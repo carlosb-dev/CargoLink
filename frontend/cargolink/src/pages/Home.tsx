@@ -8,7 +8,12 @@ function Home() {
   const [open, setOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header open={open} setOpen={setOpen} />
+      <Header 
+        open={open}
+        setOpen={setOpen}
+        mostrarAuth={true}
+        mostrarNav={true}
+      />
 
       {open && <DropdownMenu setOpen={setOpen} />}
 

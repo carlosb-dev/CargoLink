@@ -9,7 +9,7 @@ function DropdownMenu({ setOpen }: Props) {
   const close = () => setOpen && setOpen(false);
 
   return (
-    <div className="md:hidden bg-slate-900/80 border-t border-slate-800">
+    <div className="hidden [@media(max-width:950px)]:inline-flex bg-slate-900/80 border-t border-slate-800">
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3">
         <Link onClick={close} className="text-slate-200 py-2" to="/conductores">
           Conductores
@@ -17,7 +17,7 @@ function DropdownMenu({ setOpen }: Props) {
         <Link
           onClick={close}
           className="text-slate-200 py-2"
-          to="/administradores"
+          to="/admin"
         >
           Administradores
         </Link>

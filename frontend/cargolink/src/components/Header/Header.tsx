@@ -3,24 +3,27 @@ import DropdownButton from "../Dropdown/DropdownBoton";
 import Logo from "./Logo";
 import Navegacion from "./Navegacion";
 import AuthBotones from "./AuthBotones";
+import { Link } from "react-router-dom";
 
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  mostrarAuth?: boolean;
+  mostrarNav?: boolean;
 };
 
-function Header({ open, setOpen }: Props) {
+function Header({ open, setOpen, mostrarAuth, mostrarNav }: Props) {
+
   return (
-    <header className="max-w-6xl mx-auto w-full px-6 py-6 flex items-center justify-between">
+    <header className="mx-auto w-4/5 px-6 py-6 flex items-center justify-between">
       <div className="flex items-center gap-3">
         <Logo />
-        <span className="font-semibold tracking-wider text-3xl">CargoLink</span>
+        <Link to="/" className="font-semibold tracking-wider text-3xl">CargoLink</Link>
       </div>
 
-      <Navegacion />
+      <Navegacion mostrar={mostrarNav} />
 
-      {/* Botones Auth */}
-      <AuthBotones />
+      <AuthBotones mostrar={mostrarAuth}/>
 
       <DropdownButton open={open} setOpen={setOpen} />
     </header>

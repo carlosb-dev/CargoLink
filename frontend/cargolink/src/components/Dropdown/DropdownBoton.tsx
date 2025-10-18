@@ -6,7 +6,7 @@ type Props = {
 
 function DropdownButton({ open, setOpen }: Props) {
   return (
-    <div className="md:hidden">
+    <div className="hidden [@media(max-width:950px)]:inline-flex">
       <button
         aria-label="Abrir menú"
         onClick={() => setOpen((v) => !v)}
