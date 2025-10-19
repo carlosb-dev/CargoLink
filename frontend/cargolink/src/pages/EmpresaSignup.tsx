@@ -36,7 +36,7 @@ function Signup() {
 
     if (!hasNumber || !hasSpecial) {
       setError(
-        "La contraseña debe contener al menos un número y un carácter especial (!£$%^&#@)"
+        "La contraseña debe contener al menos un número y un carácter especial (!$%^&#@)"
       );
       return;
     }
@@ -48,7 +48,7 @@ function Signup() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
       <Header open={open} setOpen={setOpen} />
-      {open && <DropdownMenu setOpen={setOpen} />}
+      {open && <DropdownMenu />}
 
       <main className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full bg-slate-900/60 border border-slate-800 p-8 rounded-lg">
@@ -114,7 +114,7 @@ function Signup() {
               </button>
 
               <Link
-                to={RUTAS.EMPRESALOGIN}
+                to={RUTAS.LOGIN}
                 className="text-sm text-slate-300 hover:text-blue-300"
               >
                 ¿Ya tienes cuenta? Inicia sesión

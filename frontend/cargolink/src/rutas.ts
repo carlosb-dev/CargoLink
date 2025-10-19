@@ -1,9 +1,6 @@
 export const RUTAS = {
   HOME: "/",
-  CONDUCTORLOGIN: "/ConductorLogin",
-  ADMINLOGIN: "/AdminLogin",
-  CONTACTO: "/Contacto",
-  EMPRESALOGIN: "/EmpresaLogin",
+  LOGIN: "/Login",
   EMPRESASIGNUP: "/EmpresaSignup",
   NOSOTROS: "/Nosotros",
 };

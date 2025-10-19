@@ -1,7 +1,7 @@
 
 function CreditosModulo({nombre, rol, enlace}: {nombre: string; rol: string; enlace: string}) {
   return (
-    <div className="bg-slate-800/30 p-4 rounded-lg">
+    <div className="bg-slate-800/30 p-4 rounded-lg hover:scale-110 transition-all duration-300">
       <div className="font-medium">{nombre}</div>
       <div className="text-sm text-slate-400">{rol}</div>
       <a

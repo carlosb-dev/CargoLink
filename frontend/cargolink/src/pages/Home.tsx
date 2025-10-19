@@ -6,16 +6,21 @@ import Footer from "../components/Footer";
 
 function Home() {
   const [open, setOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header 
+      
+      <Header
         open={open}
         setOpen={setOpen}
         mostrarAuth={true}
-        mostrarNav={true}
       />
 
-      {open && <DropdownMenu setOpen={setOpen} />}
+      <DropdownMenu
+        open={open}
+        mostrarAuth={true}
+        mostrarNav={true}
+      />
 
       <main className="flex-1 flex items-center justify-center">
         <Hero />

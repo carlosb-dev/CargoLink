@@ -1,12 +1,11 @@
-
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-function DropdownButton({ open, setOpen }: Props) {
+function DropdownBoton({ open, setOpen }: Props) {
   return (
-    <div className="hidden [@media(max-width:950px)]:inline-flex">
+    <div className="flex lg:hidden">
       <button
         aria-label="Abrir menú"
         onClick={() => setOpen((v) => !v)}
@@ -39,4 +38,4 @@ function DropdownButton({ open, setOpen }: Props) {
   );
 }
 
-export default DropdownButton;
+export default DropdownBoton;
