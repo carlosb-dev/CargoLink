@@ -1,5 +1,5 @@
 
-function Conductores() {
+function ConductorLogin() {
   return (
     <>
       <div>conductores</div>
@@ -8,4 +8,4 @@ function Conductores() {
   )
 }
 
-export default Conductores
+export default ConductorLogin

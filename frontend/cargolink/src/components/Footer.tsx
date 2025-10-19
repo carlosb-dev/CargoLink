@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { RUTAS } from "../rutas";
 
 function Footer() {
   return (
@@ -9,10 +10,10 @@ function Footer() {
         </div>
 
         <div className="flex gap-4 text-slate-300">
-          <Link to="/nosotros" className="hover:text-white transition">
+          <Link to={RUTAS.NOSOTROS} className="hover:text-white transition">
             Nosotros
           </Link>
-          <Link to="/contacto" className="hover:text-white transition">
+          <Link to={RUTAS.CONTACTO} className="hover:text-white transition">
             Contacto
           </Link>
         </div>

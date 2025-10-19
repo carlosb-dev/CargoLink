@@ -1,5 +1,6 @@
 import hero from "../assets/hero.png";
 import { Link } from "react-router-dom";
+import { RUTAS } from "../rutas";
 
 function SeccionHero() {
   return (
@@ -16,7 +17,7 @@ function SeccionHero() {
         <div className="flex gap-4">
           <Link
             className="inline-flex items-center gap-2 px-5 py-3 bg-cyan-400 text-black font-semibold rounded shadow hover:scale-[1.02] transition"
-            to="/signup"
+            to={RUTAS.EMPRESASIGNUP}
           >
             Comenzar
           </Link>
