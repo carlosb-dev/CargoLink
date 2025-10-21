@@ -21,8 +21,8 @@ function Header({ open, setOpen, mostrarAuth, mostrarNav }: Props) {
         <Link
           to={RUTAS.HOME}
           className="
-            font-extrabold tracking-wider text-3xl bg-gradient-to-b bg-white bg-clip-text text-transparent 
-            hover:scale-105 transition-all duration-300 "
+            font-extrabold tracking-wider text-3xl text-color-white text-center 
+            hover:scale-105 transition-all duration-300"
         >
           CargoLink
         </Link>

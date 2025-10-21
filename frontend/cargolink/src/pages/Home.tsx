@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DropdownMenu from "../components/Dropdown/DropdownMenu";
 import Header from "../components/Header/Header";
-import Hero from "../components/SeccionHero";
+import Hero from "../components/Hero";
 import Footer from "../components/Footer";
 
 function Home() {

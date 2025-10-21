@@ -29,7 +29,7 @@ function Login() {
 
       <main className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full bg-slate-900/60 border border-slate-800 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Iniciar sesión</h2>
+          <h2 className="text-2xl font-bold mb-4">Inicia sesión</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm text-slate-300 mb-1">Email</label>
@@ -50,12 +50,12 @@ function Login() {
               />
             </div>
             {error && <div className="text-sm text-red-400">{error}</div>}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <button type="submit" className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold hover:cursor-pointer">
                 Entrar
               </button>
               <Link to={RUTAS.EMPRESASIGNUP} className="text-sm text-slate-300 hover:text-blue-300">
-                ¿No tienes cuenta? Regístrate
+                ¿No tenés cuenta? Registrate
               </Link>
             </div>
           </form>

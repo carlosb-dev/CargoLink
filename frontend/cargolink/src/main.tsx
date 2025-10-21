@@ -11,8 +11,8 @@ import { RUTAS } from "./rutas";
 const router = createBrowserRouter([
   { path: RUTAS.HOME, element: <Home /> },
   { path: RUTAS.LOGIN, element: <Login /> },
-  { path: RUTAS.EMPRESASIGNUP, element: <EmpresaSignup /> },
   { path: RUTAS.NOSOTROS, element: <Nosotros /> },
+  { path: RUTAS.EMPRESASIGNUP, element: <EmpresaSignup /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(

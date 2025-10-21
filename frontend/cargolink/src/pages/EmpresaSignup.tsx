@@ -105,7 +105,7 @@ function Signup() {
 
             {error && <div className="text-sm text-red-400">{error}</div>}
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <button
                 type="submit"
                 className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer"
@@ -117,7 +117,7 @@ function Signup() {
                 to={RUTAS.LOGIN}
                 className="text-sm text-slate-300 hover:text-blue-300"
               >
-                ¿Ya tienes cuenta? Inicia sesión
+                ¿Ya tienes cuenta? Iniciá sesión
               </Link>
             </div>
           </form>
