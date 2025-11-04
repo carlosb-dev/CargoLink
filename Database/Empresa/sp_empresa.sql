@@ -4,10 +4,10 @@
 
 DELIMITER $$
 DROP procedure IF EXISTS sp_Empresa_insertar;
-CREATE PROCEDURE sp_Empresa_insertar (OUT xidEmpresa INT, IN xNombre varchar(45), IN xContrasena varchar(45), IN xDireccion varchar(45))
+CREATE PROCEDURE sp_Empresa_insertar (OUT xidEmpresa INT, IN xNombre varchar(45), IN xContrasena varchar(45), IN xDireccion varchar(45), IN xEmail VARCHAR(100))
 BEGIN
-	INSERT INTO Empresa (Nombre, Contrasena, Direccion)
-	VALUES (xNombre, SHA2(xContrasena, 256), xDireccion);
+	INSERT INTO Empresa (Nombre, Contrasena, Direccion, Email)
+	VALUES (xNombre, SHA2(xContrasena, 256), xDireccion, xEmail);
 	set xidEmpresa = last_insert_id();
 END $$
 
@@ -16,18 +16,18 @@ END $$
 /*-----------------------------------------------*/
 
 DELIMITER $$
-CREATE PROCEDURE sp_LoginEmpresa(IN xNombre VARCHAR(45),IN xContrasena VARCHAR(255))
+CREATE PROCEDURE sp_LoginEmpresa(IN xEmail VARCHAR(100),IN xContrasena VARCHAR(255))
 BEGIN
     DECLARE vCount INT;
 
     SELECT COUNT(*) INTO vCount
     FROM Empresa
-    WHERE Nombre = xNombre AND Contrasena = SHA2(xContrasena, 256);
+    WHERE Email = xEmail AND Contrasena = SHA2(xContrasena, 256);
 
     IF vCount = 1 THEN
-        SELECT idEmpresa, Nombre, Direccion
+        SELECT idEmpresa, Nombre, Direccion, Email
         FROM Empresa
-        WHERE Nombre = xNombre AND Contrasena = SHA2(xContrasena, 256);
+        WHERE Email = xEmail AND Contrasena = SHA2(xContrasena, 256);
     ELSE
         SELECT NULL AS idEmpresa, NULL AS Nombre, NULL AS Direccion;
     END IF;

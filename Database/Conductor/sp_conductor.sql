@@ -4,10 +4,10 @@
 
 DELIMITER $$
 DROP procedure IF EXISTS sp_Conductor_insertar;
-CREATE PROCEDURE sp_Conductor_insertar (OUT xidConductor INT, IN xNombre varchar(45), IN xLicencia varchar(45), IN xidEmpresa INT)
+CREATE PROCEDURE sp_Conductor_insertar (OUT xidConductor INT, IN xNombre varchar(45), IN xLicencia varchar(45), IN xEmail Varchar(100),IN xidEmpresa INT)
 BEGIN
-	INSERT INTO Conductor (Nombre, Licencia, estado, idEmpresa)
-	VALUES (xNombre, xLicencia, true ,xidEmpresa);
+	INSERT INTO Conductor (Nombre, Licencia, estado, xEmail, idEmpresa)
+	VALUES (xNombre, xLicencia, true, xEmail, xidEmpresa);
 	set xidConductor = last_insert_id();
 END $$
 
@@ -17,7 +17,7 @@ END $$
 
 DELIMITER $$
 Drop PROCEDURE IF EXISTS sp_Conductor_Actualizar $$
-CREATE PROCEDURE sp_Conductor_Actualizar(IN xidConductor INT,IN xNombre VARCHAR(45),IN xLicencia VARCHAR(45))
+CREATE PROCEDURE sp_Conductor_Actualizar(IN xidConductor INT,IN xNombre VARCHAR(45),IN xLicencia VARCHAR(45), IN xEmail Varchar(100))
 BEGIN
 	select estado into @estado_actual
 	from conductor
@@ -25,7 +25,7 @@ BEGIN
     
 	IF (estado = TRUE) THEN
     	UPDATE Conductor
-    	SET Nombre = xNombre, Licencia = xLicencia
+    	SET Nombre = xNombre, Licencia = xLicencia, xEmail = Email
     	WHERE idConductor = xidConductor;
 	else
     	SIGNAL SQLSTATE '45000'
@@ -60,7 +60,7 @@ END $$
 
 DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_LoginConductor $$
-CREATE PROCEDURE sp_LoginConductor(IN xLicencia VARCHAR(45))
+CREATE PROCEDURE sp_LoginConductor(IN xLicencia VARCHAR(45), IN xEmail Varchar(100))
 BEGIN
     DECLARE vCount INT;
 
@@ -71,7 +71,7 @@ BEGIN
     IF vCount = 1 THEN
         SELECT idConductor, Nombre, Licencia, Estado, idEmpresa
         FROM Conductor
-        WHERE Licencia = xLicencia;
+        WHERE Licencia = xLicencia AND Email = xEmail;
     ELSE
         SELECT NULL AS idConductor, NULL AS Nombre, NULL AS Licencia, NULL AS Estado, NULL AS idEmpresa;
     END IF;

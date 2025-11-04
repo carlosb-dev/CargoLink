@@ -4,7 +4,7 @@
 
 DELIMITER $$
 DROP procedure IF EXISTS sp_Administrador_insertar;
-CREATE PROCEDURE sp_Administrador_insertar (OUT xidAdministrador INT, IN xNombre varchar(45), IN xContrasena varchar(45), IN xEmail Varchar(50), IN xidEmpresa INT)
+CREATE PROCEDURE sp_Administrador_insertar (OUT xidAdministrador INT, IN xNombre varchar(45), IN xContrasena varchar(45), IN xEmail Varchar(100), IN xidEmpresa INT)
 BEGIN
 	INSERT INTO Administrador (Nombre, Contrasena, Email, idEmpresa)
 	VALUES (xNombre, SHA2(xContrasena, 256), xEmail, xidEmpresa);
@@ -29,10 +29,10 @@ END $$
 
 DELIMITER $$
 Drop PROCEDURE IF EXISTS SP_Administador_Actualizar $$
-CREATE PROCEDURE SP_Administador_Actualizar(IN xidAdministrador INT,IN xNombre VARCHAR(45),IN xContrasena VARCHAR(45))
+CREATE PROCEDURE SP_Administador_Actualizar(IN xidAdministrador INT,IN xNombre VARCHAR(45),IN xContrasena VARCHAR(45), IN xEmail (100))
 BEGIN
 	UPDATE Administrador
-	SET Nombre = xNombre, Contrasena = xContrasena
+	SET Nombre = xNombre, Contrasena = xContrasena, Email = xEmail;
 	WHERE idAdministrador = xidAdministrador;
 END $$
 
