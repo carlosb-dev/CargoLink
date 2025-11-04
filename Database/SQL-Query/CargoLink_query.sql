@@ -16,6 +16,18 @@ BEGIN
 END $$
 DELIMITER $$;
 
+DELIMITER $$
+DROP Procedure if Exists Query_Administradores_NombreEmpresa $$
+CREATE PROCEDURE Query_Administradores_NombreEmpresa (IN xEmpresa Varchar(45), IN xEmail Varchar(100))
+BEGIN
+
+    SELECT idAdministrador, Nombre, Contrasena, Email, idEmpresa
+    FROM Administrador
+    Where Empresa = xEmpresa OR Email = xEmail;
+
+END $$
+DELIMITER $$;
+
 /*--------------------------------------------------------*/
 -- Cosulta que trae todos los CONDUCTORE de la empresa (por idEmpresa)
 /*--------------------------------------------------------*/
@@ -25,9 +37,20 @@ DROP Procedure if Exists Query_Conductores_Empresa $$
 CREATE PROCEDURE Query_Conductores_Empresa (IN xidEmpresa INT)
 BEGIN
 
-    SELECT idConductor, Nombre, Licencia, Estado, idEmpresa
+    SELECT idConductor, Nombre, Licencia, Estado, idEmpresa, Email
     FROM Conductor
     Where idEmpresa = xidEmpresa;
+
+END $$
+
+DELIMITER $$
+DROP Procedure if Exists Query_Conductores_Email $$
+CREATE PROCEDURE Query_Conductores_Email (IN xEmail Varchar(100))
+BEGIN
+
+    SELECT idConductor, Nombre, Licencia, Estado, idEmpresa, Email
+    FROM Conductor
+    Where Email = xEmail;
 
 END $$
 
