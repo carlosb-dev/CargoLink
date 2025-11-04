@@ -5,19 +5,14 @@ import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaAdmin from "../../components/Empresa/ModalCreaAdmin";
 import type { FormValues } from "../../components/Empresa/ModalCreaAdmin";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
+import { defaultAdmins } from "../../data/empresaTablas";
 
 type Admin = {
     id: number;
     nombre: string;
     email: string;
 };
-
-// Luego cambiar por GET en API
-const defaultAdmins = [
-    { id: 0, nombre: "Sofía Díaz", email: "sofia@email.com" },
-    { id: 1, nombre: "Pedro Ruiz", email: "pedro@email.com" },
-]
 
 function Administradores() {
     const [open, setOpen] = useState(false);

@@ -5,7 +5,12 @@ import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalAsignaFlota from "../../components/Empresa/ModalAsignaFlota";
 import type { FormValues } from "../../components/Empresa/ModalAsignaFlota";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
+import {
+  defaultConductores,
+  defaultVehiculos,
+  defaultFlotaAsignaciones,
+} from "../../data/empresaTablas";
 
 type Conductor = {
   id: number;
@@ -25,25 +30,19 @@ type Asignacion = {
   vehiculoId: number;
 };
 
-// Luego cambiar por GET en API
-const conductores: Conductor[] = [
-  { id: 0, nombre: "Juan Pérez" },
-  { id: 1, nombre: "María Gómez" },
-  { id: 2, nombre: "Luis Rodríguez" },
-];
+const conductores: Conductor[] = defaultConductores.map(({ id, nombre }) => ({
+  id,
+  nombre,
+}));
 
-// Luego cambiar por GET en API
-const vehiculos: Vehiculo[] = [
-  { id: 0, placa: "AB-123-CD", modelo: "Volvo FH", estado: "En camino" },
-  { id: 1, placa: "EF-456-GH", modelo: "Scania R500", estado: "Despachado" },
-  { id: 2, placa: "IJ-789-KL", modelo: "Iveco S-Way", estado: "Recibido" },
-];
+const vehiculos: Vehiculo[] = defaultVehiculos.map(({ id, placa, modelo, estado }) => ({
+  id,
+  placa,
+  modelo,
+  estado,
+}));
 
-// Luego cambiar por GET en API
-const defaultAsignaciones: Asignacion[] = [
-  { id: 0, conductorId: 0, vehiculoId: 0 },
-  { id: 1, conductorId: 1, vehiculoId: 1 },
-];
+const defaultAsignaciones: Asignacion[] = defaultFlotaAsignaciones;
 
 function Flota() {
   const [open, setOpen] = useState(false);

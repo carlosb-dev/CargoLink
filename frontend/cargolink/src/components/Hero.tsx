@@ -1,6 +1,6 @@
 import hero from "../assets/hero.png";
 import { Link } from "react-router-dom";
-import { RUTAS } from "../rutas";
+import { RUTAS } from "../data/rutas";
 
 function SeccionHero() {
   return (

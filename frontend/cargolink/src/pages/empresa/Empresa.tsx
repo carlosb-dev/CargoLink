@@ -3,28 +3,29 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
+import { defaultAdmins, defaultConductores, defaultVehiculos } from "../../data/empresaTablas";
 
 // Variables de Ejemplo
 
 const empresaNombre = "EmpresaTest";
 
-const conductores = [
-  { nombre: "Juan Pérez", estado: "Activo", licencia: "QE92ND09" },
-  { nombre: "María Gómez", estado: "De Baja", licencia: "AU28ODND" },
-  { nombre: "Luis Rodríguez", estado: "En Ruta", licencia: "P1092NSI" },
-];
+const conductores = defaultConductores.map(({ nombre, estado, licencia }) => ({
+  nombre,
+  estado,
+  licencia,
+}));
 
-const administradores = [
-  { nombre: "Sofía Díaz", email: "sofia@email.com" },
-  { nombre: "Pedro Ruiz", email: "pedro@email.com" },
-];
+const administradores = defaultAdmins.map(({ nombre, email }) => ({
+  nombre,
+  email,
+}));
 
-const vehiculos = [
-  { placa: "AB-123-CD", modelo: "Volvo FH", estado: "En camino" },
-  { placa: "EF-456-GH", modelo: "Scania R500", estado: "Despachado" },
-  { placa: "IJ-789-KL", modelo: "Iveco S-Way", estado: "Recibido" },
-];
+const vehiculos = defaultVehiculos.map(({ placa, modelo, estado }) => ({
+  placa,
+  modelo,
+  estado,
+}));
 
 function Empresa() {
   const [open, setOpen] = useState(false);

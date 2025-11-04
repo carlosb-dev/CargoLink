@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
 import Navegacion from "../Header/Navegacion";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
 import logo from "../../assets/logo.png";
 
 function Logo() {
@@ -12,7 +12,7 @@ function Logo() {
                  shadow-lg
                  hover:rotate-360 transition-all duration-300"
     >
-      <img src={logo} alt="logo" /> 
+      <img src={logo} alt="logo" />
     </Link>
   );
 }

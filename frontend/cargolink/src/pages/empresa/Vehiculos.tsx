@@ -5,7 +5,8 @@ import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaVehiculo from "../../components/Empresa/ModalCreaVehiculo";
 import type { FormValues } from "../../components/Empresa/ModalCreaVehiculo";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
+import { defaultVehiculos } from "../../data/empresaTablas";
 
 type Vehiculo = {
   id: number;
@@ -13,13 +14,6 @@ type Vehiculo = {
   modelo: string;
   estado: string;
 };
-
-// Luego cambiar por GET en API
-const defaultVehiculos: Vehiculo[] = [
-  { id: 0, placa: "AB-123-CD", modelo: "Volvo FH", estado: "En camino" },
-  { id: 1, placa: "EF-456-GH", modelo: "Scania R500", estado: "Despachado" },
-  { id: 2, placa: "IJ-789-KL", modelo: "Iveco S-Way", estado: "Recibido" },
-];
 
 function Vehiculos() {
   const [open, setOpen] = useState(false);

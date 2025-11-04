@@ -11,7 +11,7 @@ import Conductores from "./pages/empresa/Conductores";
 import Vehiculos from "./pages/empresa/Vehiculos";
 import Flota from "./pages/empresa/Flota";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { RUTAS } from "./rutas";
+import { RUTAS } from "./data/rutas";
 
 const router = createBrowserRouter([
   { path: RUTAS.HOME, element: <Home /> },

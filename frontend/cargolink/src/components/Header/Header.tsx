@@ -4,7 +4,7 @@ import Logo from "./Logo";
 import Navegacion from "./Navegacion";
 import AuthBotones from "./AuthBotones";
 import { Link } from "react-router-dom";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
 
 type Props = {
   open: boolean;

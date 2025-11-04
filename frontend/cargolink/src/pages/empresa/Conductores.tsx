@@ -5,7 +5,8 @@ import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaConductor from "../../components/Empresa/ModalCreaConductor";
 import type { FormValues } from "../../components/Empresa/ModalCreaConductor";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
+import { defaultConductores } from "../../data/empresaTablas";
 
 type Conductor = {
   id: number;
@@ -13,13 +14,6 @@ type Conductor = {
   estado: string;
   licencia: string;
 };
-
-// Luego cambiar por GET en API
-const defaultConductores: Conductor[] = [
-  { id: 0, nombre: "Juan Pérez", estado: "Activo", licencia: "QE92ND09" },
-  { id: 1, nombre: "María Gómez", estado: "En Ruta", licencia: "AU28ODND" },
-  { id: 2, nombre: "Luis Rodríguez", estado: "De Baja", licencia: "P1092NSI" },
-];
 
 function Conductores() {
   const [open, setOpen] = useState(false);
