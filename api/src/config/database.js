@@ -1,23 +1,19 @@
-import mysql from 'mysql2/promise';
+// src/config/db.js
+import { Sequelize } from 'sequelize';
 import { DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT } from './dotenv.js';
 
-const pool = mysql.createPool({
+const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASS,
-  database: DB_NAME,
   port: DB_PORT,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  dialect: 'mysql',
+  logging: false, // desactiva logs SQL en consola
 });
 
 try {
-  const connection = await pool.getConnection();
-  console.log('Conexión exitosa a MySQL');
-  connection.release();
+  await sequelize.authenticate();
+  console.log('Conexión a MySQL establecida correctamente.');
 } catch (error) {
-  console.error('Error conectando a MySQL:', error);
+  console.error('Error al conectar con la base de datos:', error);
 }
 
-export default pool;
+export default sequelize;
