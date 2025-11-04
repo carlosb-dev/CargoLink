@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { RUTAS } from "../rutas";
-import Header from "../components/Header/Header";
-import DropdownMenu from "../components/Dropdown/DropdownMenu";
-import Footer from "../components/Footer";
+import { RUTAS } from "../../data/rutas";
+import Header from "../../components/Header/Header";
+import DropdownMenu from "../../components/Dropdown/DropdownMenu";
+import Footer from "../../components/Footer";
 
 function Signup() {
   const [open, setOpen] = useState(false);

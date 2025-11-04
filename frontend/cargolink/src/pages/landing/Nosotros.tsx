@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Header from "../components/Header/Header";
-import DropdownMenu from "../components/Dropdown/DropdownMenu";
-import Footer from "../components/Footer";
-import CreditosModulo from "../components/CreditosModulo";
+import Header from "../../components/Header/Header";
+import DropdownMenu from "../../components/Dropdown/DropdownMenu";
+import Footer from "../../components/Footer";
+import CreditosModulo from "../../components/CreditosModulo";
 
 function Nosotros() {
   const [open, setOpen] = useState(false);

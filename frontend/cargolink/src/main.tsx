@@ -1,18 +1,30 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles/main.css";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import EmpresaSignup from "./pages/EmpresaSignup";
-import Nosotros from "./pages/Nosotros";
+import Home from "./pages/landing/Home";
+import Login from "./pages/landing/Login";
+import EmpresaSignup from "./pages/landing/EmpresaSignup";
+import Nosotros from "./pages/landing/Nosotros";
+import Empresa from "./pages/empresa/Empresa";
+import Administradores from "./pages/empresa/Administradores";
+import Conductores from "./pages/empresa/Conductores";
+import Vehiculos from "./pages/empresa/Vehiculos";
+import Flota from "./pages/empresa/Flota";
+import HistorialPedidos from "./pages/empresa/HistorialPedidos";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { RUTAS } from "./rutas";
+import { RUTAS } from "./data/rutas";
 
 const router = createBrowserRouter([
   { path: RUTAS.HOME, element: <Home /> },
   { path: RUTAS.LOGIN, element: <Login /> },
   { path: RUTAS.NOSOTROS, element: <Nosotros /> },
   { path: RUTAS.EMPRESASIGNUP, element: <EmpresaSignup /> },
+  { path: RUTAS.EMPRESA, element: <Empresa /> },
+  { path: RUTAS.ADMINISTRADORES, element: <Administradores /> },
+  { path: RUTAS.CONDUCTORES, element: <Conductores /> },
+  { path: RUTAS.VEHICULOS, element: <Vehiculos /> },
+  { path: RUTAS.FLOTA, element: <Flota /> },
+  { path: RUTAS.HISTORIAL, element: <HistorialPedidos /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(

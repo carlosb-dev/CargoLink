@@ -4,7 +4,7 @@ import Logo from "./Logo";
 import Navegacion from "./Navegacion";
 import AuthBotones from "./AuthBotones";
 import { Link } from "react-router-dom";
-import { RUTAS } from "../../rutas";
+import { RUTAS } from "../../data/rutas";
 
 type Props = {
   open: boolean;
@@ -15,7 +15,7 @@ type Props = {
 
 function Header({ open, setOpen, mostrarAuth, mostrarNav }: Props) {
   return (
-    <header className="mx-auto w-4/5 px-6 py-6 flex items-center justify-between gap-3">
+    <header className="mx-auto w-full px-6 py-6 flex items-center justify-between gap-3">
       <div className="flex items-center gap-3">
         <Logo />
         <Link
