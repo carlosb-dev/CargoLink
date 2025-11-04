@@ -25,10 +25,12 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Empresa` (
   `Nombre` VARCHAR(45) NOT NULL,
   `Contrasena` VARCHAR(45) NOT NULL,
   `Direccion` VARCHAR(45) NOT NULL,
+  `Email` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idEmpresa`),
   UNIQUE INDEX `nombre_UNIQUE` (`Nombre` ASC) VISIBLE,
   UNIQUE INDEX `contrasena_UNIQUE` (`Contrasena` ASC) VISIBLE,
-  UNIQUE INDEX `Direccion_UNIQUE` (`Direccion` ASC) VISIBLE)
+  UNIQUE INDEX `Direccion_UNIQUE` (`Direccion` ASC) VISIBLE,
+  UNIQUE INDEX `Email_UNIQUE` (`Email` ASC) VISIBLE)
 ENGINE = InnoDB;
 
 
@@ -41,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Administrador` (
   `idAdministrador` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
   `Contrasena` VARCHAR(45) NOT NULL,
-  `Email` VARCHAR(45) NOT NULL,
+  `Email` VARCHAR(100) NOT NULL,
   `idEmpresa` INT NOT NULL,
   PRIMARY KEY (`idAdministrador`),
   UNIQUE INDEX `email_UNIQUE` (`Email` ASC) VISIBLE,
@@ -64,10 +66,12 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Conductor` (
   `Nombre` VARCHAR(45) NOT NULL,
   `Licencia` VARCHAR(45) NOT NULL,
   `Estado` TINYINT NOT NULL,
+  `Email` VARCHAR(100) NOT NULL,
   `idEmpresa` INT NOT NULL,
   PRIMARY KEY (`idConductor`),
   INDEX `fk_Concuctores_Empresa1_idx` (`idEmpresa` ASC) VISIBLE,
   UNIQUE INDEX `Licencia_UNIQUE` (`Licencia` ASC) VISIBLE,
+  UNIQUE INDEX `Email_UNIQUE` (`Email` ASC) VISIBLE,
   CONSTRAINT `fk_Concuctores_Empresa1`
     FOREIGN KEY (`idEmpresa`)
     REFERENCES `CargoLink`.`Empresa` (`idEmpresa`)
@@ -137,6 +141,7 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Pedido` (
   `Peso` DOUBLE NOT NULL,
   `Volumen` DOUBLE NOT NULL,
   `Estado` VARCHAR(45) NOT NULL,
+  'Fecha_Despacho' DATE NOT NULL,
   `Origen` VARCHAR(45) NOT NULL,
   `Destino` VARCHAR(45) NOT NULL,
   `idVehiculo` INT NOT NULL,
@@ -174,11 +179,11 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Historial_Pedido` (
   `EstadoAnterior` VARCHAR(45) NOT NULL,
   `EstadoActual` VARCHAR(45) NOT NULL,
   `FechaModificacion` DATE NOT NULL,
-  `idPedido` INT NOT NULL,
+  `Pedido_idPedido` INT NOT NULL,
   PRIMARY KEY (`idHistorial`),
-  INDEX `fk_Historial_Pedido_Pedido1_idx` (`idPedido` ASC) VISIBLE,
+  INDEX `fk_Historial_Pedido_Pedido1_idx` (`Pedido_idPedido` ASC) VISIBLE,
   CONSTRAINT `fk_Historial_Pedido_Pedido1`
-    FOREIGN KEY (`idPedido`)
+    FOREIGN KEY (`Pedido_idPedido`)
     REFERENCES `CargoLink`.`Pedido` (`idPedido`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
