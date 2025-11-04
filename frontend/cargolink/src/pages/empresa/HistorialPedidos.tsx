@@ -52,6 +52,7 @@ function HistorialPedidos() {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
       <SidebarPanel
         mostrarVolver={true}
+        rutaVolver={RUTAS.EMPRESA}
         items={[
           { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
           { to: RUTAS.CONDUCTORES, label: "Conductores" },
