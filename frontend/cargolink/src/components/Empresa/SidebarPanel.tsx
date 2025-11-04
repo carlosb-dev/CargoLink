@@ -7,10 +7,11 @@ function SidebarPanel() {
       <h2 className="text-lg font-semibold mb-3">Panel</h2>
       <nav>
         <ul className="divide-y divide-slate-800">
+          <PanelItem to={RUTAS.HISTORIAL} label="Historial de pedidos" />
           <PanelItem to={RUTAS.ADMINISTRADORES} label="Administradores" />
-          <PanelItem to={RUTAS.VEHICULOS} label="Vehículos" />
           <PanelItem to={RUTAS.CONDUCTORES} label="Conductores" />
-          <PanelItem to={RUTAS.HISTORIAL} label="Historial pedidos" />
+          <PanelItem to={RUTAS.VEHICULOS} label="Vehículos" />
+          <PanelItem to={RUTAS.FLOTA} label="Flota" />
         </ul>
       </nav>
     </aside>

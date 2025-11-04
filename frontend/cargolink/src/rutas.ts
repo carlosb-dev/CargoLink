@@ -8,4 +8,5 @@ export const RUTAS = {
   VEHICULOS: "/Empresa/Vehiculos",
   CONDUCTORES: "/Empresa/Conductores",
   HISTORIAL: "/Empresa/Historial",
+  FLOTA: "/Empresa/Flota",
 };

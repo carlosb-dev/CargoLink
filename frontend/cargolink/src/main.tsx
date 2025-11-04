@@ -1,11 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles/main.css";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import EmpresaSignup from "./pages/EmpresaSignup";
-import Nosotros from "./pages/Nosotros";
-import Empresa from "./pages/Empresa";
+import Home from "./pages/landing/Home";
+import Login from "./pages/landing/Login";
+import EmpresaSignup from "./pages/landing/EmpresaSignup";
+import Nosotros from "./pages/landing/Nosotros";
+import Empresa from "./pages/empresa/Empresa";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./rutas";
 

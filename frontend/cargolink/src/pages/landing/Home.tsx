@@ -1,8 +1,8 @@
 import { useState } from "react";
-import DropdownMenu from "../components/Dropdown/DropdownMenu";
-import Header from "../components/Header/Header";
-import Hero from "../components/Hero";
-import Footer from "../components/Footer";
+import DropdownMenu from "../../components/Dropdown/DropdownMenu";
+import Header from "../../components/Header/Header";
+import Hero from "../../components/Hero";
+import Footer from "../../components/Footer";
 
 function Home() {
   const [open, setOpen] = useState(false);

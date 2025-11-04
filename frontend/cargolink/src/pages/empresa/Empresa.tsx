@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Header from "../components/Header/Header";
-import Footer from "../components/Footer";
-import SidebarPanel from "../components/Empresa/SidebarPanel";
-import Tabla from "../components/Empresa/Tabla";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer";
+import SidebarPanel from "../../components/Empresa/SidebarPanel";
+import Tabla from "../../components/Empresa/Tabla";
 
 // Variables de Ejemplo
 
