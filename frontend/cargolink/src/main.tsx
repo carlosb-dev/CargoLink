@@ -10,6 +10,7 @@ import Administradores from "./pages/empresa/Administradores";
 import Conductores from "./pages/empresa/Conductores";
 import Vehiculos from "./pages/empresa/Vehiculos";
 import Flota from "./pages/empresa/Flota";
+import HistorialPedidos from "./pages/empresa/HistorialPedidos";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./data/rutas";
 
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
   { path: RUTAS.CONDUCTORES, element: <Conductores /> },
   { path: RUTAS.VEHICULOS, element: <Vehiculos /> },
   { path: RUTAS.FLOTA, element: <Flota /> },
+  { path: RUTAS.HISTORIAL, element: <HistorialPedidos /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(

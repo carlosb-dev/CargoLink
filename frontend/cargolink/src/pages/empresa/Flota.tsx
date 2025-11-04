@@ -124,6 +124,7 @@ function Flota() {
           { to: RUTAS.CONDUCTORES, label: "Conductores" },
           { to: RUTAS.VEHICULOS, label: "Vehículos" },
           { to: RUTAS.FLOTA, label: "Flota" },
+          { to: RUTAS.HISTORIAL, label: "Historial" },
         ]}
       />
 

@@ -22,3 +22,36 @@ export const defaultFlotaAsignaciones = [
   { id: 0, conductorId: 0, vehiculoId: 0 },
   { id: 1, conductorId: 1, vehiculoId: 1 },
 ];
+
+export const defaultHistorialPedidos = [
+  {
+    id: 0,
+    conductor: "Juan Pérez",
+    matricula: "AB-123-CD",
+    estadoAnterior: "En camino",
+    estadoActual: "Entregado",
+    fechaModificacion: "2024-05-12 14:30",
+    nombrePedido: "Carga de insumos médicos",
+    destino: "Hospital Central",
+  },
+  {
+    id: 1,
+    conductor: "María Gómez",
+    matricula: "EF-456-GH",
+    estadoAnterior: "Preparando",
+    estadoActual: "Despachado",
+    fechaModificacion: "2024-05-11 09:15",
+    nombrePedido: "Componentes electrónicos",
+    destino: "Parque Industrial Norte",
+  },
+  {
+    id: 2,
+    conductor: "Luis Rodríguez",
+    matricula: "IJ-789-KL",
+    estadoAnterior: "Despachado",
+    estadoActual: "En camino",
+    fechaModificacion: "2024-05-10 18:45",
+    nombrePedido: "Repuestos automotrices",
+    destino: "Concesionario Ruta 3",
+  },
+];
