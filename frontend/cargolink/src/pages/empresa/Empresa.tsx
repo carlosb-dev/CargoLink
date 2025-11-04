@@ -3,34 +3,44 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
+import { RUTAS } from "../../rutas";
 
 // Variables de Ejemplo
 
-  const empresaNombre = "EmpresaTest";
+const empresaNombre = "EmpresaTest";
 
-  const conductores = [
-    { nombre: "Juan Pérez", estado: "Activo", telefono: "+54 11 5555-1111" },
-    { nombre: "María Gómez", estado: "De Baja", telefono: "+54 11 5555-2222" },
-    { nombre: "Luis Rodríguez", estado: "En Ruta", telefono: "+54 11 5555-3333" },
-  ];
+const conductores = [
+  { nombre: "Juan Pérez", estado: "Activo", licencia: "QE92ND09" },
+  { nombre: "María Gómez", estado: "De Baja", licencia: "AU28ODND" },
+  { nombre: "Luis Rodríguez", estado: "En Ruta", licencia: "P1092NSI" },
+];
 
-  const administradores = [
-    { nombre: "Sofía Díaz", rol: "Administrador", email: "sofia@email.com" },
-    { nombre: "Pedro Ruiz", rol: "Supervisor", email: "pedro@email.com" },
-  ];
+const administradores = [
+  { nombre: "Sofía Díaz", email: "sofia@email.com" },
+  { nombre: "Pedro Ruiz", email: "pedro@email.com" },
+];
 
-  const vehiculos = [
-    { placa: "AB-123-CD", modelo: "Volvo FH", estado: "En camino" },
-    { placa: "EF-456-GH", modelo: "Scania R500", estado: "Despachado" },
-    { placa: "IJ-789-KL", modelo: "Iveco S-Way", estado: "Recibido" },
-  ];
+const vehiculos = [
+  { placa: "AB-123-CD", modelo: "Volvo FH", estado: "En camino" },
+  { placa: "EF-456-GH", modelo: "Scania R500", estado: "Despachado" },
+  { placa: "IJ-789-KL", modelo: "Iveco S-Way", estado: "Recibido" },
+];
 
 function Empresa() {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
-      <SidebarPanel />
+
+      <SidebarPanel
+        mostrarVolver={false}
+        items={[
+          { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
+          { to: RUTAS.CONDUCTORES, label: "Conductores" },
+          { to: RUTAS.VEHICULOS, label: "Vehículos" },
+          { to: RUTAS.FLOTA, label: "Flota" },
+        ]}
+      />
 
       <Header open={open} setOpen={setOpen} />
 
@@ -46,6 +56,7 @@ function Empresa() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
               {/* Conductores */}
               <div className="bg-slate-900/60 border border-slate-800 rounded-lg">
                 <div className="p-4 border-b border-slate-800">
@@ -56,7 +67,7 @@ function Empresa() {
                     columns={[
                       { key: "nombre", label: "Nombre" },
                       { key: "estado", label: "Estado" },
-                      { key: "telefono", label: "Teléfono" },
+                      { key: "licencia", label: "Licencia" },
                     ]}
                     rows={conductores}
                   />
@@ -72,7 +83,6 @@ function Empresa() {
                   <Tabla
                     columns={[
                       { key: "nombre", label: "Nombre" },
-                      { key: "rol", label: "Rol" },
                       { key: "email", label: "Email" },
                     ]}
                     rows={administradores}
@@ -96,6 +106,7 @@ function Empresa() {
                   />
                 </div>
               </div>
+
             </div>
           </section>
         </div>

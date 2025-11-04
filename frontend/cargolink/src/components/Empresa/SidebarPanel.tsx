@@ -1,34 +1,24 @@
-import { RUTAS } from "../../rutas";
 import PanelItem from "./PanelItem";
 import VolverBoton from "./VolverBoton";
 
 export type PanelLink = { to: string; label: string };
 
 type Props = {
+  rutaVolver?: string;
   mostrarVolver?: boolean;
-  items?: PanelLink[];
+  items: PanelLink[];
 };
 
 // TODO: mover links a parametros
 
-function SidebarPanel({ mostrarVolver = false, items }: Props) {
-  const defaultItems: PanelLink[] = [
-    { to: RUTAS.HISTORIAL, label: "ee" },
-    { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
-    { to: RUTAS.CONDUCTORES, label: "Conductores" },
-    { to: RUTAS.VEHICULOS, label: "Vehículos" },
-    { to: RUTAS.FLOTA, label: "Flota" },
-  ];
-  const list = items ?? defaultItems;
+function SidebarPanel({ mostrarVolver = false, rutaVolver, items }: Props) {
+
+  const list = items;
 
   return (
-    <aside className="fixed inset-y-0 left-0 w-64 bg-slate-900/60 border-r border-slate-800 p-4">
+    <aside className="fixed inset-y-0 left-0 flex w-64 flex-col bg-slate-900/60 border-r border-slate-800 p-4">
       <h2 className="text-lg font-semibold mb-3">Panel</h2>
-      {mostrarVolver && (
-        <div className="mb-4">
-          <VolverBoton to={RUTAS.EMPRESA} />
-        </div>
-      )}
+
       <nav>
         <ul className="divide-y divide-slate-800">
           {list.map((it) => (
@@ -36,9 +26,14 @@ function SidebarPanel({ mostrarVolver = false, items }: Props) {
           ))}
         </ul>
       </nav>
+
+      {mostrarVolver && (
+        <div className="mt-auto pt-4">
+          <VolverBoton to={`${(rutaVolver) ? rutaVolver : ""}`} />
+        </div>
+      )}
     </aside>
   );
 }
 
 export default SidebarPanel;
-
