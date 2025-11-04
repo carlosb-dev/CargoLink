@@ -15,8 +15,8 @@ import Tabla from "../../components/Empresa/Tabla";
   ];
 
   const administradores = [
-    { nombre: "Sofía Díaz", rol: "Administrador", email: "sofia@acme.com" },
-    { nombre: "Carlos Ruiz", rol: "Supervisor", email: "carlos@acme.com" },
+    { nombre: "Sofía Díaz", rol: "Administrador", email: "sofia@email.com" },
+    { nombre: "Pedro Ruiz", rol: "Supervisor", email: "pedro@email.com" },
   ];
 
   const vehiculos = [
