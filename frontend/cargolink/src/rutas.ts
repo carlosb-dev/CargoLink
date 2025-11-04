@@ -3,4 +3,9 @@ export const RUTAS = {
   LOGIN: "/Login",
   EMPRESASIGNUP: "/EmpresaSignup",
   NOSOTROS: "/Nosotros",
+  EMPRESA: "/Empresa",
+  ADMINISTRADORES: "/Empresa/Administradores",
+  VEHICULOS: "/Empresa/Vehiculos",
+  CONDUCTORES: "/Empresa/Conductores",
+  HISTORIAL: "/Empresa/Historial",
 };

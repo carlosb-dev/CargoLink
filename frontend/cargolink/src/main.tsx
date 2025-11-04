@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import EmpresaSignup from "./pages/EmpresaSignup";
 import Nosotros from "./pages/Nosotros";
+import Empresa from "./pages/Empresa";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./rutas";
 
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
   { path: RUTAS.LOGIN, element: <Login /> },
   { path: RUTAS.NOSOTROS, element: <Nosotros /> },
   { path: RUTAS.EMPRESASIGNUP, element: <EmpresaSignup /> },
+  { path: RUTAS.EMPRESA, element: <Empresa /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
