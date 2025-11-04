@@ -9,6 +9,7 @@ import Empresa from "./pages/empresa/Empresa";
 import Administradores from "./pages/empresa/Administradores";
 import Conductores from "./pages/empresa/Conductores";
 import Vehiculos from "./pages/empresa/Vehiculos";
+import Flota from "./pages/empresa/Flota";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./rutas";
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
   { path: RUTAS.ADMINISTRADORES, element: <Administradores /> },
   { path: RUTAS.CONDUCTORES, element: <Conductores /> },
   { path: RUTAS.VEHICULOS, element: <Vehiculos /> },
+  { path: RUTAS.FLOTA, element: <Flota /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
