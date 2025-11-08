@@ -158,4 +158,60 @@ export const AdministradorController = {
       });
     }
   },
+
+  async crearPedido(req, res) {
+    try {
+      const {
+        Nombre,
+        Peso,
+        Volumen,
+        Estado,
+        Fecha_Despacho,
+        Origen,
+        Destino,
+        idVehiculo,
+        idAdministrador,
+        idEmpresa
+      } = req.body;
+
+      if (!Nombre || !Peso || !Volumen || !Estado || !Fecha_Despacho || !Origen || !Destino) {
+        return res.status(400).json({
+          success: false,
+          message: "Faltan datos obligatorios para crear el pedido."
+        });
+      }
+
+      const [resultado] = await sequelize.query(
+        "CALL sp_Pedido_insertar(:Nombre, :Peso, :Volumen, :Estado, :Fecha_Despacho, :Origen, :Destino, :idVehiculo, :idAdministrador, :idEmpresa)", 
+        {
+          replacements: {
+            Nombre,
+            Peso,
+            Volumen,
+            Estado,
+            Fecha_Despacho,
+            Origen,
+            Destino,
+            idVehiculo,
+            idAdministrador,
+            idEmpresa
+          }
+        }
+      );
+
+      return res.status(201).json({
+        success: true,
+        message: "Pedido creado correctamente.",
+        data: resultado
+      });
+
+    } catch (error) {
+      console.error("Error al crear pedido:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al crear el pedido.",
+        error: error.message
+      });
+    }
+  }
 };

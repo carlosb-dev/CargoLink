@@ -33,6 +33,34 @@ BEGIN
 	END IF;
 END $$
 
+sp_Vehiculo_actualizar_estado
+
+/*---------------------------------------------*/
+-- Store procedure para Actualizar Unicamente Estado del vehiculo
+/*---------------------------------------------*/
+
+DELIMITER $$
+Drop PROCEDURE IF EXISTS sp_Vehiculo_actualizar_estado_Ocupado $$
+CREATE PROCEDURE sp_Vehiculo_actualizar_estado_Ocupado(IN xidVehiculo INT,IN xEstado INT)
+BEGIN
+	UPDATE Vehiculo
+	SET Estado = 0
+	WHERE idVehiculo = xidVehiculo;
+END $$
+
+/*---------------------------------------------*/
+-- Store procedure para Actualizar Liberar Unicamente Estado del vehiculo
+/*---------------------------------------------*/
+
+DELIMITER $$
+Drop PROCEDURE IF EXISTS sp_Vehiculo_actualizar_estado_Disponible $$
+CREATE PROCEDURE sp_Vehiculo_actualizar_estado_Disponible(IN xidVehiculo INT,IN xEstado INT)
+BEGIN
+	UPDATE Vehiculo
+	SET Estado = 1
+	WHERE idVehiculo = xidVehiculo;
+END $$
+
 /*---------------------------------------------*/
 -- Store procedure para Eliminar
 /*---------------------------------------------*/

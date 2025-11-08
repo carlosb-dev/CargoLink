@@ -34,6 +34,32 @@ BEGIN
 END $$
 
 /*---------------------------------------------*/
+-- Store procedure para Actualizar Unicamente Estado del conductor
+/*---------------------------------------------*/
+
+DELIMITER $$
+Drop PROCEDURE IF EXISTS sp_Conductor_actualizar_estado_ocupado $$
+CREATE PROCEDURE sp_Conductor_actualizar_estado_ocupado(IN xidConductor INT,IN xEstado INT)
+BEGIN
+	UPDATE Conductor
+	SET Estado = 0
+	WHERE idConductor = xidConductor;
+END $$
+
+/*---------------------------------------------*/
+-- Store procedure para Actualizar Liberar Unicamente Estado del conductor
+/*---------------------------------------------*/
+
+DELIMITER $$
+Drop PROCEDURE IF EXISTS sp_Conductor_actualizar_estado_Liberar $$
+CREATE PROCEDURE sp_Conductor_actualizar_estado_Liberar(IN xidConductor INT,IN xEstado INT)
+BEGIN
+	UPDATE Conductor
+	SET Estado = 1
+	WHERE idConductor = xidConductor;
+END $$
+
+/*---------------------------------------------*/
 -- Store procedure para Eliminar
 /*---------------------------------------------*/
 
