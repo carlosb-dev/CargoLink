@@ -1,5 +1,5 @@
 import express from 'express';
-import { ConductorController } from '../controllers/conductorController.js';
+import { ConductorController } from '../controllers/conductor.js';
 
 const router = express.Router();
 

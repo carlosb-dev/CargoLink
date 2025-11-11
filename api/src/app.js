@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import empresaRoutes from './routes/empresaRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
-import conductorRoutes from './routes/conductorRoutes.js';
+import empresaRoutes from './routes/empresa.js';
+import adminRoutes from './routes/administrador.js';
+import conductorRoutes from './routes/conductor.js';
 
 const app = express();
 

@@ -1,9 +1,21 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mysql2": "^3.15.3",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "jest": "^30.2.0",
     "supertest": "^7.1.4"
+  },
+  "scripts": {
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
+  },
+  "type": "module",
+  "jest": {
+    "testEnvironment": "node"
   }
 }

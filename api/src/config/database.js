@@ -1,12 +1,11 @@
-// src/config/db.js
 import { Sequelize } from 'sequelize';
 import { DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT } from './dotenv.js';
 
-const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
+export const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   host: DB_HOST,
   port: DB_PORT,
   dialect: 'mysql',
-  logging: false, // desactiva logs SQL en consola
+  logging: false
 });
 
 try {
