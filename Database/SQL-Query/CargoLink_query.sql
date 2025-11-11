@@ -153,7 +153,7 @@ BEGIN
         p.Origen,
         p.Destino,
         a.Nombre AS AdministradorNombre,
-        e.Nombre AS Empresa Destino,
+        e.Nombre AS EmpresaDestino
     FROM Pedido p
     JOIN Administrador a ON p.idAdministrador = a.idAdministrador
     JOIN Empresa e ON p.idEmpresa = e.idEmpresa

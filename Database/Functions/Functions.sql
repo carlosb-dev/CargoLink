@@ -1,3 +1,4 @@
+-- Active: 1762861313268@@127.0.0.1@3306@cargolink
 /*-------------------------------------*/
 -- Funcion para retornar la cantidad de paquetes por vehiculo
 /*-------------------------------------*/
@@ -25,8 +26,7 @@ DELIMITER;
 DELIMITER $$
 DROP FUNCTION IF EXISTS Restar_Capacidad_Vehiculo $$
 CREATE FUNCTION Restar_Capacidad_Vehiculo(p_idVehiculo INT, p_paquetes INT, p_peso INT)
-RETURNS VARCHAR(100)
-MODIFIES SQL DATA
+RETURNS VARCHAR(100) READS SQL DATA
 BEGIN
     DECLARE mensaje VARCHAR(100);
 
@@ -47,8 +47,7 @@ DELIMITER ;
 DELIMITER $$
 DROP FUNCTION IF EXISTS Sumar_Capacidad_Vehiculo $$
 CREATE FUNCTION Sumar_Capacidad_Vehiculo(p_idVehiculo INT, p_paquetes INT, p_peso INT)
-RETURNS VARCHAR(100)
-MODIFIES SQL DATA
+RETURNS VARCHAR(100) READS SQL DATA
 BEGIN
     DECLARE mensaje VARCHAR(100);
 
@@ -69,8 +68,7 @@ DELIMITER ;
 DELIMITER $$
 DROP FUNCTION IF EXISTS Actualizar_Estado_ConductorYVehiculo $$
 CREATE FUNCTION ActualizarEstadoConductorYVehiculo(p_idConductor INT, p_idVehiculo INT)
-RETURNS VARCHAR(100)
-MODIFIES SQL DATA
+RETURNS VARCHAR(100) READS SQL DATA
 BEGIN
     DECLARE mensaje VARCHAR(100);
 
@@ -89,8 +87,7 @@ DELIMITER ;
 DELIMITER $$
 DROP FUNCTION IF EXISTS Restaurar_Estado_ConductorYVehiculo $$
 CREATE FUNCTION RestaurarEstadoConductorYVehiculo(p_idConductor INT, p_idVehiculo INT)
-RETURNS VARCHAR(100)
-MODIFIES SQL DATA
+RETURNS VARCHAR(100) READS SQL DATA
 BEGIN
     DECLARE mensaje VARCHAR(100);
 

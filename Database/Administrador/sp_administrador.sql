@@ -1,3 +1,4 @@
+-- Active: 1762861313268@@127.0.0.1@3306@cargolink
 /*-----------------------------------------------*/
 -- Store Procedures Tabla Administrador
 /*-----------------------------------------------*/
@@ -28,11 +29,11 @@ END $$
 /*-----------------------------------------------*/
 
 DELIMITER $$
-Drop PROCEDURE IF EXISTS SP_Administador_Actualizar $$
-CREATE PROCEDURE SP_Administador_Actualizar(IN xidAdministrador INT,IN xNombre VARCHAR(45),IN xContrasena VARCHAR(45), IN xEmail (100))
+Drop PROCEDURE IF EXISTS sp_Administador_Actualizar $$
+CREATE PROCEDURE sp_Administador_Actualizar(IN xidAdministrador INT,IN xNombre VARCHAR(45),IN xContrasena VARCHAR(45), IN xEmail VARCHAR(100))
 BEGIN
 	UPDATE Administrador
-	SET Nombre = xNombre, Contrasena = xContrasena, Email = xEmail;
+	SET Nombre = xNombre, Contrasena = xContrasena, Email = xEmail
 	WHERE idAdministrador = xidAdministrador;
 END $$
 
@@ -41,6 +42,7 @@ END $$
 /*---------------------------------------------------*/
 
 DELIMITER $$
+DROP PROCEDURE if EXISTS sp_LoginAdministrador $$
 CREATE PROCEDURE sp_LoginAdministrador(IN xEmail VARCHAR(45), IN xContrasena VARCHAR(45))
 BEGIN
     DECLARE vCount INT;

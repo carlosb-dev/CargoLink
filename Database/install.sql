@@ -1,0 +1,10 @@
+source estructura.sql
+source Empresa/sp_empresa.sql
+source Administrador/sp_administrador.sql
+source Conductor/sp_conductor.sql
+source Pedido/sp_pedido.sql
+source Vehiculo/sp_vehiculo.sql
+source Vehiculo-Conductor/sp_vehiculo_Conductor.sql
+source Functions/Functions.sql
+SOURCE SQL-Query/CargoLink_query.sql
+source triggers.sql

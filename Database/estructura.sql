@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Pedido` (
   `Peso` DOUBLE NOT NULL,
   `Volumen` DOUBLE NOT NULL,
   `Estado` VARCHAR(45) NOT NULL,
-  'Fecha_Despacho' DATE NOT NULL,
+  `Fecha_Despacho` DATE NOT NULL,
   `Origen` VARCHAR(45) NOT NULL,
   `Destino` VARCHAR(45) NOT NULL,
   `idVehiculo` INT NOT NULL,
