@@ -6,17 +6,17 @@ DELIMITER $$
 DROP procedure IF EXISTS sp_Vehiculo_Conductor_insertar $$
 CREATE PROCEDURE sp_Vehiculo_Conductor_insertar (IN xidVehiculo INT, IN xidConductor INT)
 BEGIN
-	SELECT estado into @estado_vehiculo
-	from vehiculo
+	SELECT v.Estado into @estado_vehiculo
+	from vehiculo v
 	where idVehiculo = xidVehiculo;
     
-	SELECT estado into @estado_Conductor
-	from conductor
+	SELECT c.Estado into @estado_Conductor
+	from conductor c
 	where idconductor = xidConductor;
 
-	IF(estado_vehiculo = TRUE) THEN
-		IF(estado_Conductor = TRUE) THEN
-			INSERT INTO Vehiculo_has_Conductor (idVehiculo, idConductor)
+	IF(estado_vehiculo = 1) THEN
+		IF(estado_Conductor = 1) THEN
+			INSERT INTO Vehiculo_has_Conductor (idVehiculo, idConductor, Fecha_Asignacion)
 			VALUES (xidVehiculo, xidConductor, CURDATE());
 		ELSE
 			SIGNAL SQLSTATE '45000'

@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `CargoLink`.`Empresa` ;
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Empresa` (
   `idEmpresa` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  `Contrasena` VARCHAR(45) NOT NULL,
+  `Contrasena` VARCHAR(64); NOT NULL,
   `Direccion` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idEmpresa`),

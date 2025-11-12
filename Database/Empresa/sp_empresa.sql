@@ -4,7 +4,7 @@
 
 DELIMITER $$
 DROP procedure IF EXISTS sp_Empresa_insertar;
-CREATE PROCEDURE sp_Empresa_insertar (OUT xidEmpresa INT, IN xNombre varchar(45), IN xContrasena varchar(45), IN xDireccion varchar(45), IN xEmail VARCHAR(100))
+CREATE PROCEDURE sp_Empresa_insertar (OUT xidEmpresa INT, IN xNombre varchar(45), IN xContrasena VARCHAR(64);, IN xDireccion varchar(45), IN xEmail VARCHAR(100))
 BEGIN
 	INSERT INTO Empresa (Nombre, Contrasena, Direccion, Email)
 	VALUES (xNombre, SHA2(xContrasena, 256), xDireccion, xEmail);

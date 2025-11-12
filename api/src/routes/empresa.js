@@ -30,7 +30,4 @@ router.get('/:idEmpresa/pedidos', EmpresaController.obtenerPedidos);
 // Obtener historial de un pedido específico
 router.get('/pedido/:idPedido/historial', EmpresaController.obtenerHistorialPedido);
 
-// Obtener todas las empresas
-router.get('/', EmpresaController.obtenerEmpresas);
-
 export default router;

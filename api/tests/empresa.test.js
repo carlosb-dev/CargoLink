@@ -16,9 +16,9 @@ describe('Pruebas para EmpresaController', () => {
     // Crear Empresa
     test('POST /api/empresa/crear', async () => {
         const nuevaEmpresa = {
-        Nombre: 'Transporte SurTest',
-        Contrasena: '123456',
-        Direccion: 'Av. Rivadavia 9000',
+        Nombre: 'EmpresaTest',
+        Contrasena: '1234',
+        Direccion: 'pepe 123',
         Email: 'testempresa@mail.com'
         };
 
@@ -52,7 +52,7 @@ describe('Pruebas para EmpresaController', () => {
         const nuevoConductor = {
         Nombre: 'Juan Pérez',
         DNI: '12345678',
-        Telefono: '1122334455',
+        Email: 'conductor@gmail.com',
         idEmpresa: idEmpresaCreada || 1
         };
 
@@ -71,8 +71,10 @@ describe('Pruebas para EmpresaController', () => {
         const nuevoVehiculo = {
         Patente: 'ABC123',
         Modelo: 'Camión Volvo',
+        Marca: 'Volvo',
         Capacidad: 1000,
         Estado: 1,
+
         idEmpresa: idEmpresaCreada || 1
         };
 
@@ -135,13 +137,5 @@ describe('Pruebas para EmpresaController', () => {
 
         expect(res.status).toBe(200);
         expect(res.body).toHaveProperty('historial');
-    });
-
-    // Obtener todas las empresas
-    test('GET /api/empresa/ → debe listar todas las empresas', async () => {
-        const res = await request(app).get('/api/empresa/');
-
-        expect(res.status).toBe(200);
-        expect(Array.isArray(res.body)).toBe(true);
     });
 });

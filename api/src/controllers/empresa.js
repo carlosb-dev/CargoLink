@@ -20,9 +20,10 @@ export const EmpresaController = {
       const { Nombre, Contrasena, Direccion, Email } = req.body;
 
       const [result] = await sequelize.query(
-        "CALL sp_Empresa_insertar(:Nombre, :Contrasena, :Direccion, :Email)", 
+        "CALL sp_Empresa_insertar(@xidEmpresa, :Nombre, :Contrasena, :Direccion, :Email)",
         { replacements: { Nombre, Contrasena, Direccion, Email } }
       );
+
 
       return res.status(201).json({
         success: true,
@@ -118,11 +119,11 @@ export const EmpresaController = {
 
   async crearConductor(req, res) {
     try {
-      const { Nombre, Email, Contrasena, idEmpresa } = req.body;
+      const { Nombre, Email, Licencia, Estado, idEmpresa } = req.body;
 
-      const [resultado] = await sequelize.query(
-        "CALL sp_Conductor_insertar(:Nombre, :Email, :Contrasena, :idEmpresa)",
-        { replacements: { Nombre, Email, Contrasena, idEmpresa } }
+      await sequelize.query(
+        "CALL sp_Conductor_insertar(:Nombre, :Licencia, :Estado, :Email, :idEmpresa)",
+        { replacements: { Nombre, Licencia, Estado, Email, idEmpresa } }
       );
 
       return res.status(201).json({
@@ -142,11 +143,11 @@ export const EmpresaController = {
 
   async crearVehiculo(req, res) {
     try {
-      const { Patente, Modelo, Marca, idEmpresa } = req.body;
+      const { Patente, Modelo, Marca, Capacidad, Estado, idEmpresa } = req.body;
 
-      const [resultado] = await sequelize.query(
-        "CALL sp_Vehiculo_insertar(:Patente, :Modelo, :Marca, :idEmpresa)",
-        { replacements: { Patente, Modelo, Marca, idEmpresa } }
+      await sequelize.query(
+        "CALL sp_Vehiculo_insertar(:Matricula, :Tipo, :Modelo, :Marca, :Capacidad, :Estado, :idEmpresa)",
+        { replacements: { Patente, Modelo, Marca, Capacidad, Estado, idEmpresa } }
       );
 
       return res.status(201).json({
@@ -233,24 +234,4 @@ export const EmpresaController = {
       });
     }
   },
-
-  async obtenerEmpresas(req, res) {
-    try {
-      const [empresas] = await sequelize.query(
-        "CALL sp_ObtenerEmpresas()"
-      );
-
-      return res.json({
-        success: true,
-        data: empresas
-      });
-    } catch (error) {
-      console.error("Error al obtener empresas:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Error al obtener empresas",
-        error: error.message
-      });
-    }
-  }
 };

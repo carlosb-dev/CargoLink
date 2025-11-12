@@ -5,14 +5,14 @@ export const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   host: DB_HOST,
   port: DB_PORT,
   dialect: 'mysql',
-  logging: false
+  logging: false,
 });
 
 try {
   await sequelize.authenticate();
-  console.log('Conexión a MySQL establecida correctamente.');
+  console.log('✅ Conexión a MySQL establecida correctamente.');
 } catch (error) {
-  console.error('Error al conectar con la base de datos:', error);
+  console.error('❌ Error al conectar con la base de datos:', error);
 }
 
 export default sequelize;
