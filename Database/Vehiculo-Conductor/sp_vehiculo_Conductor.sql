@@ -14,8 +14,8 @@ BEGIN
 	from conductor c
 	where idconductor = xidConductor;
 
-	IF(estado_vehiculo = 1) THEN
-		IF(estado_Conductor = 1) THEN
+	IF(@estado_vehiculo = 1) THEN
+		IF(@estado_Conductor = 1) THEN
 			INSERT INTO Vehiculo_has_Conductor (idVehiculo, idConductor, Fecha_Asignacion)
 			VALUES (xidVehiculo, xidConductor, CURDATE());
 		ELSE
@@ -44,8 +44,8 @@ BEGIN
 	from conductor
 	where idconductor = xidConductor;
     
-	IF(estado_vehiculo = TRUE) THEN
-    	IF(estado_Conductor = TRUE) THEN
+	IF(@estado_vehiculo = TRUE) THEN
+    	IF(@estado_Conductor = TRUE) THEN
         	DELETE FROM Vehiculo_has_Conductor
         	where idVehiculo = xidVehiculo AND idconductor = xidConductor;
     	ELSE

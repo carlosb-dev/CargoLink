@@ -1,4 +1,4 @@
--- Active: 1762861313268@@127.0.0.1@3306@cargolink
+-- Active: 1762879183741@@127.0.0.1@3306@cargolink
 /*-----------------------------------------------*/
 -- Store Procedures Tabla Administrador
 /*-----------------------------------------------*/
@@ -43,7 +43,7 @@ END $$
 
 DELIMITER $$
 DROP PROCEDURE if EXISTS sp_LoginAdministrador $$
-CREATE PROCEDURE sp_LoginAdministrador(IN xEmail VARCHAR(45), IN xContrasena VARCHAR(45))
+CREATE PROCEDURE sp_LoginAdministrador(IN xEmail VARCHAR(45), IN xContrasena VARCHAR(64))
 BEGIN
     DECLARE vCount INT;
 

@@ -6,7 +6,7 @@ DELIMITER $$
 DROP procedure IF EXISTS sp_Conductor_insertar;
 CREATE PROCEDURE sp_Conductor_insertar (OUT xidConductor INT, IN xNombre varchar(45), IN xLicencia varchar(45), IN xEmail Varchar(100),IN xidEmpresa INT)
 BEGIN
-	INSERT INTO Conductor (Nombre, Licencia, estado, xEmail, idEmpresa)
+	INSERT INTO Conductor (Nombre, Licencia, estado, Email, idEmpresa)
 	VALUES (xNombre, xLicencia, true, xEmail, xidEmpresa);
 	set xidConductor = last_insert_id();
 END $$
@@ -19,13 +19,13 @@ DELIMITER $$
 Drop PROCEDURE IF EXISTS sp_Conductor_Actualizar $$
 CREATE PROCEDURE sp_Conductor_Actualizar(IN xidConductor INT,IN xNombre VARCHAR(45),IN xLicencia VARCHAR(45), IN xEmail Varchar(100))
 BEGIN
-	select estado into @estado_actual
-	from conductor
+	select c.Estado into @estado_actual
+	from conductor c
 	WHERE idConductor = xidConductor;
     
-	IF (estado = TRUE) THEN
+	IF (@estado_actual = TRUE) THEN
     	UPDATE Conductor
-    	SET Nombre = xNombre, Licencia = xLicencia, xEmail = Email
+    	SET Nombre = xNombre, Licencia = xLicencia, Email = xEmail
     	WHERE idConductor = xidConductor;
 	else
     	SIGNAL SQLSTATE '45000'
@@ -71,7 +71,7 @@ BEGIN
 	from conductor
 	WHERE idConductor = xidConductor;
     
-	IF (estado = TRUE) THEN
+	IF (@estado_actual = TRUE) THEN
     	DELETE FROM Conductor
     	WHERE idConductor = xidConductor;
 	ELSE

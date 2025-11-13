@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `CargoLink`.`Empresa` ;
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Empresa` (
   `idEmpresa` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  `Contrasena` VARCHAR(64); NOT NULL,
+  `Contrasena` VARCHAR(64) NOT NULL,
   `Direccion` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idEmpresa`),
@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS `CargoLink`.`Administrador` ;
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Administrador` (
   `idAdministrador` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  `Contrasena` VARCHAR(45) NOT NULL,
+  `Contrasena` VARCHAR(64) NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
   `idEmpresa` INT NOT NULL,
   PRIMARY KEY (`idAdministrador`),
@@ -84,7 +84,6 @@ ENGINE = InnoDB;
 -- Table `CargoLink`.`Vehiculo`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `CargoLink`.`Vehiculo` ;
-
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Vehiculo` (
   `idVehiculo` INT NOT NULL AUTO_INCREMENT,
   `Modelo` VARCHAR(45) NOT NULL,
@@ -109,7 +108,6 @@ ENGINE = InnoDB;
 -- Table `CargoLink`.`Vehiculo_has_Conductor`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `CargoLink`.`Vehiculo_has_Conductor` ;
-
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Vehiculo_has_Conductor` (
   `idVehiculo` INT NOT NULL,
   `idConductor` INT NOT NULL,
