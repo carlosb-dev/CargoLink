@@ -142,29 +142,35 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Pedido` (
   `Fecha_Despacho` DATE NOT NULL,
   `Origen` VARCHAR(45) NOT NULL,
   `Destino` VARCHAR(45) NOT NULL,
-  `idVehiculo` INT NOT NULL,
-  `idAdministrador` INT NOT NULL,
-  `idEmpresa` INT NOT NULL,
+  `idVehiculo` INT NULL,
+  `idAdministrador` INT NULL,             
+  `idEmpresa` INT NULL,
   PRIMARY KEY (`idPedido`),
+
   INDEX `fk_pedido_Vehiculos1_idx` (`idVehiculo` ASC) VISIBLE,
   INDEX `fk_pedido_Administradores1_idx` (`idAdministrador` ASC) VISIBLE,
   INDEX `fk_pedido_Empresa1_idx` (`idEmpresa` ASC) VISIBLE,
+
   CONSTRAINT `fk_pedido_Vehiculos1`
     FOREIGN KEY (`idVehiculo`)
     REFERENCES `CargoLink`.`Vehiculo` (`idVehiculo`)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL           
     ON UPDATE NO ACTION,
+
   CONSTRAINT `fk_pedido_Administradores1`
     FOREIGN KEY (`idAdministrador`)
     REFERENCES `CargoLink`.`Administrador` (`idAdministrador`)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL           
     ON UPDATE NO ACTION,
+
   CONSTRAINT `fk_pedido_Empresa1`
     FOREIGN KEY (`idEmpresa`)
     REFERENCES `CargoLink`.`Empresa` (`idEmpresa`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB;
+
 
 
 -- -----------------------------------------------------

@@ -37,6 +37,7 @@ CALL sp_Administrador_Eliminar(@idAdmin) $$
 -- ==============================================
 CALL sp_Conductor_insertar(@idConductor, 'Juan Perez', 'LIC1234', 'conductor@test.com', @idEmpresa1) $$
 CALL sp_Conductor_insertar(@idConductor2, 'pepe', '2345678', 'pepe@test.com', @idEmpresa1) $$
+CALL sp_Conductor_insertar(@idConductor3, 'Para Eliminar', 'vr2234a', 'Oman@test.com', @idEmpresa1) $$
 
 SELECT @idConductor AS idInsertado $$
 SELECT * FROM Conductor WHERE idConductor = @idConductor $$
@@ -62,7 +63,9 @@ CALL sp_Conductor_Eliminar(@idConductor) $$
 -- TEST: Insertar Vehículo
 -- ==============================================
 CALL sp_Vehiculo_insertar(@idVehiculo, 'Camión Ford', 'Camión', 'ABC123', 5000, 100, @idEmpresa1) $$
-CALL sp_Vehiculo_insertar(@idVehiculo1, 'Camión Ford', 'Camión', 'ABC1234', 5000, 100, @idEmpresa1) $$
+CALL sp_Vehiculo_insertar(@idVehiculo1, 'Camión Ford', 'Camión', 'AB123H4', 5000, 100, @idEmpresa1) $$
+CALL sp_Vehiculo_insertar(@idVehiculo3, 'Scania F1', 'Camión', 'G3453QW', 5000, 100, @idEmpresa1) $$
+CALL sp_Vehiculo_insertar(@idVehiculo4, 'Camión Ford', 'Camión', 'GVY23F3W', 5000, 100, @idEmpresa1) $$
 
 -- ==============================================
 -- TEST: Actualizar Matrícula (Estado TRUE)
@@ -84,7 +87,7 @@ CALL sp_Vehiculo_Eliminar(@idVehiculo) $$
 -- ==============================================
 -- TEST: Insertar Pedido
 -- ==============================================
-CALL sp_Pedido_insertar(@idPedido, 'Cajas de prueba', 100.5, 2.3, 'Pendiente', CURDATE(), 'Buenos Aires', 'Rosario', @idVehiculo1, @idAdmin2, @idEmpresa1) $$
+CALL sp_Pedido_insertar(@idPedido, 'Cajas de prueba', 100.5, 2.3, 'Pendiente', 'Buenos Aires', 'Rosario', @idVehiculo1, @idAdmin2, @idEmpresa1) $$
 
 -- ==============================================
 -- TEST: Actualizar Estado del Pedido

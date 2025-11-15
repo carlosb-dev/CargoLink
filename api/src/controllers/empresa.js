@@ -10,12 +10,11 @@
     Obtener historial de un pedido en especifico (idpedido)
 */
 
-import sequelize from '../config/database.js';
-import Empresa from '../models/empresa.js';
+import sequelize from "../config/database.js";
+import Empresa from "../models/empresa.js";
 
 export const EmpresaController = {
-
-    async crearEmpresa(req, res) {
+  async crearEmpresa(req, res) {
     try {
       const { Nombre, Contrasena, Direccion, Email } = req.body;
 
@@ -27,14 +26,14 @@ export const EmpresaController = {
       return res.status(201).json({
         success: true,
         message: "Empresa creada correctamente",
-        data: result
+        data: result,
       });
     } catch (error) {
       console.error("Error al crear empresa:", error);
       return res.status(500).json({
         success: false,
         message: "Error al crear empresa",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -51,14 +50,14 @@ export const EmpresaController = {
       return res.status(200).json({
         success: true,
         message: "Inicio de sesión exitoso",
-        data: result[0]
+        data: result[0],
       });
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       return res.status(500).json({
         success: false,
         message: "Error al iniciar sesión",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -73,13 +72,12 @@ export const EmpresaController = {
       );
 
       return res.status(200).json(conductores);
-
     } catch (error) {
       console.error("Error al obtener conductores:", error);
       return res.status(500).json({
         success: false,
         message: "Error al obtener conductores",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -89,18 +87,17 @@ export const EmpresaController = {
       const { idEmpresa } = req.params;
 
       const [vehiculos] = await sequelize.query(
-        "CALL Query_Vehiculos_Empresa(:idEmpresa)", 
+        "CALL Query_Vehiculos_Empresa(:idEmpresa)",
         { replacements: { idEmpresa } }
       );
 
       return res.status(200).json(vehiculos);
-
     } catch (error) {
       console.error("Error al obtener vehiculos:", error);
       return res.status(500).json({
         success: false,
         message: "Error al obtener vehículos",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -121,27 +118,42 @@ export const EmpresaController = {
       return res.status(201).json({
         success: true,
         message: "Conductor creado correctamente",
-        conductor: { idConductor }
+        conductor: { idConductor },
       });
-
     } catch (error) {
       console.error("Error al crear conductor:", error);
       return res.status(500).json({
         success: false,
         message: "Error al crear conductor",
-        error: error.message
+        error: error.message,
       });
     }
   },
 
-
   async crearVehiculo(req, res) {
     try {
-      const { Modelo, Tipo, Matricula, Capacidad, Cantidad_paquetes, Estado, idEmpresa } = req.body;
+      const {
+        Modelo,
+        Tipo,
+        Matricula,
+        Capacidad,
+        Cantidad_paquetes,
+        Estado,
+        idEmpresa,
+      } = req.body;
 
       await sequelize.query(
         "CALL sp_Vehiculo_insertar(@xidVehiculo, :Modelo, :Tipo, :Matricula, :Capacidad, :Cantidad_paquetes, :idEmpresa)",
-        { replacements: { Modelo, Tipo, Matricula, Capacidad, Cantidad_paquetes, idEmpresa } }
+        {
+          replacements: {
+            Modelo,
+            Tipo,
+            Matricula,
+            Capacidad,
+            Cantidad_paquetes,
+            idEmpresa,
+          },
+        }
       );
 
       const [[{ idVehiculo }]] = await sequelize.query(
@@ -151,15 +163,14 @@ export const EmpresaController = {
       return res.status(201).json({
         success: true,
         message: "Vehículo creado correctamente",
-        vehiculo: { idVehiculo }
+        vehiculo: { idVehiculo },
       });
-
     } catch (error) {
       console.error("Error al crear vehículo:", error);
       return res.status(500).json({
         success: false,
         message: "Error al crear vehículo",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -175,37 +186,34 @@ export const EmpresaController = {
 
       return res.status(200).json({
         success: true,
-        message: "Vehículo y conductor vinculados correctamente"
+        message: "Vehículo y conductor vinculados correctamente",
       });
-
     } catch (error) {
       console.error("Error al vincular:", error);
       return res.status(500).json({
         success: false,
         message: "Error al crear vinculación",
-        error: error.message
+        error: error.message,
       });
     }
   },
-
 
   async obtenerPedidos(req, res) {
     try {
       const { idEmpresa } = req.params;
 
       const [pedidos] = await sequelize.query(
-        "CALL Query_Paquetes_Enviados_Empresa(:idEmpresa)", 
+        "CALL Query_Paquetes_Enviados_Empresa(:idEmpresa)",
         { replacements: { idEmpresa } }
       );
 
       return res.json(pedidos);
-
     } catch (error) {
       console.error("Error al obtener pedidos:", error);
       return res.status(500).json({
         success: false,
         message: "Error al obtener pedidos",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -215,7 +223,7 @@ export const EmpresaController = {
       const { idPedido } = req.params;
 
       const [historial] = await sequelize.query(
-        "CALL Query_Historial_Pedido(:idPedido)", 
+        "CALL Query_Historial_Pedido(:idPedido)",
         { replacements: { idPedido } }
       );
 
@@ -225,7 +233,151 @@ export const EmpresaController = {
       return res.status(500).json({
         success: false,
         message: "Error al obtener historial del pedido",
-        error: error.message
+        error: error.message,
+      });
+    }
+  },
+
+  // 15/11
+  // Mth para actualizar la informacion de administrador
+
+  async actualizarAdministrador(req, res) {
+    try {
+      const { idAdministrador, Nombre, Contrasena, Email } = req.body;
+      await sequelize.query(
+        "CALL sp_Administador_Actualizar(:idAdministrador, :Nombre, :Contrasena, :Email)",
+        { replacements: { idAdministrador, Nombre, Contrasena, Email } }
+      );
+      return res.status(200).json({
+        success: true,
+        message:
+          "Información del administrador ha sido actualizada correctamente",
+      });
+    } catch (error) {
+      console.error(
+        "Error al actualizar la información del administrador:",
+        error
+      );
+      return res.status(500).json({
+        success: false,
+        message: "Error al actualizar la información de la empresa",
+        error: error.message,
+      });
+    }
+  },
+  // Mth para eliminar la cuenta de administrador
+
+  async eliminarAdministrador(req, res) {
+    try {
+      const { idAdministrador } = req.params;
+      await sequelize.query(
+        "CALL sp_Administrador_Eliminar(:idAdministrador)",
+        { replacements: { idAdministrador } }
+      );
+      return res.status(200).json({
+        success: true,
+        message: "El administrador ha sido eliminado correctamente",
+      });
+    } catch (error) {
+      console.error("Error al eliminar la cuenta del administrador:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al eliminar la cuenta del administrador",
+        error: error.message,
+      });
+    }
+  },
+
+  // Mth para actualizar la informacion de vehiculo
+
+  async actualizarVehiculo(req, res) {
+    try {
+      const { idVehiculo } = req.params;
+      const { Matricula } = req.body;
+      await sequelize.query(
+        "CALL sp_Vehiculo_Actualizar(:idVehiculo, :Matricula)",
+        {
+          replacements: { idVehiculo, Matricula },
+        }
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Matricula del vehículo ha sido actualizada correctamente",
+      });
+    } catch (error) {
+      console.error("Error al actualizar la información del vehículo:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al actualizar la información del vehículo",
+        error: error.message,
+      });
+    }
+  },
+
+  // Mth para eliminar vehiculo
+
+  async eliminarVehiculo(req, res) {
+    try {
+      const { idVehiculo } = req.params;
+      await sequelize.query("CALL sp_Vehiculo_Eliminar(:idVehiculo)", {
+        replacements: { idVehiculo },
+      });
+      return res.status(200).json({
+        success: true,
+        message: "El vehículo ha sido eliminado correctamente",
+      });
+    } catch (error) {
+      console.error("Error al eliminar el vehículo:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al eliminar el vehículo",
+        error: error.message,
+      });
+    }
+  },
+
+  // Mth para actualizar la informacion de conductor
+
+  async actualizarConductor(req, res) {
+    try {
+      const { idConductor } = req.params;
+      const { Nombre, Licencia, Email } = req.body;
+      await sequelize.query(
+        "CALL sp_Conductor_Actualizar(:idConductor, :Nombre, :Licencia, :Email)",
+        { replacements: { idConductor, Nombre, Licencia, Email } }
+      );
+      return res.status(200).json({
+        success: true,
+        message: "Información del conductor ha sido actualizada correctamente",
+      });
+    } catch (error) {
+      console.error("Error al actualizar la información del conductor:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al actualizar la información del conductor",
+        error: error.message,
+      });
+    }
+  },
+
+  // Mth para eliminar conductor
+
+  async eliminarConductor(req, res) {
+    try {
+      const { idConductor } = req.params;
+      await sequelize.query("CALL sp_Conductor_Eliminar(:idConductor)", {
+        replacements: { idConductor },
+      });
+      return res.status(200).json({
+        success: true,
+        message: "El conductor ha sido eliminado correctamente",
+      });
+    } catch (error) {
+      console.error("Error al eliminar el conductor:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al eliminar el conductor",
+        error: error.message,
       });
     }
   },

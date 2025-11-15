@@ -1,3 +1,4 @@
+-- Active: 1761860465442@@127.0.0.1@3306@cargolink
 /*Consultas que figuran en los Views de la Entidad Empresa*/
 
 /*--------------------------------------------------------*/
@@ -87,6 +88,25 @@ BEGIN
 END $$
 
 /*--------------------------------------------------------*/
+-- Consulta que trae a los vehiculos que tiene asignado conductor y esten disponibles (por idEmpresa)
+/*--------------------------------------------------------*/
+
+DELIMITER $$
+DROP Procedure if Exists Query_Vehiculos_Conductores_Libres_Empresa $$
+CREATE PROCEDURE Query_Vehiculos_Conductores_Libres_Empresa (IN xidEmpresa INT)
+BEGIN
+
+    SELECT v.idVehiculo, v.Modelo, v.Tipo, v.Matricula, v.Capacidad, v.Cantidad_Paquetes, v.Estado, v.idEmpresa,
+           c.idConductor, c.Nombre, c.Licencia, c.Estado AS Conductor_Estado, c.idEmpresa AS Conductor_idEmpresa,
+           vc.Fecha_Asignacion
+    FROM vehiculo_has_conductor vc
+    JOIN Vehiculo v ON vc.idVehiculo = v.idVehiculo
+    JOIN Conductor c ON vc.idConductor = c.idConductor
+    WHERE v.idEmpresa = xidEmpresa AND v.Estado = TRUE AND c.Estado = TRUE;
+   
+END $$
+
+/*--------------------------------------------------------*/
 -- Cosulta que trae los paquetes de la empresa que envia (por idEmpresa)
 /*--------------------------------------------------------*/
 
@@ -166,3 +186,36 @@ BEGIN
     WHERE p.idVehiculo = xidVehiculo
     ORDER BY p.idPedido;
 END $$
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS Query_Pedidos_Empresa $$
+CREATE PROCEDURE Query_Pedidos_Empresa(IN xidEmpresa INT)
+BEGIN
+    SELECT 
+        p.idPedido,
+        p.Nombre,
+        p.Peso,
+        p.Volumen,
+        p.Estado,
+        p.Fecha_Despacho,
+        p.Origen,
+        p.Destino,
+        p.idVehiculo,
+        p.idAdministrador,
+        p.idEmpresa,
+
+        e.Nombre AS Empresa_Destino,
+        e.Direccion AS Direccion_Destino,
+
+        v.Modelo AS Vehiculo_Modelo,
+        v.Matricula AS Vehiculo_Matricula
+
+    FROM Pedido p
+    INNER JOIN Empresa e ON p.idEmpresa = e.idEmpresa
+    LEFT JOIN Vehiculo v ON p.idVehiculo = v.idVehiculo
+
+    WHERE p.idEmpresa = xidEmpresa    
+    ORDER BY p.Fecha_Despacho DESC;
+END $$
+
+DELIMITER ;
