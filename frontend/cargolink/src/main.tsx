@@ -13,18 +13,20 @@ import Flota from "./pages/empresa/Flota";
 import HistorialPedidos from "./pages/empresa/HistorialPedidos";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./data/rutas";
+import Administrador from "./pages/administrador/Administrador";
 
 const router = createBrowserRouter([
   { path: RUTAS.HOME, element: <Home /> },
   { path: RUTAS.LOGIN, element: <Login /> },
   { path: RUTAS.NOSOTROS, element: <Nosotros /> },
   { path: RUTAS.EMPRESASIGNUP, element: <EmpresaSignup /> },
-  { path: RUTAS.EMPRESA, element: <Empresa /> },
-  { path: RUTAS.ADMINISTRADORES, element: <Administradores /> },
-  { path: RUTAS.CONDUCTORES, element: <Conductores /> },
-  { path: RUTAS.VEHICULOS, element: <Vehiculos /> },
-  { path: RUTAS.FLOTA, element: <Flota /> },
-  { path: RUTAS.HISTORIAL, element: <HistorialPedidos /> },
+  { path: RUTAS.EMPRESA_PANEL, element: <Empresa /> },
+  { path: RUTAS.EMPRESA_ADMINISTRADORES, element: <Administradores /> },
+  { path: RUTAS.EMPRESA_CONDUCTORES, element: <Conductores /> },
+  { path: RUTAS.EMPRESA_VEHICULOS, element: <Vehiculos /> },
+  { path: RUTAS.EMPRESA_FLOTA, element: <Flota /> },
+  { path: RUTAS.EMPRESA_HISTORIAL, element: <HistorialPedidos /> },
+  { path: RUTAS.ADMIN_PANEL, element: <Administrador /> },
 ]);
 
 createRoot(document.getElementById("root")!).render(
