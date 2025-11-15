@@ -4,7 +4,7 @@
 
 DELIMITER $$
 DROP procedure IF EXISTS sp_Vehiculo_insertar $$
-CREATE PROCEDURE sp_Vehiculo_insertar (OUT xidVehiculo INT, IN xModelo varchar(45), IN xTipo varchar(45), IN xMatricula Varchar(45), IN xCapacidad INT, IN xCantidad_Paquetes INT, IN xidEmpresa INT)
+CREATE PROCEDURE sp_Vehiculo_insertar (OUT xidVehiculo INT, IN xModelo varchar(45), IN xTipo varchar(45), IN xMatricula Varchar(45), IN xCapacidad INT, IN xCantidad_Paquetes INT,IN xidEmpresa INT)
 BEGIN
 	INSERT INTO Vehiculo (Modelo, Tipo, Matricula, Capacidad, Cantidad_Paquetes, Estado, idEmpresa)
 	VALUES (xModelo, xTipo, xMatricula, xCapacidad, xCantidad_Paquetes, TRUE ,xidEmpresa);

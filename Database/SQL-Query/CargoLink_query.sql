@@ -127,16 +127,19 @@ BEGIN
         hp.EstadoActual,
         hp.FechaModificacion
     FROM Historial_Pedido hp
-    JOIN Pedido p ON hp.idPedido = p.idPedido
+    JOIN Pedido p ON hp.Pedido_idPedido = p.idPedido
     JOIN Vehiculo v ON p.idVehiculo = v.idVehiculo
     JOIN Administrador a ON p.idAdministrador = a.idAdministrador
     LEFT JOIN Vehiculo_has_Conductor vc ON v.idVehiculo = vc.idVehiculo
     LEFT JOIN Conductor c ON vc.idConductor = c.idConductor
-    WHERE hp.idPedido = xidPedido
+    WHERE hp.Pedido_idPedido = xidPedido
     ORDER BY hp.FechaModificacion DESC;
 END $$
 DELIMITER $$;
 
+DELIMITER $$
+Call Query_Historial_Pedido(1) $$
+DELIMITER $$;
 /*--------------------------------------------------------*/
 -- Consulta que tree los pedidos asignados a un vehiculo (por idVehiculo)
 /*--------------------------------------------------------*/

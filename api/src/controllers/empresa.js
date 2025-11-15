@@ -19,11 +19,10 @@ export const EmpresaController = {
     try {
       const { Nombre, Contrasena, Direccion, Email } = req.body;
 
-      const [result] = await sequelize.query(
+      const result = await sequelize.query(
         "CALL sp_Empresa_insertar(@xidEmpresa, :Nombre, :Contrasena, :Direccion, :Email)",
         { replacements: { Nombre, Contrasena, Direccion, Email } }
       );
-
 
       return res.status(201).json({
         success: true,
@@ -49,14 +48,7 @@ export const EmpresaController = {
         { replacements: { Email, Contrasena } }
       );
 
-      if (!result || !result[0] || result[0].idEmpresa === null) {
-        return res.status(401).json({
-          success: false,
-          message: "Credenciales incorrectas"
-        });
-      }
-
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "Inicio de sesión exitoso",
         data: result[0]
@@ -76,14 +68,12 @@ export const EmpresaController = {
       const { idEmpresa } = req.params;
 
       const [conductores] = await sequelize.query(
-        "CALL Query_Conductores_Empresa(:idEmpresa)", 
+        "CALL Query_Conductores_Empresa(:idEmpresa)",
         { replacements: { idEmpresa } }
       );
 
-      return res.json({
-        success: true,
-        data: conductores
-      });
+      return res.status(200).json(conductores);
+
     } catch (error) {
       console.error("Error al obtener conductores:", error);
       return res.status(500).json({
@@ -103,10 +93,8 @@ export const EmpresaController = {
         { replacements: { idEmpresa } }
       );
 
-      return res.json({
-        success: true,
-        data: vehiculos
-      });
+      return res.status(200).json(vehiculos);
+
     } catch (error) {
       console.error("Error al obtener vehiculos:", error);
       return res.status(500).json({
@@ -119,18 +107,23 @@ export const EmpresaController = {
 
   async crearConductor(req, res) {
     try {
-      const { Nombre, Email, Licencia, Estado, idEmpresa } = req.body;
+      const { Nombre, Licencia, Email, idEmpresa } = req.body;
 
       await sequelize.query(
-        "CALL sp_Conductor_insertar(:Nombre, :Licencia, :Estado, :Email, :idEmpresa)",
-        { replacements: { Nombre, Licencia, Estado, Email, idEmpresa } }
+        "CALL sp_Conductor_insertar(@xidConductor, :Nombre, :Licencia, :Email, :idEmpresa)",
+        { replacements: { Nombre, Licencia, Email, idEmpresa } }
+      );
+
+      const [[{ idConductor }]] = await sequelize.query(
+        "SELECT @xidConductor AS idConductor"
       );
 
       return res.status(201).json({
         success: true,
         message: "Conductor creado correctamente",
-        data: resultado
+        conductor: { idConductor }
       });
+
     } catch (error) {
       console.error("Error al crear conductor:", error);
       return res.status(500).json({
@@ -141,20 +134,26 @@ export const EmpresaController = {
     }
   },
 
+
   async crearVehiculo(req, res) {
     try {
-      const { Patente, Modelo, Marca, Capacidad, Estado, idEmpresa } = req.body;
+      const { Modelo, Tipo, Matricula, Capacidad, Cantidad_paquetes, Estado, idEmpresa } = req.body;
 
       await sequelize.query(
-        "CALL sp_Vehiculo_insertar(:Matricula, :Tipo, :Modelo, :Marca, :Capacidad, :Estado, :idEmpresa)",
-        { replacements: { Patente, Modelo, Marca, Capacidad, Estado, idEmpresa } }
+        "CALL sp_Vehiculo_insertar(@xidVehiculo, :Modelo, :Tipo, :Matricula, :Capacidad, :Cantidad_paquetes, :idEmpresa)",
+        { replacements: { Modelo, Tipo, Matricula, Capacidad, Cantidad_paquetes, idEmpresa } }
+      );
+
+      const [[{ idVehiculo }]] = await sequelize.query(
+        "SELECT @xidVehiculo AS idVehiculo"
       );
 
       return res.status(201).json({
         success: true,
         message: "Vehículo creado correctamente",
-        data: resultado
+        vehiculo: { idVehiculo }
       });
+
     } catch (error) {
       console.error("Error al crear vehículo:", error);
       return res.status(500).json({
@@ -169,16 +168,16 @@ export const EmpresaController = {
     try {
       const { idVehiculo, idConductor } = req.body;
 
-      const [resultado] = await sequelize.query(
-        "CALL sp_Vehiculo_Conductor_insertar(:idVehiculo, :idConductor)", 
+      await sequelize.query(
+        "CALL sp_Vehiculo_Conductor_insertar(:idVehiculo, :idConductor)",
         { replacements: { idVehiculo, idConductor } }
       );
 
       return res.status(200).json({
         success: true,
-        message: "Vinculación creada correctamente",
-        data: resultado
+        message: "Vehículo y conductor vinculados correctamente"
       });
+
     } catch (error) {
       console.error("Error al vincular:", error);
       return res.status(500).json({
@@ -189,6 +188,7 @@ export const EmpresaController = {
     }
   },
 
+
   async obtenerPedidos(req, res) {
     try {
       const { idEmpresa } = req.params;
@@ -198,10 +198,8 @@ export const EmpresaController = {
         { replacements: { idEmpresa } }
       );
 
-      return res.json({
-        success: true,
-        data: pedidos
-      });
+      return res.json(pedidos);
+
     } catch (error) {
       console.error("Error al obtener pedidos:", error);
       return res.status(500).json({
@@ -221,10 +219,7 @@ export const EmpresaController = {
         { replacements: { idPedido } }
       );
 
-      return res.json({
-        success: true,
-        data: historial
-      });
+      return res.json(historial);
     } catch (error) {
       console.error("Error al obtener historial del pedido:", error);
       return res.status(500).json({

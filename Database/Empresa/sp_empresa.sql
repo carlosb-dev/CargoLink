@@ -33,3 +33,4 @@ BEGIN
         SELECT NULL AS idEmpresa, NULL AS Nombre, NULL AS Direccion;
     END IF;
 END $$
+DELIMITER ;
