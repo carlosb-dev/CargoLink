@@ -24,7 +24,6 @@ function Vehiculos() {
       { key: "id", label: "ID" },
       { key: "placa", label: "Placa" },
       { key: "modelo", label: "Modelo" },
-      { key: "estado", label: "Estado" },
       { key: "acciones", label: "Acciones" },
     ],
     []
