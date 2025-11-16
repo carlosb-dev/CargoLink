@@ -86,19 +86,12 @@ END $$
 
 DELIMITER $$
 DROP PROCEDURE IF EXISTS sp_LoginConductor $$
-CREATE PROCEDURE sp_LoginConductor(IN xLicencia VARCHAR(45), IN xEmail Varchar(100))
+CREATE PROCEDURE sp_LoginConductor(IN xLicencia VARCHAR(45), IN xEmail VARCHAR(100))
 BEGIN
-    DECLARE vCount INT;
-
-    SELECT COUNT(*) INTO vCount
-    FROM Conductor
-    WHERE Licencia = xLicencia;
-
-    IF vCount = 1 THEN
+    IF EXISTS (SELECT 1 FROM Conductor WHERE Licencia = xLicencia AND Email = xEmail) THEN
         SELECT idConductor, Nombre, Licencia, Estado, idEmpresa
         FROM Conductor
         WHERE Licencia = xLicencia AND Email = xEmail;
-    ELSE
-        SELECT NULL AS idConductor, NULL AS Nombre, NULL AS Licencia, NULL AS Estado, NULL AS idEmpresa;
     END IF;
 END $$
+
