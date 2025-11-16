@@ -4,13 +4,15 @@
 
 DELIMITER $$
 
-Drop Trigger if exists AftInsertPedido $$
-CREATE TRIGGER AftInsertPedido AFTER INSERT ON Pedido
+DROP TRIGGER IF EXISTS AftInsertPedido $$
+CREATE TRIGGER AftInsertPedido
+AFTER INSERT ON Pedido
 FOR EACH ROW
 BEGIN
-    INSERT INTO HistorialPedido (EstadoAnterior, EstadoActual, FechaModificacion, idPedido)
-    VALUES ("Creado", NEW.Estado, NOW(), NEW.idPedido);
+    INSERT INTO Historial_Pedido (EstadoAnterior, EstadoActual, FechaModificacion, Pedido_idPedido)
+    VALUES ('Creado', NEW.Estado, NOW(), NEW.idPedido);
 END $$
+DELIMITER ;
 
 DELIMITER $$
 
@@ -19,7 +21,7 @@ CREATE TRIGGER AftUpdatePedido AFTER UPDATE ON Pedido
 FOR EACH ROW
 BEGIN
     IF NEW.Estado != OLD.Estado THEN
-        INSERT INTO HistorialPedido (EstadoAnterior, EstadoActual, FechaModificacion, idPedido)
+        INSERT INTO Historial_Pedido (EstadoAnterior, EstadoActual, FechaModificacion, Pedido_idPedido)
         VALUES (OLD.Estado, NEW.Estado, NOW(), NEW.idPedido);
     END IF;
 END $$

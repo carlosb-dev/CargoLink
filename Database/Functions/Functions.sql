@@ -17,7 +17,7 @@ BEGIN
     
     RETURN total;
 END $$
-DELIMITER;
+DELIMITER $$
 
 /*-------------------------------------*/
 -- Funcion para la capacidad restante del vehiculo
@@ -38,7 +38,7 @@ BEGIN
     SET mensaje = CONCAT('Se restaron ', p_paquetes, ' paquetes y ', p_peso, ' kg de capacidad.');
     RETURN mensaje;
 END $$
-DELIMITER ;
+DELIMITER $$
 
 /*-------------------------------------*/
 -- Funcion para retornar la sumatoria de paquetes por vehiculo
@@ -59,7 +59,7 @@ BEGIN
     SET mensaje = CONCAT('Se restauraron ', p_paquetes, ' paquetes y ', p_peso, ' kg de capacidad.');
     RETURN mensaje;
 END $$
-DELIMITER ;
+DELIMITER $$
 
 /*-------------------------------------*/
 --  Actualizar estado de conductor y vehículo (poner en 0 = no disponible)
@@ -78,7 +78,7 @@ BEGIN
     SET mensaje = 'Conductor y vehículo actualizados a NO disponibles.';
     RETURN mensaje;
 END $$
-DELIMITER ;
+DELIMITER $$
 
 /*-------------------------------------*/
 --  Restaurar estado de conductor y vehículo  (poner en 1 = disponible)
@@ -97,6 +97,4 @@ BEGIN
     SET mensaje = 'Conductor y vehículo restaurados a disponibles.';
     RETURN mensaje;
 END $$
-DELIMITER ;
-
 

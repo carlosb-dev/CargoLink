@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `CargoLink`.`Empresa` ;
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Empresa` (
   `idEmpresa` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  `Contrasena` VARCHAR(45) NOT NULL,
+  `Contrasena` VARCHAR(64) NOT NULL,
   `Direccion` VARCHAR(45) NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`idEmpresa`),
@@ -42,7 +42,7 @@ DROP TABLE IF EXISTS `CargoLink`.`Administrador` ;
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Administrador` (
   `idAdministrador` INT NOT NULL AUTO_INCREMENT,
   `Nombre` VARCHAR(45) NOT NULL,
-  `Contrasena` VARCHAR(45) NOT NULL,
+  `Contrasena` VARCHAR(64) NOT NULL,
   `Email` VARCHAR(100) NOT NULL,
   `idEmpresa` INT NOT NULL,
   PRIMARY KEY (`idAdministrador`),
@@ -84,7 +84,6 @@ ENGINE = InnoDB;
 -- Table `CargoLink`.`Vehiculo`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `CargoLink`.`Vehiculo` ;
-
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Vehiculo` (
   `idVehiculo` INT NOT NULL AUTO_INCREMENT,
   `Modelo` VARCHAR(45) NOT NULL,
@@ -109,7 +108,6 @@ ENGINE = InnoDB;
 -- Table `CargoLink`.`Vehiculo_has_Conductor`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `CargoLink`.`Vehiculo_has_Conductor` ;
-
 CREATE TABLE IF NOT EXISTS `CargoLink`.`Vehiculo_has_Conductor` (
   `idVehiculo` INT NOT NULL,
   `idConductor` INT NOT NULL,
@@ -144,29 +142,35 @@ CREATE TABLE IF NOT EXISTS `CargoLink`.`Pedido` (
   `Fecha_Despacho` DATE NOT NULL,
   `Origen` VARCHAR(45) NOT NULL,
   `Destino` VARCHAR(45) NOT NULL,
-  `idVehiculo` INT NOT NULL,
-  `idAdministrador` INT NOT NULL,
-  `idEmpresa` INT NOT NULL,
+  `idVehiculo` INT NULL,
+  `idAdministrador` INT NULL,             
+  `idEmpresa` INT NULL,
   PRIMARY KEY (`idPedido`),
+
   INDEX `fk_pedido_Vehiculos1_idx` (`idVehiculo` ASC) VISIBLE,
   INDEX `fk_pedido_Administradores1_idx` (`idAdministrador` ASC) VISIBLE,
   INDEX `fk_pedido_Empresa1_idx` (`idEmpresa` ASC) VISIBLE,
+
   CONSTRAINT `fk_pedido_Vehiculos1`
     FOREIGN KEY (`idVehiculo`)
     REFERENCES `CargoLink`.`Vehiculo` (`idVehiculo`)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL           
     ON UPDATE NO ACTION,
+
   CONSTRAINT `fk_pedido_Administradores1`
     FOREIGN KEY (`idAdministrador`)
     REFERENCES `CargoLink`.`Administrador` (`idAdministrador`)
-    ON DELETE NO ACTION
+    ON DELETE SET NULL           
     ON UPDATE NO ACTION,
+
   CONSTRAINT `fk_pedido_Empresa1`
     FOREIGN KEY (`idEmpresa`)
     REFERENCES `CargoLink`.`Empresa` (`idEmpresa`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION
+)
 ENGINE = InnoDB;
+
 
 
 -- -----------------------------------------------------

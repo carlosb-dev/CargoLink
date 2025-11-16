@@ -1,27 +1,39 @@
-import express from 'express';
-import { AdministradorController } from '../controllers/administrador.controlador.js';
+import express from "express";
+import { AdministradorController } from "../controllers/administrador.js";
 
 const router = express.Router();
 
 // Crear Administrador
-router.post('/crear', AdministradorController.crearAdministrador);
-
-// Actualizar Administrador
-router.put('/actualizar', AdministradorController.actualizarAdministrador);
-
-// Eliminar Administrador
-router.delete('/:idAdministrador', AdministradorController.eliminarAdministrador);
+router.post("/crear", AdministradorController.crearAdministrador);
 
 // Login Administrador
-router.post('/login', AdministradorController.loginAdministrador);
+router.post("/login", AdministradorController.loginAdministrador);
 
 // Obtener vehículos disponibles de su empresa
-router.get('/vehiculos/disponibles/:idEmpresa', AdministradorController.obtenerVehiculosDisponibles);
+router.get(
+  "/vehiculos/disponibles/:idEmpresa",
+  AdministradorController.obtenerVehiculosDisponibles
+);
 
 // Obtener historial de un pedido
-router.get('/pedido/:idPedido/historial', AdministradorController.obtenerHistorialPedido);
+router.get(
+  "/pedido/:idPedido/historial",
+  AdministradorController.obtenerHistorialPedido
+);
 
 // Crear pedido
-router.post('/pedido/crear', AdministradorController.crearPedido);
+router.post("/pedido/crear", AdministradorController.crearPedido);
+
+// Bandeja de entrada de pedidos para la empresa del administrador
+router.get(
+  "/pedidos/entrada/:idEmpresa",
+  AdministradorController.obtenerPedidosEntrada
+);
+
+// Actualizar estado de pedido a "recibido"
+router.put(
+  "/pedido/:idPedido/actualizarEstado",
+  AdministradorController.actualizarEstadoPedido
+);
 
 export default router;

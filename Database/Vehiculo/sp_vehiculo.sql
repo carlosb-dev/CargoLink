@@ -4,7 +4,7 @@
 
 DELIMITER $$
 DROP procedure IF EXISTS sp_Vehiculo_insertar $$
-CREATE PROCEDURE sp_Vehiculo_insertar (OUT xidVehiculo INT, IN xModelo varchar(45), IN xTipo varchar(45), IN xMatricula Varchar(45), IN xCapacidad INT, IN xCantidad_Paquetes INT, IN xidEmpresa INT)
+CREATE PROCEDURE sp_Vehiculo_insertar (OUT xidVehiculo INT, IN xModelo varchar(45), IN xTipo varchar(45), IN xMatricula Varchar(45), IN xCapacidad INT, IN xCantidad_Paquetes INT,IN xidEmpresa INT)
 BEGIN
 	INSERT INTO Vehiculo (Modelo, Tipo, Matricula, Capacidad, Cantidad_Paquetes, Estado, idEmpresa)
 	VALUES (xModelo, xTipo, xMatricula, xCapacidad, xCantidad_Paquetes, TRUE ,xidEmpresa);
@@ -23,7 +23,7 @@ BEGIN
 	from vehiculo
 	WHERE idVehiculo = xidVehiculo;
     
-	IF (estado = TRUE) THEN
+	IF (@estado_actual = TRUE) THEN
     	UPDATE Vehiculo
     	SET Matricula = xMatricula
     	WHERE idVehiculo = xidVehiculo;
@@ -32,8 +32,6 @@ BEGIN
     	SET MESSAGE_TEXT = 'No se puede ACTUALIZAR el vehiculo. ESTADO DEL VEHICULO = 0';
 	END IF;
 END $$
-
-sp_Vehiculo_actualizar_estado
 
 /*---------------------------------------------*/
 -- Store procedure para Actualizar Unicamente Estado del vehiculo
@@ -73,7 +71,7 @@ BEGIN
 	from vehiculo
 	WHERE idVehiculo = xidVehiculo;
     
-	IF (estado = TRUE) THEN
+	IF (@estado_actual = TRUE) THEN
     	DELETE FROM Vehiculo
     	WHERE idVehiculo = xidVehiculo;
 	ELSE

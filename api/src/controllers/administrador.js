@@ -1,80 +1,36 @@
-import sequelize from '../config/database.js';
-import Administrador from '../models/administrador.js';
+import sequelize from "../config/database.js";
+import Administrador from "../models/administrador.js";
 
 export const AdministradorController = {
-
-  //  Crear administrador
   async crearAdministrador(req, res) {
     try {
       const { Nombre, Contrasena, Email, idEmpresa } = req.body;
 
-      const [result] = await sequelize.query(
+      await sequelize.query(
         "CALL sp_Administrador_insertar(@xidAdministrador, :Nombre, :Contrasena, :Email, :idEmpresa)",
         { replacements: { Nombre, Contrasena, Email, idEmpresa } }
       );
 
-      const [[idAdministrador]] = await sequelize.query("SELECT @xidAdministrador AS idAdministrador;");
+      const [row] = await sequelize.query(
+        "SELECT @xidAdministrador AS idAdministrador;"
+      );
 
       return res.status(201).json({
         success: true,
         message: "Administrador creado correctamente",
-        idAdministrador: idAdministrador.idAdministrador,
-        data: result
+        administrador: {
+          idAdministrador: row.idAdministrador,
+          Nombre,
+          Email,
+          idEmpresa,
+        },
       });
     } catch (error) {
       console.error("Error al crear administrador:", error);
       return res.status(500).json({
         success: false,
         message: "Error al crear administrador",
-        error: error.message
-      });
-    }
-  },
-
-  //  Actualizar administrador
-  async actualizarAdministrador(req, res) {
-    try {
-      const { idAdministrador, Nombre, Contrasena, Email } = req.body;
-
-      await sequelize.query(
-        "CALL SP_Administador_Actualizar(:idAdministrador, :Nombre, :Contrasena, :Email)",
-        { replacements: { idAdministrador, Nombre, Contrasena, Email } }
-      );
-
-      return res.status(200).json({
-        success: true,
-        message: "Administrador actualizado correctamente"
-      });
-    } catch (error) {
-      console.error("Error al actualizar administrador:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Error al actualizar administrador",
-        error: error.message
-      });
-    }
-  },
-
-  //  Eliminar administrador
-  async eliminarAdministrador(req, res) {
-    try {
-      const { idAdministrador } = req.params;
-
-      await sequelize.query(
-        "CALL sp_Administrador_Eliminar(:idAdministrador)",
-        { replacements: { idAdministrador } }
-      );
-
-      return res.status(200).json({
-        success: true,
-        message: "Administrador eliminado correctamente"
-      });
-    } catch (error) {
-      console.error("Error al eliminar administrador:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Error al eliminar administrador",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -89,24 +45,17 @@ export const AdministradorController = {
         { replacements: { Email, Contrasena } }
       );
 
-      if (!result || !result[0] || result[0].idAdministrador === null) {
-        return res.status(401).json({
-          success: false,
-          message: "Credenciales incorrectas"
-        });
-      }
-
       return res.json({
         success: true,
         message: "Inicio de sesión exitoso",
-        data: result[0]
+        data: result[0],
       });
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       return res.status(500).json({
         success: false,
         message: "Error al iniciar sesión",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -115,23 +64,24 @@ export const AdministradorController = {
     try {
       const { idEmpresa } = req.params;
 
-      const [vehiculos] = await sequelize.query(
-        "CALL Query_Vehiculos_Empresa(:idEmpresa)",
+      const vehiculos = await sequelize.query(
+        "CALL Query_Vehiculos_Conductores_Libres_Empresa(:idEmpresa)",
         { replacements: { idEmpresa } }
       );
 
-      const vehiculosLibres = vehiculos.filter(v => v.Estado === 1);
+      const vehiculosArray = Array.isArray(vehiculos) ? vehiculos : [];
+      const vehiculosLibres = vehiculosArray.filter((v) => v.Estado === 1);
 
-      return res.json({
+      return res.status(200).json({
         success: true,
-        data: vehiculosLibres
+        data: vehiculosLibres,
       });
     } catch (error) {
       console.error("Error al obtener vehículos disponibles:", error);
       return res.status(500).json({
         success: false,
         message: "Error al obtener vehículos disponibles",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -147,14 +97,14 @@ export const AdministradorController = {
 
       return res.json({
         success: true,
-        data: historial
+        data: historial,
       });
     } catch (error) {
       console.error("Error al obtener historial del pedido:", error);
       return res.status(500).json({
         success: false,
         message: "Error al obtener historial del pedido",
-        error: error.message
+        error: error.message,
       });
     }
   },
@@ -166,52 +116,85 @@ export const AdministradorController = {
         Peso,
         Volumen,
         Estado,
-        Fecha_Despacho,
         Origen,
         Destino,
         idVehiculo,
         idAdministrador,
-        idEmpresa
+        idEmpresa,
       } = req.body;
 
-      if (!Nombre || !Peso || !Volumen || !Estado || !Fecha_Despacho || !Origen || !Destino) {
-        return res.status(400).json({
-          success: false,
-          message: "Faltan datos obligatorios para crear el pedido."
-        });
-      }
-
-      const [resultado] = await sequelize.query(
-        "CALL sp_Pedido_insertar(:Nombre, :Peso, :Volumen, :Estado, :Fecha_Despacho, :Origen, :Destino, :idVehiculo, :idAdministrador, :idEmpresa)", 
+      const resultado = await sequelize.query(
+        "CALL sp_Pedido_insertar(@idPedido, :Nombre, :Peso, :Volumen, :Estado, :Origen, :Destino, :idVehiculo, :idAdministrador, :idEmpresa)",
         {
           replacements: {
             Nombre,
             Peso,
             Volumen,
             Estado,
-            Fecha_Despacho,
             Origen,
             Destino,
             idVehiculo,
             idAdministrador,
-            idEmpresa
-          }
+            idEmpresa,
+          },
         }
       );
 
       return res.status(201).json({
         success: true,
         message: "Pedido creado correctamente.",
-        data: resultado
+        data: resultado,
       });
-
     } catch (error) {
       console.error("Error al crear pedido:", error);
       return res.status(500).json({
         success: false,
         message: "Error al crear el pedido.",
-        error: error.message
+        error: error.message,
       });
     }
-  }
+  },
+
+  async obtenerPedidosEntrada(req, res) {
+    try {
+      const { idEmpresa } = req.params;
+      const [pedidos] = await sequelize.query(
+        "CALL Query_Pedidos_Empresa(:idEmpresa)",
+        { replacements: { idEmpresa } }
+      );
+      return res.json({
+        success: true,
+        data: pedidos,
+      });
+    } catch (error) {
+      console.error("Error al obtener pedidos de entrada:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al obtener pedidos de entrada",
+        error: error.message,
+      });
+    }
+  },
+
+  async actualizarEstadoPedido(req, res) {
+    try {
+      const { idPedido } = req.params;
+      const { Estado } = req.body;
+      await sequelize.query(
+        "CALL sp_Pedido_actualizar_estado(:idPedido, :Estado)",
+        { replacements: { idPedido, Estado } }
+      );
+      return res.json({
+        success: true,
+        message: "Estado del pedido actualizado correctamente",
+      });
+    } catch (error) {
+      console.error("Error al actualizar estado del pedido:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Error al actualizar estado del pedido",
+        error: error.message,
+      });
+    }
+  },
 };

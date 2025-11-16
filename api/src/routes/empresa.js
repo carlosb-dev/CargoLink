@@ -1,36 +1,76 @@
-import express from 'express';
-import { EmpresaController } from '../controllers/empresa.controlador.js';
+import express from "express";
+import { EmpresaController } from "../controllers/empresa.js";
 
 const router = express.Router();
 
 // Crear Empresa
-router.post('/crear', EmpresaController.crearEmpresa);
+router.post("/crear", EmpresaController.crearEmpresa);
 
 // Login Empresa
-router.post('/login', EmpresaController.loginEmpresa);
+router.post("/login", EmpresaController.loginEmpresa);
 
 // Obtener Conductores de la empresa
-router.get('/:idEmpresa/conductores', EmpresaController.obtenerConductoresEmpresa);
+router.get(
+  "/:idEmpresa/conductores",
+  EmpresaController.obtenerConductoresEmpresa
+);
 
 // Obtener Vehículos de la empresa
-router.get('/:idEmpresa/vehiculos', EmpresaController.obtenerVehiculosEmpresa);
+router.get("/:idEmpresa/vehiculos", EmpresaController.obtenerVehiculosEmpresa);
 
 // Crear Conductor
-router.post('/conductor/crear', EmpresaController.crearConductor);
+router.post("/conductor/crear", EmpresaController.crearConductor);
 
 // Crear Vehículo
-router.post('/vehiculo/crear', EmpresaController.crearVehiculo);
+router.post("/vehiculo/crear", EmpresaController.crearVehiculo);
 
 // Vincular Vehículo con Conductor
-router.post('/vincular', EmpresaController.vincularVehiculoConductor);
+router.post("/vincular", EmpresaController.vincularVehiculoConductor);
 
 // Obtener Pedidos donde la empresa sea receptora
-router.get('/:idEmpresa/pedidos', EmpresaController.obtenerPedidos);
+router.get("/:idEmpresa/pedidos", EmpresaController.obtenerPedidos);
 
 // Obtener historial de un pedido específico
-router.get('/pedido/:idPedido/historial', EmpresaController.obtenerHistorialPedido);
+router.get(
+  "/pedido/:idPedido/historial",
+  EmpresaController.obtenerHistorialPedido
+);
 
-// Obtener todas las empresas
-router.get('/', EmpresaController.obtenerEmpresas);
+//15/11
+// Mth para actualizar la informacion de administrador
+router.put(
+  "/administrador/actualizar/:idAdministrador",
+  EmpresaController.actualizarAdministrador
+);
+
+// Mth para eliminar un administrador
+router.delete(
+  "/administrador/eliminar/:idAdministrador",
+  EmpresaController.eliminarAdministrador
+);
+
+// Mth para actualizar la informacion de vehiculo
+router.put(
+  "/vehiculo/actualizar/vehiculo/:idVehiculo",
+  EmpresaController.actualizarVehiculo
+);
+
+// Mth para eliminar un vehiculo
+router.delete(
+  "/vehiculo/eliminar/:idVehiculo",
+  EmpresaController.eliminarVehiculo
+);
+
+// Mth para actualizar la informacion de conductor
+router.put(
+  "/conductor/actualizar/:idConductor",
+  EmpresaController.actualizarConductor
+);
+
+// Mth para eliminar un conductor
+router.delete(
+  "/conductor/eliminar/:idConductor",
+  EmpresaController.eliminarConductor
+);
 
 export default router;
