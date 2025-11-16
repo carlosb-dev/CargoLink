@@ -93,7 +93,7 @@ function Empresa() {
               {/* Veh�culos */}
               <div className="bg-slate-900/60 border border-slate-800 rounded-lg">
                 <div className="p-4 border-b border-slate-800">
-                  <h3 className="text-lg font-semibold">Veh�culos</h3>
+                  <h3 className="text-lg font-semibold">Vehículos</h3>
                 </div>
                 <div className="p-4 overflow-x-auto">
                   <Tabla
