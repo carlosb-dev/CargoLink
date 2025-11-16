@@ -85,3 +85,32 @@ export const defaultPedidos = [
     estadoActual: "Entregado",
   },
 ];
+export const defaultOrdenes = [
+  {
+    id: 0,
+    nombre: "Lotes textiles",
+    peso: "2.4 Tn",
+    destino: "Centro Comercial Norte",
+    vehiculoId: defaultVehiculos[1].id,
+    administradorId: defaultAdmins[0].id,
+    estadoActual: "Preparando",
+  },
+  {
+    id: 1,
+    nombre: "Insumos químicos",
+    peso: "3.8 Tn",
+    destino: "Laboratorio Central",
+    vehiculoId: defaultVehiculos[0].id,
+    administradorId: defaultAdmins[1].id,
+    estadoActual: "Despachado",
+  },
+  {
+    id: 2,
+    nombre: "Paneles solares",
+    peso: "1.1 Tn",
+    destino: "Parque Tecnológico",
+    vehiculoId: defaultVehiculos[2].id,
+    administradorId: defaultAdmins[1].id,
+    estadoActual: "En camino",
+  },
+];
