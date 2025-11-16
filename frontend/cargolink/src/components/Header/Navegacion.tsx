@@ -1,19 +1,12 @@
 import { Link } from "react-router-dom";
-import type { NavLink } from "../../data/navLinks";
+import { RUTAS } from "../../data/rutas";
 
-type Props = {
-  mostrar?: boolean;
-  items?: NavLink[];
-};
-
-function Navegacion({ mostrar = false, items = [] }: Props) {
+function Navegacion({ mostrar = false }: { mostrar?: boolean }) {
   return (
-    <nav className={`${mostrar ? "hidden lg:flex" : "flex flex-col justify-center"} flex gap-6 text-slate-300 `}>
-      {items.map((item) => (
-        <Link key={item.to} className="hover:text-white transition" to={item.to}>
-          {item.label}
-        </Link>
-      ))}
+    <nav className={`${mostrar ? "block" : "hidden lg:flex"} gap-6 text-slate-300 `}>
+      <Link className="hover:text-white transition" to={RUTAS.NOSOTROS}>
+        Nosotros
+      </Link>
     </nav>
   );
 }

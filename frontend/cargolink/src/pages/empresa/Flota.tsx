@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
+import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalAsignaFlota from "../../components/Empresa/ModalAsignaFlota";
-import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalAsignaFlota";
-import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
+import { RUTAS } from "../../data/rutas";
 import {
   defaultConductores,
   defaultVehiculos,
@@ -21,7 +21,7 @@ type Vehiculo = {
   id: number;
   placa: string;
   modelo: string;
-  estado?: string;
+  estado: string;
 };
 
 type Asignacion = {
@@ -35,10 +35,11 @@ const conductores: Conductor[] = defaultConductores.map(({ id, nombre }) => ({
   nombre,
 }));
 
-const vehiculos: Vehiculo[] = defaultVehiculos.map(({ id, placa, modelo }) => ({
+const vehiculos: Vehiculo[] = defaultVehiculos.map(({ id, placa, modelo, estado }) => ({
   id,
   placa,
   modelo,
+  estado,
 }));
 
 const defaultAsignaciones: Asignacion[] = defaultFlotaAsignaciones;
@@ -46,8 +47,7 @@ const defaultAsignaciones: Asignacion[] = defaultFlotaAsignaciones;
 function Flota() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [asignaciones, setAsignaciones] =
-    useState<Asignacion[]>(defaultAsignaciones);
+  const [asignaciones, setAsignaciones] = useState<Asignacion[]>(defaultAsignaciones);
 
   const columns = useMemo(
     () => [
@@ -64,17 +64,15 @@ function Flota() {
   const rows = useMemo(
     () =>
       asignaciones.map((asignacion) => {
-        const conductor = conductores.find(
-          (c) => c.id === asignacion.conductorId
-        );
+        const conductor = conductores.find((c) => c.id === asignacion.conductorId);
         const vehiculo = vehiculos.find((v) => v.id === asignacion.vehiculoId);
 
         return {
           id: asignacion.id,
-          conductor: conductor?.nombre ?? "-",
-          vehiculo: vehiculo?.placa ?? "-",
-          modelo: vehiculo?.modelo ?? "-",
-          estado: vehiculo?.estado ?? "Sin estado",
+          conductor: conductor?.nombre ?? "—",
+          vehiculo: vehiculo?.placa ?? "—",
+          modelo: vehiculo?.modelo ?? "—",
+          estado: vehiculo?.estado ?? "—",
           acciones: (
             <button
               onClick={() => handleDesvincular(asignacion.id)}
@@ -89,18 +87,13 @@ function Flota() {
   );
 
   const vehiculosDisponibles = useMemo(
-    () =>
-      vehiculos.filter(
-        (vehiculo) => !asignaciones.some((a) => a.vehiculoId === vehiculo.id)
-      ),
+    () => vehiculos.filter((vehiculo) => !asignaciones.some((a) => a.vehiculoId === vehiculo.id)),
     [asignaciones]
   );
 
   const conductoresDisponibles = useMemo(
     () =>
-      conductores.filter(
-        (conductor) => !asignaciones.some((a) => a.conductorId === conductor.id)
-      ),
+      conductores.filter((conductor) => !asignaciones.some((a) => a.conductorId === conductor.id)),
     [asignaciones]
   );
 
@@ -114,38 +107,35 @@ function Flota() {
 
   // Luego cambiar por POST en API
   function handleCreate(data: FormValues) {
-    const nextId = asignaciones.length
-      ? Math.max(...asignaciones.map((a) => a.id)) + 1
-      : 0;
+    const nextId = asignaciones.length ? Math.max(...asignaciones.map((a) => a.id)) + 1 : 0;
     setAsignaciones((prev) => [
       ...prev,
-      {
-        id: nextId,
-        conductorId: data.conductorId,
-        vehiculoId: data.vehiculoId,
-      },
+      { id: nextId, conductorId: data.conductorId, vehiculoId: data.vehiculoId },
     ]);
     setIsModalOpen(false);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header
-        open={open}
-        setOpen={setOpen}
-        mostrarNav={true}
-        items={EMPRESA_NAV_ITEMS}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
+      <SidebarPanel
+        mostrarVolver={true}
+        rutaVolver={RUTAS.EMPRESA}
+        items={[
+          { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
+          { to: RUTAS.CONDUCTORES, label: "Conductores" },
+          { to: RUTAS.VEHICULOS, label: "Vehículos" },
+          { to: RUTAS.FLOTA, label: "Flota" },
+          { to: RUTAS.HISTORIAL, label: "Historial" },
+        ]}
       />
 
-      <DropdownMenu open={open} mostrarNav={true} items={EMPRESA_NAV_ITEMS} />
+      <Header open={open} setOpen={setOpen} />
 
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Flota
-              </h1>
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Flota</h1>
             </div>
             <button
               onClick={() => setIsModalOpen(true)}

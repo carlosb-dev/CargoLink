@@ -1,14 +1,18 @@
 import PanelItem from "./PanelItem";
 import VolverBoton from "./VolverBoton";
-import type { NavLink } from "../../data/navLinks";
+
+export type PanelLink = { to: string; label: string };
 
 type Props = {
   rutaVolver?: string;
   mostrarVolver?: boolean;
-  items: NavLink[];
+  items: PanelLink[];
 };
 
+// TODO: mover links a parametros
+
 function SidebarPanel({ mostrarVolver = false, rutaVolver, items }: Props) {
+
   const list = items;
 
   return (
@@ -25,7 +29,7 @@ function SidebarPanel({ mostrarVolver = false, rutaVolver, items }: Props) {
 
       {mostrarVolver && (
         <div className="mt-auto pt-4">
-          <VolverBoton to={`${rutaVolver ? rutaVolver : ""}`} />
+          <VolverBoton to={`${(rutaVolver) ? rutaVolver : ""}`} />
         </div>
       )}
     </aside>

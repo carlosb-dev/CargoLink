@@ -1,14 +1,10 @@
 import { useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
+import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
-import DropdownMenu from "../../components/Dropdown/DropdownMenu";
-import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import {
-  defaultAdmins,
-  defaultConductores,
-  defaultVehiculos,
-} from "../../data/empresaTablas";
+import { RUTAS } from "../../data/rutas";
+import { defaultAdmins, defaultConductores, defaultVehiculos } from "../../data/empresaTablas";
 
 // Variables de Ejemplo
 
@@ -25,25 +21,30 @@ const administradores = defaultAdmins.map(({ nombre, email }) => ({
   email,
 }));
 
-const vehiculos = defaultVehiculos.map(({ placa, modelo }) => ({
+const vehiculos = defaultVehiculos.map(({ placa, modelo, estado }) => ({
   placa,
   modelo,
-  estado: "Sin estado",
+  estado,
 }));
 
 function Empresa() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header
-        open={open}
-        setOpen={setOpen}
-        mostrarNav={true}
-        items={EMPRESA_NAV_ITEMS}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
+
+      <SidebarPanel
+        mostrarVolver={false}
+        items={[
+          { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
+          { to: RUTAS.CONDUCTORES, label: "Conductores" },
+          { to: RUTAS.VEHICULOS, label: "Vehículos" },
+          { to: RUTAS.FLOTA, label: "Flota" },
+          { to: RUTAS.HISTORIAL, label: "Historial" },
+        ]}
       />
 
-      <DropdownMenu open={open} mostrarNav={true} items={EMPRESA_NAV_ITEMS} />
+      <Header open={open} setOpen={setOpen} />
 
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-6 py-8">
@@ -51,12 +52,13 @@ function Empresa() {
           <section className="space-y-6">
             <div className="bg-slate-900/60 border border-slate-800 rounded-lg p-6">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                {empresaNombre}.
+                Bienvenido, {empresaNombre}.
               </h1>
               <p className="text-slate-300 mt-1">Resumen de la empresa.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+
               {/* Conductores */}
               <div className="bg-slate-900/60 border border-slate-800 rounded-lg">
                 <div className="p-4 border-b border-slate-800">
@@ -90,7 +92,7 @@ function Empresa() {
                 </div>
               </div>
 
-              {/* Veh�culos */}
+              {/* Vehículos */}
               <div className="bg-slate-900/60 border border-slate-800 rounded-lg">
                 <div className="p-4 border-b border-slate-800">
                   <h3 className="text-lg font-semibold">Vehículos</h3>
@@ -106,6 +108,7 @@ function Empresa() {
                   />
                 </div>
               </div>
+
             </div>
           </section>
         </div>

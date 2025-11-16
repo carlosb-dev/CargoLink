@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
+import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
-import DropdownMenu from "../../components/Dropdown/DropdownMenu";
-import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
+import { RUTAS } from "../../data/rutas";
 import { defaultHistorialPedidos } from "../../data/empresaTablas";
 
 type HistorialItem = {
@@ -49,15 +49,20 @@ function HistorialPedidos() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header
-        open={open}
-        setOpen={setOpen}
-        mostrarNav={true}
-        items={EMPRESA_NAV_ITEMS}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
+      <SidebarPanel
+        mostrarVolver={true}
+        rutaVolver={RUTAS.EMPRESA}
+        items={[
+          { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
+          { to: RUTAS.CONDUCTORES, label: "Conductores" },
+          { to: RUTAS.VEHICULOS, label: "Vehículos" },
+          { to: RUTAS.FLOTA, label: "Flota" },
+          { to: RUTAS.HISTORIAL, label: "Historial" },
+        ]}
       />
 
-      <DropdownMenu open={open} mostrarNav={true} items={EMPRESA_NAV_ITEMS} />
+      <Header open={open} setOpen={setOpen} />
 
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">

@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { RUTAS } from "../data/rutas";
+import Navegacion from "./Header/Navegacion";
 
 function Footer() {
   return (
@@ -9,9 +8,7 @@ function Footer() {
           © {new Date().getFullYear()} CargoLink
         </div>
 
-        <Link className=" text-slate-400 hover:text-white transition" to={RUTAS.NOSOTROS}>
-          Nosotros
-        </Link>
+        <Navegacion mostrar={true} />
       </div>
     </footer>
   );

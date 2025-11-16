@@ -1,17 +1,18 @@
 import { useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
+import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaVehiculo from "../../components/Empresa/ModalCreaVehiculo";
-import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalCreaVehiculo";
-import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
+import { RUTAS } from "../../data/rutas";
 import { defaultVehiculos } from "../../data/empresaTablas";
 
 type Vehiculo = {
   id: number;
   placa: string;
   modelo: string;
+  estado: string;
 };
 
 function Vehiculos() {
@@ -24,6 +25,7 @@ function Vehiculos() {
       { key: "id", label: "ID" },
       { key: "placa", label: "Placa" },
       { key: "modelo", label: "Modelo" },
+      { key: "estado", label: "Estado" },
       { key: "acciones", label: "Acciones" },
     ],
     []
@@ -35,6 +37,7 @@ function Vehiculos() {
         id: v.id,
         placa: v.placa,
         modelo: v.modelo,
+        estado: v.estado,
         acciones: (
           <button
             onClick={() => handleDelete(v.id)}
@@ -54,31 +57,29 @@ function Vehiculos() {
 
   // Luego cambiar por POST en API
   function handleCreate(data: FormValues) {
-    const nextId = vehiculos.length
-      ? Math.max(...vehiculos.map((v) => v.id)) + 1
-      : 0;
+    const nextId = vehiculos.length ? Math.max(...vehiculos.map((v) => v.id)) + 1 : 0;
     setVehiculos((prev) => [
       ...prev,
-      {
-        id: nextId,
-        placa: data.placa,
-        modelo: data.modelo,
-        estado: data.estado,
-      },
+      { id: nextId, placa: data.placa, modelo: data.modelo, estado: data.estado },
     ]);
     setIsModalOpen(false);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header
-        open={open}
-        setOpen={setOpen}
-        mostrarNav={true}
-        items={EMPRESA_NAV_ITEMS}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
+      <SidebarPanel
+        mostrarVolver={true}
+        rutaVolver={RUTAS.EMPRESA}
+        items={[
+          { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
+          { to: RUTAS.CONDUCTORES, label: "Conductores" },
+          { to: RUTAS.VEHICULOS, label: "Vehículos" },
+          { to: RUTAS.FLOTA, label: "Flota" },
+          { to: RUTAS.HISTORIAL, label: "Historial" },
+        ]}
       />
 
-      <DropdownMenu open={open} mostrarNav={true} items={EMPRESA_NAV_ITEMS} />
+      <Header open={open} setOpen={setOpen} />
 
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">

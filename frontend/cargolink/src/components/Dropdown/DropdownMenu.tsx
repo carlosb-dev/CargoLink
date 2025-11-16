@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
 import Navegacion from "../Header/Navegacion";
-import type { NavLink } from "../../data/navLinks";
 
 type Props = {
   open?: boolean;
   mostrarAuth?: boolean;
   mostrarNav?: boolean;
-  items?: NavLink[];
 };
 
-function DropdownMenu({ open = false, mostrarAuth = false, mostrarNav = false, items = [] }: Props) {
+function DropdownMenu({
+  open = false,
+  mostrarAuth = false,
+  mostrarNav = false,
+}: Props) {
   return (
     <div
       className={`bg-red border-t border-slate-800
@@ -19,7 +21,7 @@ function DropdownMenu({ open = false, mostrarAuth = false, mostrarNav = false, i
     >
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-3">
         {mostrarNav && (
-          <Navegacion items={items}/>
+          <Navegacion />
         )}
 
         {mostrarAuth && (

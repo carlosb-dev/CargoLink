@@ -13,9 +13,9 @@ export const defaultConductores = [
 ];
 
 export const defaultVehiculos = [
-  { id: 0, placa: "AB-123-CD", modelo: "Volvo FH" },
-  { id: 1, placa: "EF-456-GH", modelo: "Scania R500" },
-  { id: 2, placa: "IJ-789-KL", modelo: "Iveco S-Way" },
+  { id: 0, placa: "AB-123-CD", modelo: "Volvo FH", estado: "En camino" },
+  { id: 1, placa: "EF-456-GH", modelo: "Scania R500", estado: "Despachado" },
+  { id: 2, placa: "IJ-789-KL", modelo: "Iveco S-Way", estado: "Recibido" },
 ];
 
 export const defaultFlotaAsignaciones = [
@@ -53,64 +53,5 @@ export const defaultHistorialPedidos = [
     fechaModificacion: "2024-05-10 18:45",
     nombrePedido: "Repuestos automotrices",
     destino: "Concesionario Ruta 3",
-  },
-];
-
-export const defaultPedidos = [
-  {
-    id: 0,
-    nombre: "Materia prima plástica",
-    peso: "3.2 Tn",
-    destino: "Planta Sur",
-    vehiculoId: defaultVehiculos[0].id,
-    administradorId: defaultAdmins[0].id,
-    estadoActual: "Entregado",
-  },
-  {
-    id: 1,
-    nombre: "Equipos electrónicos",
-    peso: "1.5 Tn",
-    destino: "Deposito Centro",
-    vehiculoId: defaultVehiculos[1].id,
-    administradorId: defaultAdmins[1].id,
-    estadoActual: "En camino",
-  },
-  {
-    id: 2,
-    nombre: "Insumos médicos",
-    peso: "900 Kg",
-    destino: "Clínica Norte",
-    vehiculoId: defaultVehiculos[2].id,
-    administradorId: defaultAdmins[0].id,
-    estadoActual: "Entregado",
-  },
-];
-export const defaultOrdenes = [
-  {
-    id: 0,
-    nombre: "Lotes textiles",
-    peso: "2.4 Tn",
-    destino: "Centro Comercial Norte",
-    vehiculoId: defaultVehiculos[1].id,
-    administradorId: defaultAdmins[0].id,
-    estadoActual: "Preparando",
-  },
-  {
-    id: 1,
-    nombre: "Insumos químicos",
-    peso: "3.8 Tn",
-    destino: "Laboratorio Central",
-    vehiculoId: defaultVehiculos[0].id,
-    administradorId: defaultAdmins[1].id,
-    estadoActual: "Despachado",
-  },
-  {
-    id: 2,
-    nombre: "Paneles solares",
-    peso: "1.1 Tn",
-    destino: "Parque Tecnológico",
-    vehiculoId: defaultVehiculos[2].id,
-    administradorId: defaultAdmins[1].id,
-    estadoActual: "En camino",
   },
 ];

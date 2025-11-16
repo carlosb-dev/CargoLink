@@ -26,7 +26,7 @@ function Home() {
         <Hero />
       </main>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 }
