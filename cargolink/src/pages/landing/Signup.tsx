@@ -52,7 +52,7 @@ function Signup() {
 
     try {
       const res = await fetch(
-        apiURL +  "/api/empresa/crear",
+        apiURL +  "/empresa/crear",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
