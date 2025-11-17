@@ -11,7 +11,7 @@ function AuthBotones() {
         Iniciá sesión
       </Link>
       <Link
-        to={RUTAS.EMPRESASIGNUP}
+        to={RUTAS.SIGNUP}
         className="px-4 py-2 bg-gradient-to-r from-cyan-400 to-blue-500 text-black text-center rounded-md font-medium shadow hover:scale-[1.02] transition cursor-pointer"
       >
         Registrá tu empresa

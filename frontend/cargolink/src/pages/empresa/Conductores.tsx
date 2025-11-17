@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
-import SidebarPanel from "../../components/Empresa/SidebarPanel";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaConductor from "../../components/Empresa/ModalCreaConductor";
+import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalCreaConductor";
-import { RUTAS } from "../../data/rutas";
+import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import { defaultConductores } from "../../data/empresaTablas";
 
 type Conductor = {
@@ -18,7 +18,8 @@ type Conductor = {
 function Conductores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [conductores, setConductores] = useState<Conductor[]>(defaultConductores);
+  const [conductores, setConductores] =
+    useState<Conductor[]>(defaultConductores);
 
   const columns = useMemo(
     () => [
@@ -57,26 +58,31 @@ function Conductores() {
 
   // Luego cambiar por POST en API
   function handleCreate(data: FormValues) {
-    const nextId = conductores.length ? Math.max(...conductores.map((c) => c.id)) + 1 : 0;
-    setConductores((prev) => [...prev, { id: nextId, nombre: data.nombre, estado: data.estado, licencia: data.licencia }]);
+    const nextId = conductores.length
+      ? Math.max(...conductores.map((c) => c.id)) + 1
+      : 0;
+    setConductores((prev) => [
+      ...prev,
+      {
+        id: nextId,
+        nombre: data.nombre,
+        estado: data.estado,
+        licencia: data.licencia,
+      },
+    ]);
     setIsModalOpen(false);
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col pl-64">
-      <SidebarPanel
-        mostrarVolver={true}
-        rutaVolver={RUTAS.EMPRESA}
-        items={[
-          { to: RUTAS.ADMINISTRADORES, label: "Administradores" },
-          { to: RUTAS.CONDUCTORES, label: "Conductores" },
-          { to: RUTAS.VEHICULOS, label: "Vehículos" },
-          { to: RUTAS.FLOTA, label: "Flota" },
-          { to: RUTAS.HISTORIAL, label: "Historial" },
-        ]}
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
+      <Header
+        open={open}
+        setOpen={setOpen}
+        mostrarNav={true}
+        items={EMPRESA_NAV_ITEMS}
       />
 
-      <Header open={open} setOpen={setOpen} />
+      <DropdownMenu open={open} mostrarNav={true} items={EMPRESA_NAV_ITEMS} />
 
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">

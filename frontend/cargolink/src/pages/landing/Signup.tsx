@@ -5,21 +5,44 @@ import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
 
-function Login() {
+function Signup() {
   const [open, setOpen] = useState(false);
+  const [empresa, setEmpresa] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmar, setConfirmar] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!email || !password) {
+    if (!empresa || !email || !password || !confirmar) {
       setError("Completa todos los campos");
       return;
     }
-    // Aquí se llama a la API para iniciar sesión
-    console.log("Login:", { email });
+
+    if (password !== confirmar) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    if (password.length <= 8 || password.length >= 16) {
+      setError("La contraseña debe tener entre 8 y 16 caracteres");
+      return;
+    }
+
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!$%^&#@]/.test(password);
+
+    if (!hasNumber || !hasSpecial) {
+      setError(
+        "La contraseña debe contener al menos un número y un carácter especial (!$%^&#@)"
+      );
+      return;
+    }
+
+    //Aqui se llama a la API para crear la cuenta
+    console.log("Registro exitoso:", { empresa, email });
   }
 
   return (
@@ -29,8 +52,21 @@ function Login() {
 
       <main className="flex-1 flex items-center justify-center">
         <div className="max-w-md w-full bg-slate-900/60 border border-slate-800 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Inicia sesión</h2>
+          <h2 className="text-2xl font-bold mb-4">Crear cuenta</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nombre */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Nombre de la empresa
+              </label>
+              <input
+                value={empresa}
+                onChange={(e) => setEmpresa(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Email */}
             <div>
               <label className="block text-sm text-slate-300 mb-1">Email</label>
               <input
@@ -40,6 +76,8 @@ function Login() {
                 className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
               />
             </div>
+
+            {/* Contraseña */}
             <div>
               <label className="block text-sm text-slate-300 mb-1">
                 Contraseña
@@ -51,19 +89,35 @@ function Login() {
                 className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
               />
             </div>
+
+            {/* Confirmar contraseña */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Repetir contraseña
+              </label>
+              <input
+                type="password"
+                value={confirmar}
+                onChange={(e) => setConfirmar(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
             {error && <div className="text-sm text-red-400">{error}</div>}
-            <div className="flex items-center justify-between gap-2">
+
+            <div className="flex items-center justify-between gap-3">
               <button
                 type="submit"
-                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold hover:cursor-pointer"
+                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer"
               >
-                Entrar
+                Crear cuenta
               </button>
+
               <Link
-                to={RUTAS.SIGNUP}
+                to={RUTAS.LOGIN}
                 className="text-sm text-slate-300 hover:text-blue-300"
               >
-                ¿No tenés cuenta? Registrate
+                ¿Ya tienes cuenta? Iniciá sesión
               </Link>
             </div>
           </form>
@@ -75,4 +129,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Signup;

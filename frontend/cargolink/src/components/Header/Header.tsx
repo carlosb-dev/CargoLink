@@ -5,17 +5,21 @@ import Navegacion from "./Navegacion";
 import AuthBotones from "./AuthBotones";
 import { Link } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
+import type { NavLink } from "../../data/navLinks";
 
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   mostrarAuth?: boolean;
   mostrarNav?: boolean;
+  items?: NavLink[];
 };
 
-function Header({ open, setOpen, mostrarAuth, mostrarNav }: Props) {
+const defaultNavItems: NavLink[] = [{ to: RUTAS.NOSOTROS, label: "Nosotros" }];
+
+function Header({ open, setOpen, mostrarAuth, mostrarNav, items = defaultNavItems }: Props) {
   return (
-    <header className="mx-auto w-full px-6 py-6 flex items-center justify-between gap-3">
+    <header className="mx-auto w-full px-6 py-6 flex items-center justify-around gap-3">
       <div className="flex items-center gap-3">
         <Logo />
         <Link
@@ -28,7 +32,7 @@ function Header({ open, setOpen, mostrarAuth, mostrarNav }: Props) {
         </Link>
       </div>
 
-      {mostrarNav && <Navegacion mostrar={mostrarNav} />}
+      {mostrarNav && <Navegacion mostrar={mostrarNav} items={items} />}
 
       {mostrarAuth && <AuthBotones />}
 
