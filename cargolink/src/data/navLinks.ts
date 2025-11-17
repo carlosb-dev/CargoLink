@@ -22,3 +22,7 @@ export const ADMIN_NAV_ITEMS: NavLink[] = [
   { to: RUTAS.ADMIN_LISTA_ORDENES, label: "Ordenes" },
   { to: RUTAS.ADMIN_HISTORIAL, label: "Historial" },
 ];
+
+export const HOME_EMPRESA_NAV_ITEMS: NavLink[] = [
+  { to: RUTAS.EMPRESA_PANEL, label: "Dashboard" },
+];

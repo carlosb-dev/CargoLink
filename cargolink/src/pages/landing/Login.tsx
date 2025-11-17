@@ -16,8 +16,8 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<EmpresaData | null>(
-    () => getStoredUserFromCookie()
+  const [currentUser, setCurrentUser] = useState<EmpresaData | null>(() =>
+    getStoredUserFromCookie()
   );
   const navigate = useNavigate();
 
@@ -28,7 +28,7 @@ function Login() {
       setError("Completa todos los campos");
       return;
     }
-    
+
     const loginData = {
       Email: email,
       Contrasena: password,
@@ -115,7 +115,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
-
