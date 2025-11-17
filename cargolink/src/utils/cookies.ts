@@ -30,3 +30,7 @@ export function persistUserCookie(user: EmpresaData) {
     JSON.stringify(user)
   )}; path=/; max-age=${maxAgeSeconds}`;
 }
+
+export function clearUserCookie() {
+  document.cookie = `${USER_COOKIE_NAME}=; path=/; max-age=0`;
+}
