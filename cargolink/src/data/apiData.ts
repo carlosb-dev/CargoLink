@@ -1,0 +1,3 @@
+
+
+export const apiURL = "https://backend-cargolink-production.up.railway.app/api";
