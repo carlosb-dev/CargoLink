@@ -11,15 +11,43 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!email || !password) {
       setError("Completa todos los campos");
       return;
     }
-    // Aquí se llama a la API para iniciar sesión
-    console.log("Login:", { email });
+    
+    const loginData = {
+      Email: email,
+      Contrasena: password,
+    };
+
+    try {
+      const res = await fetch(
+        "http://backend-cargolink-production.up.railway.app/api/empresa/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(loginData),
+        }
+      );
+      const datos = await res.json().catch(() => ({}));
+
+      console.log(datos);
+
+      if (res.status !== 200) {
+        setError(datos?.message ?? "Credenciales incorrectas");
+        return;
+      }
+
+      alert(datos?.message ?? "Login exitoso");
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo conectar con el servidor");
+    }
+
   }
 
   return (
@@ -76,3 +104,4 @@ function Login() {
 }
 
 export default Login;
+
