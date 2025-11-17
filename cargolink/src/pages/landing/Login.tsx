@@ -4,6 +4,7 @@ import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
+import { apiURL } from "../../data/apiData";
 
 function Login() {
   const [open, setOpen] = useState(false);
@@ -26,7 +27,7 @@ function Login() {
 
     try {
       const res = await fetch(
-        "http://backend-cargolink-production.up.railway.app/api/empresa/login",
+        apiURL + "/empresa/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
