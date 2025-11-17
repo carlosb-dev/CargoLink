@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { FormValues } from "../../pages/admins/ListaPedidos";
+import type { FormValues } from "../../pages/administrador/ListaPedidos";
 
 const estadoOptions = ["Preparando", "Despachado", "En camino", "Recibido"];
 

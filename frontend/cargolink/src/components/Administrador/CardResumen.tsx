@@ -23,7 +23,7 @@ function CardResumen({ titulo, descripcion, cantidad, botonLabel, to }: CardProp
       </div>
       <Link
         to={to}
-        className="inline-block text-center px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white font-medium hover:scale-105 transition-all duration-100"
+        className="inline-bloc text-center px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white font-medium hover:scale-105 transition-all duration-100"
       >
         {botonLabel}
       </Link>

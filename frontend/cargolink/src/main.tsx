@@ -13,10 +13,12 @@ import Flota from "./pages/empresa/Flota";
 import EmpresaHistorial from "./pages/empresa/Historial";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./data/rutas";
-import Administrador from "./pages/admins/Panel";
-import ListaPedidos from "./pages/admins/ListaPedidos";
-import ListaOrdenes from "./pages/admins/ListaOrdenes";
-import AdministradorHistorial from "./pages/admins/Historial";
+import ConductorEnvios from "./pages/conductor/Envios";
+import ConductorPanel from "./pages/conductor/Panel";
+import Administrador from "./pages/administrador/Panel";
+import ListaPedidos from "./pages/administrador/ListaPedidos";
+import ListaOrdenes from "./pages/administrador/ListaOrdenes";
+import AdministradorHistorial from "./pages/administrador/Historial";
 
 const router = createBrowserRouter([
   { path: RUTAS.HOME, element: <Home /> },
@@ -30,6 +32,8 @@ const router = createBrowserRouter([
   { path: RUTAS.EMPRESA_VEHICULOS, element: <Vehiculos /> },
   { path: RUTAS.EMPRESA_FLOTA, element: <Flota /> },
   { path: RUTAS.EMPRESA_HISTORIAL, element: <EmpresaHistorial /> },
+  { path: RUTAS.CONDUCTOR_PANEL, element: <ConductorPanel /> },
+  { path: RUTAS.CONDUCTOR_ENVIOS, element: <ConductorEnvios /> },
 
   { path: RUTAS.ADMIN_PANEL, element: <Administrador /> },
   { path: RUTAS.ADMIN_LISTA_PEDIDOS, element: <ListaPedidos /> },

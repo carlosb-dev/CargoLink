@@ -11,6 +11,9 @@ export const RUTAS = {
   EMPRESA_HISTORIAL: "/Empresa/Historial",
   EMPRESA_FLOTA: "/Empresa/Flota",
 
+  CONDUCTOR_PANEL: "/Conductor/Panel",
+  CONDUCTOR_ENVIOS: "/Conductor/Envios",
+
   ADMIN_PANEL: "/Administrador/Panel",
   ADMIN_LISTA_PEDIDOS: "/Administrador/ListaPedidos",
   ADMIN_LISTA_ORDENES: "/Administrador/ListaOrdenes",
