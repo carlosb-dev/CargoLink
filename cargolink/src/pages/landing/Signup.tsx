@@ -4,7 +4,7 @@ import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
-import { apiURL } from "../../data/apiData";
+import { crearEmpresa } from "../../services/auth";
 
 function Signup() {
   const [open, setOpen] = useState(false);
@@ -51,22 +51,14 @@ function Signup() {
     };
 
     try {
-      const res = await fetch(
-        apiURL +  "/empresa/crear",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(nuevaEmpresa),
-        }
-      );
-      const datos = await res.json().catch(() => ({}));
+      const result = await crearEmpresa(nuevaEmpresa);
 
-      if (res.status !== 201) {
-        setError(datos?.message ?? "No se pudo crear la empresa");
+      if (!result.success) {
+        setError(result.message ?? "No se pudo crear la empresa");
         return;
       }
 
-      alert(datos?.message ?? "Empresa creada con exito");
+      alert(result.message ?? "Empresa creada con exito");
       setEmpresa("");
       setDireccion("");
       setEmail("");

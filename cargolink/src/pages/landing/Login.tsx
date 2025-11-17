@@ -4,18 +4,12 @@ import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
-import { apiURL } from "../../data/apiData";
 import {
   getStoredUserFromCookie,
   persistUserCookie,
   type EmpresaData,
 } from "../../utils/cookies";
-
-type LoginResponse = {
-  success?: boolean;
-  message?: string;
-  data?: EmpresaData;
-};
+import { loginEmpresa, type LoginData } from "../../services/auth";
 
 function Login() {
   const [open, setOpen] = useState(false);
@@ -41,20 +35,14 @@ function Login() {
     };
 
     try {
-      const res = await fetch(apiURL + "/empresa/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(loginData),
-      });
-      const datos: LoginResponse = await res
-        .json()
-        .catch(() => ({} as LoginResponse));
+      const result = await loginEmpresa(loginData);
 
-      if (res.status !== 200) {
-        setError(datos?.message ?? "Credenciales incorrectas");
+      if (!result.success) {
+        setError(result.message ?? "Credenciales incorrectas");
         return;
       }
 
+      const datos: LoginData | undefined = result.data;
       if (datos?.data) {
         persistUserCookie(datos.data);
         setCurrentUser(datos.data);
