@@ -8,15 +8,16 @@ import Footer from "../../components/Footer";
 function Signup() {
   const [open, setOpen] = useState(false);
   const [empresa, setEmpresa] = useState("");
+  const [direccion, setDireccion] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!empresa || !email || !password || !confirmar) {
+    if (!empresa || !email || !password || !confirmar || !direccion) {
       setError("Completa todos los campos");
       return;
     }
@@ -41,8 +42,39 @@ function Signup() {
       return;
     }
 
-    //Aqui se llama a la API para crear la cuenta
-    console.log("Registro exitoso:", { empresa, email });
+    const nuevaEmpresa = {
+      Nombre: empresa,
+      Contrasena: password,
+      Direccion: direccion,
+      Email: email,
+    };
+
+    try {
+      const res = await fetch(
+        "http://backend-cargolink-production.up.railway.app/api/empresa/crear",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nuevaEmpresa),
+        }
+      );
+      const datos = await res.json().catch(() => ({}));
+
+      if (res.status !== 201) {
+        setError(datos?.message ?? "No se pudo crear la empresa");
+        return;
+      }
+
+      alert(datos?.message ?? "Empresa creada con exito");
+      setEmpresa("");
+      setDireccion("");
+      setEmail("");
+      setPassword("");
+      setConfirmar("");
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo conectar con el servidor");
+    }
   }
 
   return (
@@ -73,6 +105,18 @@ function Signup() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Direccion */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Direccion
+              </label>
+              <input
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
                 className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
               />
             </div>
