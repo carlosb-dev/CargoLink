@@ -9,10 +9,9 @@ import {
   defaultConductores,
   defaultVehiculos,
 } from "../../data/empresaTablas";
+import { getStoredUserFromCookie } from "../../utils/cookies";
 
 // Variables de Ejemplo
-
-const empresaNombre = "EmpresaTest";
 
 const conductores = defaultConductores.map(({ nombre, estado, licencia }) => ({
   nombre,
@@ -33,6 +32,8 @@ const vehiculos = defaultVehiculos.map(({ placa, modelo }) => ({
 
 function Empresa() {
   const [open, setOpen] = useState(false);
+  const storedUser = getStoredUserFromCookie();
+  const empresaNombre = storedUser?.Nombre ?? "EmpresaTest";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -54,6 +55,12 @@ function Empresa() {
                 {empresaNombre}.
               </h1>
               <p className="text-slate-300 mt-1">Resumen de la empresa.</p>
+              {storedUser && (
+                <div className="text-sm text-slate-300 mt-3 space-y-1">
+                  <p>Email: {storedUser.Email}</p>
+                  <p>Dirección: {storedUser.Direccion}</p>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
