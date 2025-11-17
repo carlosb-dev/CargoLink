@@ -1,16 +1,31 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
 import { apiURL } from "../../data/apiData";
+import {
+  getStoredUserFromCookie,
+  persistUserCookie,
+  type EmpresaData,
+} from "../../utils/cookies";
+
+type LoginResponse = {
+  success?: boolean;
+  message?: string;
+  data?: EmpresaData;
+};
 
 function Login() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<EmpresaData | null>(
+    () => getStoredUserFromCookie()
+  );
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,29 +41,31 @@ function Login() {
     };
 
     try {
-      const res = await fetch(
-        apiURL + "/empresa/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(loginData),
-        }
-      );
-      const datos = await res.json().catch(() => ({}));
-
-      console.log(datos);
+      const res = await fetch(apiURL + "/empresa/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData),
+      });
+      const datos: LoginResponse = await res
+        .json()
+        .catch(() => ({} as LoginResponse));
 
       if (res.status !== 200) {
         setError(datos?.message ?? "Credenciales incorrectas");
         return;
       }
 
+      if (datos?.data) {
+        persistUserCookie(datos.data);
+        setCurrentUser(datos.data);
+      }
+
       alert(datos?.message ?? "Login exitoso");
+      navigate(RUTAS.EMPRESA_PANEL);
     } catch (err) {
       console.error(err);
       setError("No se pudo conectar con el servidor");
     }
-
   }
 
   return (
@@ -81,6 +98,11 @@ function Login() {
               />
             </div>
             {error && <div className="text-sm text-red-400">{error}</div>}
+            {currentUser && (
+              <div className="text-sm text-green-400">
+                Sesión activa: {currentUser.Nombre}
+              </div>
+            )}
             <div className="flex items-center justify-between gap-2">
               <button
                 type="submit"
@@ -105,4 +127,7 @@ function Login() {
 }
 
 export default Login;
+
+
+
 
