@@ -1,39 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import {
-  defaultAdmins,
-  defaultConductores,
-  defaultVehiculos,
-} from "../../data/empresaTablas";
+import { defaultAdmins } from "../../data/empresaTablas";
 import { getStoredUserFromCookie } from "../../utils/cookies";
+import { fetchConductores, fetchVehiculos } from "../../utils/empresa";
+import type { Conductor, Vehiculo } from "../../utils/empresa";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 
 // Variables de Ejemplo
-
-const conductores = defaultConductores.map(({ nombre, estado, licencia }) => ({
-  nombre,
-  estado,
-  licencia,
-}));
 
 const administradores = defaultAdmins.map(({ nombre, email }) => ({
   nombre,
   email,
 }));
 
-const vehiculos = defaultVehiculos.map(({ placa, modelo }) => ({
-  placa,
-  modelo,
-  estado: "Sin estado",
-}));
-
 function Empresa() {
   const [open, setOpen] = useState(false);
+  const [conductores, setConductores] = useState<Conductor[]>([]);
+  const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
   const empresaNombre = storedUser?.Nombre ?? "EmpresaTest";
+
+  useEffect(() => {
+    if (!empresaId) {
+      setConductores([]);
+      setVehiculos([]);
+      return;
+    }
+
+    let active = true;
+
+    fetchConductores(empresaId)
+      .then((data) => {
+        if (active) {
+          setConductores(data);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setConductores([]);
+        }
+      });
+
+    fetchVehiculos(empresaId)
+      .then((data) => {
+        if (active) {
+          setVehiculos(data);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setVehiculos([]);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [empresaId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -61,7 +89,7 @@ function Empresa() {
                 {storedUser && (
                   <div className="text-sm text-slate-300 mt-3 space-y-1">
                     <p>Email: {storedUser.Email}</p>
-                    <p>Dirección: {storedUser.Direccion}</p>
+                    <p>Direccion: {storedUser.Direccion}</p>
                   </div>
                 )}
               </div>
@@ -74,14 +102,23 @@ function Empresa() {
                   <h3 className="text-lg font-semibold">Conductores</h3>
                 </div>
                 <div className="p-4 overflow-x-auto">
-                  <Tabla
-                    columns={[
-                      { key: "nombre", label: "Nombre" },
-                      { key: "estado", label: "Estado" },
-                      { key: "licencia", label: "Licencia" },
-                    ]}
-                    rows={conductores}
-                  />
+                  {conductores.length > 0 ? (
+                    <Tabla
+                      columns={[
+                        { key: "nombre", label: "Nombre" },
+                        { key: "estado", label: "Estado" },
+                        { key: "licencia", label: "Licencia" },
+                      ]}
+                      rows={conductores}
+                    />
+                  ) : (
+                    <EmptyStateCard
+                      title="No hay conductores"
+                      description="No hay conductores cargados para esta empresa."
+                      buttonLabel="Agregar conductor"
+                      href="/empresa/conductores"
+                    />
+                  )}
                 </div>
               </div>
 
@@ -101,20 +138,29 @@ function Empresa() {
                 </div>
               </div>
 
-              {/* Veh�culos */}
+              {/* Vehiculos */}
               <div className="bg-slate-900/60 border border-slate-800 rounded-lg">
                 <div className="p-4 border-b border-slate-800">
-                  <h3 className="text-lg font-semibold">Vehículos</h3>
+                  <h3 className="text-lg font-semibold">Vehiculos</h3>
                 </div>
                 <div className="p-4 overflow-x-auto">
-                  <Tabla
-                    columns={[
-                      { key: "placa", label: "Placa" },
-                      { key: "modelo", label: "Modelo" },
-                      { key: "estado", label: "Estado" },
-                    ]}
-                    rows={vehiculos}
-                  />
+                  {vehiculos.length > 0 ? (
+                    <Tabla
+                      columns={[
+                        { key: "placa", label: "Placa" },
+                        { key: "modelo", label: "Modelo" },
+                        { key: "estado", label: "Estado" },
+                      ]}
+                      rows={vehiculos}
+                    />
+                  ) : (
+                    <EmptyStateCard
+                      title="No hay vehiculos"
+                      description="No hay vehiculos cargados para esta empresa."
+                      buttonLabel="Agregar vehiculo"
+                      href="/empresa/vehiculos"
+                    />
+                  )}
                 </div>
               </div>
             </div>
