@@ -7,7 +7,7 @@ type Column = {
 
 type Props = {
   columns: Column[];
-  rows: Array<Record<string, React.ReactNode>>;
+  rows: Array<Record<string, string | any>>;
 };
 
 function Tabla({ columns, rows }: Props) {
