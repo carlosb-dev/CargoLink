@@ -50,17 +50,21 @@ function Empresa() {
         <div className="max-w-7xl mx-auto px-6 py-8">
           {/* Contenido principal */}
           <section className="space-y-6">
-            <div className="bg-slate-900/60 border border-slate-800 rounded-lg p-6">
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                {empresaNombre}.
-              </h1>
-              <p className="text-slate-300 mt-1">Resumen de la empresa.</p>
-              {storedUser && (
-                <div className="text-sm text-slate-300 mt-3 space-y-1">
-                  <p>Email: {storedUser.Email}</p>
-                  <p>Dirección: {storedUser.Direccion}</p>
-                </div>
-              )}
+            <div className="flex justify-between flex-row bg-slate-900/60 border border-slate-800 rounded-lg p-6">
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                  {empresaNombre}.
+                </h1>
+                <p className="text-slate-300 mt-1">Resumen de la empresa.</p>
+              </div>
+              <div>
+                {storedUser && (
+                  <div className="text-sm text-slate-300 mt-3 space-y-1">
+                    <p>Email: {storedUser.Email}</p>
+                    <p>Dirección: {storedUser.Direccion}</p>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
