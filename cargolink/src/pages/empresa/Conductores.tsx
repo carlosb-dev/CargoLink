@@ -1,25 +1,69 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaConductor from "../../components/Empresa/ModalCreaConductor";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalCreaConductor";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import { defaultConductores } from "../../data/empresaTablas";
+import { getStoredUserFromCookie } from "../../utils/cookies";
+import {
+  crearConductor,
+  fetchConductores,
+  getConductorEstadoLabel,
+  type Conductor,
+  type CrearConductorPayload,
+} from "../../utils/empresa";
 
-type Conductor = {
-  id: number;
-  nombre: string;
-  estado: string;
-  licencia: string;
-};
+function getNextConductorId(list: Conductor[]): number {
+  if (list.length === 0) {
+    return 1;
+  }
+
+  return (
+    Math.max(...list.map((c) => (typeof c.id === "number" ? c.id : 0))) + 1
+  );
+}
 
 function Conductores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [conductores, setConductores] =
-    useState<Conductor[]>(defaultConductores);
+  const [conductores, setConductores] = useState<Conductor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
+  const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
+
+  useEffect(() => {
+    if (!empresaId) {
+      setConductores([]);
+      setIsLoading(false);
+      return;
+    }
+
+    let isActive = true;
+    setIsLoading(true);
+
+    fetchConductores(empresaId)
+      .then((data) => {
+        if (!isActive) return;
+        setConductores(data);
+      })
+      .catch(() => {
+        if (!isActive) return;
+        setConductores([]);
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [empresaId]);
 
   const columns = useMemo(
     () => [
@@ -34,22 +78,29 @@ function Conductores() {
 
   const rows = useMemo(
     () =>
-      conductores.map((c) => ({
-        id: c.id,
-        nombre: c.nombre,
-        estado: c.estado,
-        licencia: c.licencia,
-        acciones: (
-          <button
-            onClick={() => handleDelete(c.id)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
-          >
-            Eliminar
-          </button>
-        ),
-      })),
+      conductores.map((c, index) => {
+        const rowId =
+          typeof c.id === "number" ? c.id : index + 1;
+
+        return {
+          id: rowId,
+          nombre: c.nombre ?? "",
+          estado: c.estado ?? "Sin estado",
+          licencia: c.licencia ?? "",
+          acciones: (
+            <button
+              onClick={() => handleDelete(rowId)}
+              className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            >
+              Eliminar
+            </button>
+          ),
+        };
+      }),
     [conductores]
   );
+
+  const hasConductores = rows.length > 0;
 
   // Luego cambiar por DELETE en API
   function handleDelete(id: number) {
@@ -57,20 +108,56 @@ function Conductores() {
   }
 
   // Luego cambiar por POST en API
-  function handleCreate(data: FormValues) {
-    const nextId = conductores.length
-      ? Math.max(...conductores.map((c) => c.id)) + 1
-      : 0;
-    setConductores((prev) => [
-      ...prev,
-      {
-        id: nextId,
-        nombre: data.nombre,
-        estado: data.estado,
-        licencia: data.licencia,
-      },
-    ]);
-    setIsModalOpen(false);
+  async function handleCreate(data: FormValues): Promise<boolean> {
+    if (!empresaId || isCreating) {
+      if (!empresaId) {
+        window.alert("No se pudo identificar la empresa actual.");
+      }
+      return false;
+    }
+
+    setIsCreating(true);
+
+    const payload: CrearConductorPayload = {
+      Nombre: data.Nombre.trim(),
+      Licencia: data.Licencia.trim(),
+      Estado: data.Estado,
+      Email: data.Email.trim(),
+      idEmpresa: empresaId,
+    };
+
+    try {
+      const result = await crearConductor(payload);
+
+      if (!result.success) {
+        window.alert(result.message ?? "No se pudo crear el conductor");
+        return false;
+      }
+
+      const conductorFromApi = result.conductor;
+
+      setConductores((prev) => {
+        if (conductorFromApi) {
+          return [...prev, conductorFromApi];
+        }
+
+        return [
+          ...prev,
+          {
+            id: getNextConductorId(prev),
+            nombre: payload.Nombre,
+            estado: getConductorEstadoLabel(payload.Estado),
+            licencia: payload.Licencia,
+            email: payload.Email,
+          },
+        ];
+      });
+
+      setIsModalOpen(false);
+      return true;
+    } finally {
+      setIsCreating(false);
+    }
   }
 
   return (
@@ -105,7 +192,20 @@ function Conductores() {
               <h3 className="text-lg font-semibold">Lista</h3>
             </div>
             <div className="p-4 overflow-x-auto">
-              <Tabla columns={columns} rows={rows} />
+              {isLoading ? (
+                <p className="text-sm text-slate-400">
+                  Cargando conductores...
+                </p>
+              ) : hasConductores ? (
+                <Tabla columns={columns} rows={rows} />
+              ) : (
+                <EmptyStateCard
+                  title="No hay conductores"
+                  description="No se encontraron conductores para esta empresa."
+                  buttonLabel="Agregar conductor"
+                  onButtonClick={() => setIsModalOpen(true)}
+                />
+              )}
             </div>
           </div>
         </div>

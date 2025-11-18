@@ -1,29 +1,52 @@
 import { useState } from "react";
+import { CONDUCTOR_ESTADO_OPTIONS } from "../../utils/empresa";
+
+type ConductorEstadoValue =
+  (typeof CONDUCTOR_ESTADO_OPTIONS)[number]["value"];
 
 type FormValues = {
-  nombre: string;
-  estado: string;
-  licencia: string;
+  Nombre: string;
+  Email: string;
+  Licencia: string;
+  Estado: ConductorEstadoValue;
 };
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onCreate: (data: FormValues) => void;
+  onCreate: (data: FormValues) => Promise<boolean> | boolean;
 };
 
-const estadoOptions = ["Activo", "En Ruta", "De Baja"];
+const getInitialFormValues = (): FormValues => ({
+  Nombre: "",
+  Email: "",
+  Licencia: "",
+  Estado: CONDUCTOR_ESTADO_OPTIONS[0]?.value ?? 1,
+});
 
 function ModalCreaConductor({ open, onClose, onCreate }: Props) {
-  const [form, setForm] = useState<FormValues>({ nombre: "", estado: estadoOptions[0], licencia: "" });
+  const [form, setForm] = useState<FormValues>(getInitialFormValues());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!open) return null;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.nombre || !form.estado || !form.licencia) return;
-    onCreate(form);
-    setForm({ nombre: "", estado: estadoOptions[0], licencia: "" });
+    if (isSubmitting) return;
+    if (!form.Nombre || !form.Email || !form.Licencia) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = onCreate(form);
+      const wasCreated =
+        typeof result === "boolean" ? result : await result;
+
+      if (wasCreated) {
+        setForm(getInitialFormValues());
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -37,8 +60,22 @@ function ModalCreaConductor({ open, onClose, onCreate }: Props) {
             <input
               type="text"
               className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={form.nombre}
-              onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
+              value={form.Nombre}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Nombre: e.target.value }))
+              }
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm mb-1">Email</label>
+            <input
+              type="email"
+              className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
+              value={form.Email}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Email: e.target.value }))
+              }
               required
             />
           </div>
@@ -46,13 +83,15 @@ function ModalCreaConductor({ open, onClose, onCreate }: Props) {
             <label className="block text-sm mb-1">Estado</label>
             <select
               className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={form.estado}
-              onChange={(e) => setForm((f) => ({ ...f, estado: e.target.value }))}
+              value={String(form.Estado)}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Estado: Number(e.target.value) }))
+              }
               required
             >
-              {estadoOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+              {CONDUCTOR_ESTADO_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -62,8 +101,10 @@ function ModalCreaConductor({ open, onClose, onCreate }: Props) {
             <input
               type="text"
               className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={form.licencia}
-              onChange={(e) => setForm((f) => ({ ...f, licencia: e.target.value }))}
+              value={form.Licencia}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Licencia: e.target.value }))
+              }
               required
             />
           </div>
@@ -77,9 +118,10 @@ function ModalCreaConductor({ open, onClose, onCreate }: Props) {
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white hover:scale-105 transition-all duration-100"
             >
-              Guardar
+              {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
           </div>
         </form>
