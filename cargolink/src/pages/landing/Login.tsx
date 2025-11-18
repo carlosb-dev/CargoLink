@@ -9,7 +9,7 @@ import {
   persistUserCookie,
   type EmpresaData,
 } from "../../utils/cookies";
-import { loginEmpresa, type LoginData } from "../../services/auth";
+import { loginEmpresa, type LoginData } from "../../utils/auth";
 
 function Login() {
   const [open, setOpen] = useState(false);
@@ -19,6 +19,7 @@ function Login() {
   const [currentUser, setCurrentUser] = useState<EmpresaData | null>(() =>
     getStoredUserFromCookie()
   );
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -35,6 +36,7 @@ function Login() {
     };
 
     try {
+      setIsLoading(true);
       const result = await loginEmpresa(loginData);
 
       if (!result.success) {
@@ -53,6 +55,8 @@ function Login() {
     } catch (err) {
       console.error(err);
       setError("No se pudo conectar con el servidor");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -94,9 +98,10 @@ function Login() {
             <div className="flex items-center justify-between gap-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold hover:cursor-pointer"
+                disabled={isLoading}
+                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold hover:cursor-pointer disabled:opacity-60"
               >
-                Entrar
+                {isLoading ? "Cargando..." : "Entrar"}
               </button>
               <Link
                 to={RUTAS.SIGNUP}

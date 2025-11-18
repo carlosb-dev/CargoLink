@@ -3,14 +3,14 @@ import DropdownBoton from "../Dropdown/DropdownBoton";
 import Logo from "./Logo";
 import Navegacion from "./Navegacion";
 import AuthBotones from "./AuthBotones";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
 import type { NavLink } from "../../data/navLinks";
 import {
-  clearUserCookie,
   getStoredUserFromCookie,
   type EmpresaData,
 } from "../../utils/cookies";
+import { handleLogout } from "../../utils/auth";
 
 type Props = {
   open: boolean;
@@ -29,16 +29,12 @@ function Header({
   mostrarNav,
   items = defaultNavItems,
 }: Props) {
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<EmpresaData | null>(null);
 
   useEffect(() => {
     setCurrentUser(getStoredUserFromCookie());
   }, []);
-
-  function handleLogout() {
-    clearUserCookie();
-    setCurrentUser(null);
-  }
 
   return (
     <header className="mx-auto w-full px-6 py-6 flex items-center justify-around gap-3">
@@ -60,7 +56,11 @@ function Header({
 
       {currentUser && (
         <button
-          onClick={handleLogout}
+          onClick={() => {
+            navigate(RUTAS.HOME);
+            handleLogout();
+            setCurrentUser(null);
+          }}
           className="px-3 py-2 text-sm font-semibold text-slate-100 border border-slate-500 rounded hover:bg-slate-800 transition-colors"
         >
           Cerrar sesión

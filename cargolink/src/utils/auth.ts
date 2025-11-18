@@ -1,5 +1,8 @@
 import { apiURL } from "../data/apiData";
-import { type EmpresaData } from "../utils/cookies";
+import { type EmpresaData } from "./cookies";
+import {
+  clearUserCookie,
+} from "./cookies";
 
 type ApiResult<T> = {
   success: boolean;
@@ -81,4 +84,8 @@ export async function loginEmpresa(
     status: res.status,
     rawBody: body,
   };
+}
+
+export function handleLogout() {
+  clearUserCookie();
 }

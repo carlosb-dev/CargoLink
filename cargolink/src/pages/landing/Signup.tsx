@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
-import { crearEmpresa } from "../../services/auth";
+import { crearEmpresa } from "../../utils/auth";
 
 function Signup() {
   const [open, setOpen] = useState(false);
@@ -14,6 +14,8 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -51,6 +53,7 @@ function Signup() {
     };
 
     try {
+      setIsLoading(true);
       const result = await crearEmpresa(nuevaEmpresa);
 
       if (!result.success) {
@@ -64,9 +67,12 @@ function Signup() {
       setEmail("");
       setPassword("");
       setConfirmar("");
+      navigate(RUTAS.LOGIN);
     } catch (err) {
       console.error(err);
       setError("No se pudo conectar con el servidor");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -145,9 +151,10 @@ function Signup() {
             <div className="flex items-center justify-between gap-3">
               <button
                 type="submit"
-                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer"
+                disabled={isLoading}
+                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer disabled:opacity-60"
               >
-                Crear cuenta
+                {isLoading ? "Cargando..." : "Crear cuenta"}
               </button>
 
               <Link
