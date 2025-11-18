@@ -1,0 +1,40 @@
+# Directorios de Construcción
+# Directorio de salida de Vite (por defecto 'dist')
+/dist
+/build
+/out
+
+# Dependencias de Paquetes
+# Dependencias de npm
+/node_modules
+
+# Archivos de Registro y Caché
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+.stylelintcache
+
+# Variables de Entorno
+# Almacena variables de entorno sensibles o específicas de la máquina.
+# Asegúrate de usar .env.local, .env.development.local, .env.test.local
+# o .env.production.local para las variables que deberían ignorarse.
+.env
+.env.*
+!.env.example # Permite incluir un ejemplo genérico
+
+# Archivos de Sistema y Editor
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# IDEs como WebStorm/IntelliJ
+.idea/
+
+# Editor de texto/OS temporales
+*~
+\#*
+.lock
