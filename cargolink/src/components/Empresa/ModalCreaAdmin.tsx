@@ -1,27 +1,46 @@
 import { useState } from "react";
 
 type FormValues = {
-  nombre: string;
-  email: string;
-  password: string;
+  Nombre: string;
+  Email: string;
+  Contrasena: string;
 };
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onCreate: (data: FormValues) => void;
+  onCreate: (data: FormValues) => Promise<boolean> | boolean;
 };
 
+const getInitialFormValues = (): FormValues => ({
+  Nombre: "",
+  Email: "",
+  Contrasena: "",
+});
+
 function ModalCreaAdmin({ open, onClose, onCreate }: Props) {
-  const [form, setForm] = useState<FormValues>({ nombre: "", email: "", password: "" });
+  const [form, setForm] = useState<FormValues>(getInitialFormValues());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!open) return null;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.nombre || !form.email || !form.password) return;
-    onCreate(form);
-    setForm({ nombre: "", email: "", password: "" });
+    if (isSubmitting) return;
+    if (!form.Nombre || !form.Email || !form.Contrasena) return;
+
+    setIsSubmitting(true);
+    try {
+      const result = onCreate(form);
+      const wasCreated =
+        typeof result === "boolean" ? result : await result;
+
+      if (wasCreated) {
+        setForm(getInitialFormValues());
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -35,8 +54,10 @@ function ModalCreaAdmin({ open, onClose, onCreate }: Props) {
             <input
               type="text"
               className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={form.nombre}
-              onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
+              value={form.Nombre}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Nombre: e.target.value }))
+              }
               required
             />
           </div>
@@ -45,18 +66,22 @@ function ModalCreaAdmin({ open, onClose, onCreate }: Props) {
             <input
               type="email"
               className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              value={form.Email}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Email: e.target.value }))
+              }
               required
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Contraseña</label>
+            <label className="block text-sm mb-1">Contrasena</label>
             <input
               type="password"
               className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={form.password}
-              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              value={form.Contrasena}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, Contrasena: e.target.value }))
+              }
               required
             />
           </div>
@@ -70,9 +95,10 @@ function ModalCreaAdmin({ open, onClose, onCreate }: Props) {
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white hover:scale-105 transition-all duration-100"
             >
-              Guardar
+              {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
           </div>
         </form>

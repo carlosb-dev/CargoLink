@@ -7,6 +7,11 @@ import type { FormValues } from "../../components/Empresa/ModalCreaAdmin";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import { defaultAdmins } from "../../data/empresaTablas";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
+import { getStoredUserFromCookie } from "../../utils/cookies";
+import {
+  createAdministrador,
+  type CreateAdministradorPayload,
+} from "../../utils/empresa";
 
 type Admin = {
   id: number;
@@ -14,10 +19,21 @@ type Admin = {
   email: string;
 };
 
+function getNextAdminId(list: Admin[]): number {
+  if (list.length === 0) {
+    return 1;
+  }
+
+  return Math.max(...list.map((a) => (typeof a.id === "number" ? a.id : 0))) + 1;
+}
+
 function Administradores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [admins, setAdmins] = useState<Admin[]>(defaultAdmins);
+  const [isCreating, setIsCreating] = useState(false);
+  const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
 
   const columns = useMemo(
     () => [
@@ -52,14 +68,48 @@ function Administradores() {
     setAdmins((prev) => prev.filter((x) => x.id !== id));
   }
 
-  // Luego cambiar por POST en API
-  function handleCreate(data: FormValues) {
-    const nextId = admins.length ? Math.max(...admins.map((a) => a.id)) + 1 : 0;
-    setAdmins((prev) => [
-      ...prev,
-      { id: nextId, nombre: data.nombre, email: data.email },
-    ]);
-    setIsModalOpen(false);
+  async function handleCreate(data: FormValues): Promise<boolean> {
+    if (!empresaId || isCreating) {
+      if (!empresaId) {
+        window.alert("No se pudo identificar la empresa actual.");
+      }
+      return false;
+    }
+
+    setIsCreating(true);
+
+    const payload: CreateAdministradorPayload = {
+      Nombre: data.Nombre.trim(),
+      Contrasena: data.Contrasena,
+      Email: data.Email.trim(),
+      idEmpresa: empresaId,
+    };
+
+    try {
+      const administrador = await createAdministrador(payload);
+      setAdmins((prev) => [
+        ...prev,
+        {
+          id:
+            typeof administrador.idAdministrador === "number"
+              ? administrador.idAdministrador
+              : getNextAdminId(prev),
+          nombre: administrador.Nombre ?? payload.Nombre,
+          email: administrador.Email ?? payload.Email,
+        },
+      ]);
+      setIsModalOpen(false);
+      return true;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No se pudo crear el administrador";
+      window.alert(message);
+      return false;
+    } finally {
+      setIsCreating(false);
+    }
   }
 
   return (
