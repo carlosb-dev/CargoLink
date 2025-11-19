@@ -1,5 +1,9 @@
 import { apiURL } from "../../data/apiData";
 
+// -------------------------------
+//    TIPOS
+// -------------------------------
+
 export type HistorialPedido = {
   id?: number;
   tipo: string;
@@ -11,6 +15,10 @@ export type HistorialPedido = {
   nombrePedido: string;
   destino: string;
 };
+
+// -------------------------------
+//    GET
+// -------------------------------
 
 export async function fetchHistorialPedidos(
   idEmpresa: number

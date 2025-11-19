@@ -8,7 +8,6 @@ export const EMPRESA_NAV_ITEMS: NavLink[] = [
   { to: RUTAS.EMPRESA_CONDUCTORES, label: "Conductores" },
   { to: RUTAS.EMPRESA_VEHICULOS, label: "Vehiculos" },
   { to: RUTAS.EMPRESA_FLOTA, label: "Flota" },
-  { to: RUTAS.EMPRESA_HISTORIAL, label: "Historial" },
 ];
 
 export const CONDUCTOR_NAV_ITEMS: NavLink[] = [

@@ -1,5 +1,9 @@
 import { apiURL } from "../../data/apiData";
 
+// -------------------------------
+//    TIPOS
+// -------------------------------
+
 export type Vehiculo = {
   idVehiculo?: number;
   Matricula: string;
@@ -30,6 +34,10 @@ export type EliminarVehiculoResult = {
   message?: string;
 };
 
+// -------------------------------
+//    GET
+// -------------------------------
+
 export async function fetchVehiculos(
   idEmpresa: number
 ): Promise<Vehiculo[]> {
@@ -54,6 +62,10 @@ export async function fetchVehiculos(
   console.log("Vehiculos obtenidos:", list);
   return list;
 }
+
+// -------------------------------
+//    POST
+// -------------------------------
 
 export async function crearVehiculo(
   payload: CrearVehiculoPayload
@@ -83,6 +95,10 @@ export async function crearVehiculo(
     vehiculo: body?.vehiculo,
   };
 }
+
+// -------------------------------
+//    DELETE
+// -------------------------------
 
 export async function eliminarVehiculo(
   idVehiculo: number

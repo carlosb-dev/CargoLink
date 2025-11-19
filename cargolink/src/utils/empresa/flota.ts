@@ -1,5 +1,9 @@
 import { apiURL } from "../../data/apiData";
 
+// -------------------------------
+//    TIPOS
+// -------------------------------
+
 export type FlotaAsignacion = {
   id: number;
   conductorId: number;
@@ -15,6 +19,10 @@ type RawFlotaResponse = {
 };
 
 type RawFlotaItem = Record<string, unknown>;
+
+// -------------------------------
+//    GET
+// -------------------------------
 
 export async function fetchVinculos(
   idEmpresa: number
