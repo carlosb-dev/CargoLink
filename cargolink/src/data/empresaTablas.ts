@@ -18,7 +18,7 @@ export const defaultVehiculos = [
   { id: 2, placa: "IJ-789-KL", modelo: "Iveco S-Way" },
 ];
 
-export const defaultFlotaAsignaciones = [
+export const defaultVinculos = [
   { id: 0, conductorId: 0, vehiculoId: 0 },
   { id: 1, conductorId: 1, vehiculoId: 1 },
 ];

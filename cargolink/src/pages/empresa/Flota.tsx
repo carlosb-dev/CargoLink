@@ -1,59 +1,33 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalAsignaFlota from "../../components/Empresa/ModalAsignaFlota";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalAsignaFlota";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import {
-  defaultConductores,
-  defaultVehiculos,
-  defaultFlotaAsignaciones,
-} from "../../data/empresaTablas";
-
-type Conductor = {
-  id: number;
-  nombre: string;
-};
-
-type Vehiculo = {
-  id: number;
-  placa: string;
-  modelo: string;
-  estado?: string;
-};
-
-type Asignacion = {
-  id: number;
-  conductorId: number;
-  vehiculoId: number;
-};
-
-const conductores: Conductor[] = defaultConductores.map(({ id, nombre }) => ({
-  id,
-  nombre,
-}));
-
-const vehiculos: Vehiculo[] = defaultVehiculos.map(({ id, placa, modelo }) => ({
-  id,
-  placa,
-  modelo,
-}));
-
-const defaultAsignaciones: Asignacion[] = defaultFlotaAsignaciones;
+import useConductores from "../../hooks/useConductores";
+import useVehiculos from "../../hooks/useVehiculos";  
+import useVinculos from "../../hooks/useVinculos";
+import { getConductorEstadoLabel } from "../../utils/empresa";
 
 function Flota() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [asignaciones, setAsignaciones] =
-    useState<Asignacion[]>(defaultAsignaciones);
+  const { conductores, isLoading: isConductoresLoading } = useConductores();
+  const { vehiculos, isLoading: isVehiculosLoading } = useVehiculos();
+  const {
+    asignaciones,
+    isLoading: isAsignacionesLoading,
+    setAsignaciones,
+  } = useVinculos();
 
   const columns = useMemo(
     () => [
       { key: "id", label: "ID" },
       { key: "conductor", label: "Conductor" },
-      { key: "vehiculo", label: "Vehículo" },
+      { key: "vehiculo", label: "Vehiculo" },
       { key: "modelo", label: "Modelo" },
       { key: "estado", label: "Estado" },
       { key: "acciones", label: "Acciones" },
@@ -61,20 +35,53 @@ function Flota() {
     []
   );
 
+  const handleDesvincular = useCallback(
+    (id: number) => {
+      setAsignaciones((prev) =>
+        prev.filter((asignacion) => asignacion.id !== id)
+      );
+    },
+    [setAsignaciones]
+  );
+
+  const handleCreate = useCallback(
+    (data: FormValues) => {
+      setAsignaciones((prev) => {
+        const maxId = prev.reduce(
+          (max, asignacion) => (asignacion.id > max ? asignacion.id : max),
+          -1
+        );
+        const nextId = maxId + 1;
+        return [
+          ...prev,
+          {
+            id: nextId,
+            conductorId: data.conductorId,
+            vehiculoId: data.vehiculoId,
+          },
+        ];
+      });
+      setIsModalOpen(false);
+    },
+    [setAsignaciones]
+  );
+
   const rows = useMemo(
     () =>
       asignaciones.map((asignacion) => {
         const conductor = conductores.find(
-          (c) => c.id === asignacion.conductorId
+          (c) => c.idConductor === asignacion.conductorId
         );
-        const vehiculo = vehiculos.find((v) => v.id === asignacion.vehiculoId);
+        const vehiculo = vehiculos.find(
+          (v) => v.idVehiculo === asignacion.vehiculoId
+        );
 
         return {
           id: asignacion.id,
-          conductor: conductor?.nombre ?? "-",
-          vehiculo: vehiculo?.placa ?? "-",
-          modelo: vehiculo?.modelo ?? "-",
-          estado: vehiculo?.estado ?? "Sin estado",
+          conductor: conductor?.Nombre ?? "-",
+          vehiculo: vehiculo?.Matricula ?? "-",
+          modelo: vehiculo?.Modelo ?? "-",
+          estado: getConductorEstadoLabel(conductor?.Estado ?? ""),
           acciones: (
             <button
               onClick={() => handleDesvincular(asignacion.id)}
@@ -85,48 +92,38 @@ function Flota() {
           ),
         };
       }),
-    [asignaciones]
+    [asignaciones, conductores, vehiculos, handleDesvincular]
   );
 
-  const vehiculosDisponibles = useMemo(
-    () =>
-      vehiculos.filter(
-        (vehiculo) => !asignaciones.some((a) => a.vehiculoId === vehiculo.id)
-      ),
-    [asignaciones]
-  );
+  const conductoresDisponibles = useMemo(() => {
+    const ocupados = new Set(asignaciones.map((a) => a.conductorId));
+    return conductores
+      .filter((conductor) => !ocupados.has(conductor.idConductor))
+      .map((conductor) => ({
+        id: conductor.idConductor,
+        nombre: conductor.Nombre,
+      }));
+  }, [conductores, asignaciones]);
 
-  const conductoresDisponibles = useMemo(
-    () =>
-      conductores.filter(
-        (conductor) => !asignaciones.some((a) => a.conductorId === conductor.id)
-      ),
-    [asignaciones]
-  );
+  const vehiculosDisponibles = useMemo(() => {
+    const ocupados = new Set(asignaciones.map((a) => a.vehiculoId));
+    return vehiculos
+      .filter((vehiculo) => {
+        const idVehiculo = vehiculo.idVehiculo;
+        return typeof idVehiculo === "number" && !ocupados.has(idVehiculo);
+      })
+      .map((vehiculo) => ({
+        id: vehiculo.idVehiculo as number,
+        placa: vehiculo.Matricula,
+        modelo: vehiculo.Modelo,
+      }));
+  }, [vehiculos, asignaciones]);
 
   const sinVehiculosDisponibles = vehiculosDisponibles.length === 0;
   const sinConductoresDisponibles = conductoresDisponibles.length === 0;
-
-  // Luego cambiar por DELETE en API
-  function handleDesvincular(id: number) {
-    setAsignaciones((prev) => prev.filter((x) => x.id !== id));
-  }
-
-  // Luego cambiar por POST en API
-  function handleCreate(data: FormValues) {
-    const nextId = asignaciones.length
-      ? Math.max(...asignaciones.map((a) => a.id)) + 1
-      : 0;
-    setAsignaciones((prev) => [
-      ...prev,
-      {
-        id: nextId,
-        conductorId: data.conductorId,
-        vehiculoId: data.vehiculoId,
-      },
-    ]);
-    setIsModalOpen(false);
-  }
+  const isLoadingData =
+    isConductoresLoading || isVehiculosLoading || isAsignacionesLoading;
+  const hasAsignaciones = rows.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -149,10 +146,14 @@ function Flota() {
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
-              disabled={sinVehiculosDisponibles || sinConductoresDisponibles}
+              disabled={
+                sinVehiculosDisponibles ||
+                sinConductoresDisponibles ||
+                isLoadingData
+              }
               className="px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:scale-105"
             >
-              Asignar vehículo
+              Asignar vehiculo
             </button>
           </div>
 
@@ -161,7 +162,20 @@ function Flota() {
               <h3 className="text-lg font-semibold">Relaciones</h3>
             </div>
             <div className="p-4 overflow-x-auto">
-              <Tabla columns={columns} rows={rows} />
+              {isLoadingData ? (
+                <p className="text-sm text-slate-400">
+                  Cargando vinculos de flota...
+                </p>
+              ) : hasAsignaciones ? (
+                <Tabla columns={columns} rows={rows} />
+              ) : (
+                <EmptyStateCard
+                  title="No hay vinculos"
+                  description="Aun no se registran conductores con vehiculos asignados."
+                  buttonLabel="Asignar vehiculo"
+                  onButtonClick={() => setIsModalOpen(true)}
+                />
+              )}
             </div>
           </div>
         </div>
