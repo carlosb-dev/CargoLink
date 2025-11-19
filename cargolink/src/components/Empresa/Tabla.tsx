@@ -5,13 +5,15 @@ type Column = {
   label: string;
 };
 
+type Row = Record<string, React.ReactNode>;
+
 type Props = {
   columns: Column[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  rows: Array<Record<string, string | any>>;
+  rows: Row[];
+  getRowId?: (row: Row, index: number) => string | number | undefined;
 };
 
-function Tabla({ columns, rows }: Props) {
+function Tabla({ columns, rows, getRowId }: Props) {
   return (
     <div>
       <table className="min-w-full table-auto text-sm">
@@ -25,15 +27,28 @@ function Tabla({ columns, rows }: Props) {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-800">
-          {rows.map((row, i) => (
-            <tr key={i} className="hover:bg-slate-800/40">
-              {columns.map((col) => (
-                <td key={col.key} className="py-2 pr-4 whitespace-nowrap">
-                  {row[col.key] as React.ReactNode}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {rows.map((row, i) => {
+            const providedId = getRowId?.(row, i);
+            const fallbackId =
+              typeof row.id === "string" || typeof row.id === "number"
+                ? row.id
+                : undefined;
+            const domId = providedId ?? fallbackId;
+
+            return (
+              <tr
+                key={domId ?? i}
+                id={domId !== undefined ? String(domId) : undefined}
+                className="hover:bg-slate-800/40"
+              >
+                {columns.map((col) => (
+                  <td key={col.key} className="py-2 pr-4 whitespace-nowrap">
+                    {row[col.key]}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
