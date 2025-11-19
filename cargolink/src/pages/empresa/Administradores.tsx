@@ -19,14 +19,11 @@ function Administradores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
-  const {
-    administradores,
-    isLoading,
-    refetch,
-    setAdministradores,
-  } = useAdministradores();
+  const { administradores, isLoading, refetch, setAdministradores } =
+    useAdministradores();
 
   const columns = useMemo(
     () => [
@@ -45,18 +42,24 @@ function Administradores() {
         return;
       }
 
-      const result = await eliminarAdministrador(idAdministrador);
+      setDeletingId(idAdministrador);
 
-      if (!result.success) {
-        window.alert(
-          result.message ?? "No se pudo eliminar el administrador."
+      try {
+        const result = await eliminarAdministrador(idAdministrador);
+
+        if (!result.success) {
+          window.alert(
+            result.message ?? "No se pudo eliminar el administrador."
+          );
+          return;
+        }
+
+        setAdministradores((prev) =>
+          prev.filter((admin) => admin.idAdministrador !== idAdministrador)
         );
-        return;
+      } finally {
+        setDeletingId(null);
       }
-
-      setAdministradores((prev) =>
-        prev.filter((admin) => admin.idAdministrador !== idAdministrador)
-      );
     },
     [setAdministradores]
   );
@@ -70,13 +73,14 @@ function Administradores() {
         acciones: (
           <button
             onClick={() => void handleDelete(a.idAdministrador)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            disabled={deletingId === a.idAdministrador}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Eliminar
+            {deletingId === a.idAdministrador ? "Eliminando..." : "Eliminar"}
           </button>
         ),
       })),
-    [administradores, handleDelete]
+    [administradores, handleDelete, deletingId]
   );
 
   const hasAdministradores = rows.length > 0;

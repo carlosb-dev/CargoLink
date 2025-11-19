@@ -20,6 +20,7 @@ function Conductores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
   const { conductores, isLoading, setConductores, refetch } = useConductores();
@@ -72,16 +73,22 @@ function Conductores() {
         return;
       }
 
-      const result = await eliminarConductor(idConductor);
+      setDeletingId(idConductor);
 
-      if (!result.success) {
-        window.alert(result.message ?? "No se pudo eliminar el conductor.");
-        return;
+      try {
+        const result = await eliminarConductor(idConductor);
+
+        if (!result.success) {
+          window.alert(result.message ?? "No se pudo eliminar el conductor.");
+          return;
+        }
+
+        setConductores((prev) =>
+          prev.filter((conductor) => conductor.idConductor !== idConductor)
+        );
+      } finally {
+        setDeletingId(null);
       }
-
-      setConductores((prev) =>
-        prev.filter((conductor) => conductor.idConductor !== idConductor)
-      );
     },
     [setConductores]
   );
@@ -111,13 +118,14 @@ function Conductores() {
         acciones: (
           <button
             onClick={() => void handleDelete(c.idConductor)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            disabled={deletingId === c.idConductor}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Eliminar
+            {deletingId === c.idConductor ? "Eliminando..." : "Eliminar"}
           </button>
         ),
       })),
-    [conductores, handleDelete]
+    [conductores, handleDelete, deletingId]
   );
 
   const hasConductores = rows.length > 0;

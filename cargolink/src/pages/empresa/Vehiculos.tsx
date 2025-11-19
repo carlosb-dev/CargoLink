@@ -19,6 +19,7 @@ function Vehiculos() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
   const { vehiculos, isLoading, refetch, setVehiculos } = useVehiculos();
@@ -46,16 +47,22 @@ function Vehiculos() {
         return;
       }
 
-      const result = await eliminarVehiculo(idVehiculo);
+      setDeletingId(idVehiculo);
 
-      if (!result.success) {
-        window.alert(result.message ?? "No se pudo eliminar el vehiculo.");
-        return;
+      try {
+        const result = await eliminarVehiculo(idVehiculo);
+
+        if (!result.success) {
+          window.alert(result.message ?? "No se pudo eliminar el vehiculo.");
+          return;
+        }
+
+        setVehiculos((prev) =>
+          prev.filter((vehiculo) => vehiculo.idVehiculo !== idVehiculo)
+        );
+      } finally {
+        setDeletingId(null);
       }
-
-      setVehiculos((prev) =>
-        prev.filter((vehiculo) => vehiculo.idVehiculo !== idVehiculo)
-      );
     },
     [setVehiculos]
   );
@@ -72,13 +79,14 @@ function Vehiculos() {
         acciones: (
           <button
             onClick={() => void handleDelete(v.idVehiculo)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            disabled={deletingId === v.idVehiculo}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Eliminar
+            {deletingId === v.idVehiculo ? "Eliminando..." : "Eliminar"}
           </button>
         ),
       })),
-    [vehiculos, handleDelete]
+    [vehiculos, handleDelete, deletingId]
   );
 
   const hasVehiculos = rows.length > 0;

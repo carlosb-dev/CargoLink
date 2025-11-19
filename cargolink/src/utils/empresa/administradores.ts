@@ -78,8 +78,6 @@ export async function createAdministrador(
         message?: string;
       };
 
-  console.log("crear admin" + data);
-
   if (!response.ok) {
     const message =
       (data as { message?: string })?.message ??
