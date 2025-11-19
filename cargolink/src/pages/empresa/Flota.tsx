@@ -10,7 +10,7 @@ import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import useConductores from "../../hooks/useConductores";
 import useVehiculos from "../../hooks/useVehiculos";  
 import useVinculos from "../../hooks/useVinculos";
-import { getConductorEstadoLabel } from "../../utils/empresa";
+import { crearVinculo, getConductorEstadoLabel } from "../../utils/empresa";
 
 function Flota() {
   const [open, setOpen] = useState(false);
@@ -45,25 +45,42 @@ function Flota() {
   );
 
   const handleCreate = useCallback(
-    (data: FormValues) => {
-      setAsignaciones((prev) => {
-        const maxId = prev.reduce(
-          (max, asignacion) => (asignacion.id > max ? asignacion.id : max),
-          -1
-        );
-        const nextId = maxId + 1;
-        return [
-          ...prev,
-          {
-            id: nextId,
-            conductorId: data.conductorId,
-            vehiculoId: data.vehiculoId,
-          },
-        ];
-      });
-      setIsModalOpen(false);
+    async (data: FormValues) => {
+      try {
+        const result = await crearVinculo({
+          idVehiculo: data.vehiculoId,
+          idConductor: data.conductorId,
+        });
+
+        if (!result.success) {
+          window.alert(
+            result.message ?? "No se pudo crear la vinculacion."
+          );
+          return;
+        }
+
+        setAsignaciones((prev) => {
+          const maxId = prev.reduce(
+            (max, asignacion) => (asignacion.id > max ? asignacion.id : max),
+            -1
+          );
+          const nextId = maxId + 1;
+          return [
+            ...prev,
+            {
+              id: nextId,
+              conductorId: data.conductorId,
+              vehiculoId: data.vehiculoId,
+            },
+          ];
+        });
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error("Error al crear vinculo:", error);
+        window.alert("Error al crear la vinculacion.");
+      }
     },
-    [setAsignaciones]
+    [setAsignaciones, setIsModalOpen]
   );
 
   const rows = useMemo(

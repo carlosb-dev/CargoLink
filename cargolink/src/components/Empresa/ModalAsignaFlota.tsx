@@ -19,7 +19,7 @@ type FormValues = {
 type Props = {
   open: boolean;
   onClose: () => void;
-  onCreate: (data: FormValues) => void;
+  onCreate: (data: FormValues) => void | Promise<void>;
   conductores: ConductorOption[];
   vehiculos: VehiculoOption[];
 };
@@ -46,7 +46,7 @@ function ModalAsignaFlota({ open, onClose, onCreate, conductores, vehiculos }: P
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
-    onCreate({ conductorId: selectedConductorId, vehiculoId: selectedVehiculoId });
+    void onCreate({ conductorId: selectedConductorId, vehiculoId: selectedVehiculoId });
   }
 
   return (

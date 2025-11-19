@@ -10,6 +10,16 @@ export type FlotaAsignacion = {
   vehiculoId: number;
 };
 
+export type CrearVinculoPayload = {
+  idVehiculo: number;
+  idConductor: number;
+};
+
+export type CrearVinculoResult = {
+  success: boolean;
+  message?: string;
+};
+
 type RawFlotaResponse = {
   asignaciones?: unknown[];
   Vinculos?: unknown[];
@@ -28,7 +38,7 @@ export async function fetchVinculos(
   idEmpresa: number
 ): Promise<FlotaAsignacion[]> {
   const response = await fetch(
-    `${apiURL}/vehiculo-conductor/${idEmpresa}`
+    `${apiURL}/empresa/vehiculo-conductor/${idEmpresa}`
   );
 
   if (!response.ok) {
@@ -92,6 +102,41 @@ export async function fetchVinculos(
 
   console.log("Flota asignaciones obtenidas:", asignaciones);
   return asignaciones;
+}
+
+// -------------------------------
+//    POST
+// -------------------------------
+
+export async function crearVinculo(
+  payload: CrearVinculoPayload
+): Promise<CrearVinculoResult> {
+  const response = await fetch(`${apiURL}/empresa/vincular`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  console.log(payload);
+
+  const body = (await response.json().catch(() => null)) as {
+    message?: string;
+    success?: boolean;
+  } | null;
+
+  if (!response.ok) {
+    return {
+      success: false,
+      message:
+        body?.message ??
+        `No se pudo crear la vinculacion (${response.status})`,
+    };
+  }
+
+  return {
+    success: body?.success ?? true,
+    message: body?.message,
+  };
 }
 
 function getNumericValue(value: unknown): number | undefined {
