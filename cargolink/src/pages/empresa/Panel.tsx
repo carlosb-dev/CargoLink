@@ -4,24 +4,19 @@ import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import { defaultAdmins } from "../../data/empresaTablas";
 import { getStoredUserFromCookie } from "../../utils/cookies";
 import { getConductorEstadoLabel } from "../../utils/empresa";
 import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import useConductores from "../../hooks/useConductores";
 import useVehiculos from "../../hooks/useVehiculos";
-
-// Variables de Ejemplo
-
-const administradores = defaultAdmins.map(({ nombre, email }) => ({
-  nombre,
-  email,
-}));
+import useAdministradores from "../../hooks/useAdministradores";
 
 function Empresa() {
   const [open, setOpen] = useState(false);
   const { vehiculos, isLoading: isVehiculosLoading } = useVehiculos();
   const { conductores, isLoading: isConductoresLoading } = useConductores();
+  const { administradores, isLoading: isAdministradoresLoading } =
+    useAdministradores();
   const storedUser = getStoredUserFromCookie();
   const empresaNombre = storedUser?.Nombre ?? "EmpresaTest";
 
@@ -98,13 +93,29 @@ function Empresa() {
                   <h3 className="text-lg font-semibold">Administradores</h3>
                 </div>
                 <div className="p-4 overflow-x-auto overflow-y-auto max-h-64">
-                  <Tabla
-                    columns={[
-                      { key: "nombre", label: "Nombre" },
-                      { key: "email", label: "Email" },
-                    ]}
-                    rows={administradores}
-                  />
+                  {isAdministradoresLoading ? (
+                    <p className="text-sm text-slate-400">
+                      Cargando administradores...
+                    </p>
+                  ) : administradores.length > 0 ? (
+                    <Tabla
+                      columns={[
+                        { key: "nombre", label: "Nombre" },
+                        { key: "email", label: "Email" },
+                      ]}
+                      rows={administradores.map((admin) => ({
+                        nombre: admin.Nombre ?? "NA",
+                        email: admin.Email ?? "NA",
+                      }))}
+                    />
+                  ) : (
+                    <EmptyStateCard
+                      title="No hay administradores"
+                      description="No hay administradores cargados para esta empresa."
+                      buttonLabel="Agregar admin"
+                      href="/empresa/administradores"
+                    />
+                  )}
                 </div>
               </div>
 

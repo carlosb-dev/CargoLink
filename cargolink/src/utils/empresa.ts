@@ -1,8 +1,8 @@
 import { apiURL } from "../data/apiData";
 
-  // -------------------------------
-  //    TIPOS DE DATO
-  // -------------------------------
+// -------------------------------
+//    TIPOS DE DATO
+// -------------------------------
 
 export type Conductor = {
   Email: string;
@@ -11,7 +11,7 @@ export type Conductor = {
   Nombre: string;
   idConductor: number;
   idEmpresa: number;
-}
+};
 
 export type Vehiculo = {
   idVehiculo?: number;
@@ -21,6 +21,12 @@ export type Vehiculo = {
   Cantidad_paquetes: number;
   Capacidad: number;
   idEmpresa: number;
+};
+
+export type FlotaAsignacion = {
+  id: number;
+  conductorId: number;
+  vehiculoId: number;
 };
 
 export type HistorialPedido = {
@@ -33,20 +39,20 @@ export type HistorialPedido = {
   fechaModificacion: string;
   nombrePedido: string;
   destino: string;
-}
+};
 
 export type Administrador = {
   idAdministrador?: number;
   Nombre: string;
   Email: string;
-}
+};
 
 export type CreateAdministradorPayload = {
   Nombre: string;
   Contrasena: string;
   Email: string;
   idEmpresa: number;
-}
+};
 
 export type CrearConductorPayload = {
   Nombre: string;
@@ -62,6 +68,16 @@ export type CrearConductorResult = {
 };
 
 export type EliminarConductorResult = {
+  success: boolean;
+  message?: string;
+};
+
+export type EliminarAdministradorResult = {
+  success: boolean;
+  message?: string;
+};
+
+export type EliminarVehiculoResult = {
   success: boolean;
   message?: string;
 };
@@ -83,17 +99,13 @@ export type CrearVehiculoResult = {
 
 export const CONDUCTOR_ESTADO_OPTIONS = [
   { value: 1, label: "Activo" },
-  { value: 2, label: "En Ruta" },
-  { value: 0, label: "De Baja" },
+  { value: 2, label: "De baja" },
+  { value: 0, label: "En Ruta" },
 ] as const;
 
-
-const estadoLabelByValue: Record<ConductorEstadoValue, string> = {
-  0: "De Baja",
-  1: "Activo",
-  2: "En Ruta",
-};
-
+const estadoLabelByValue = Object.fromEntries(
+  CONDUCTOR_ESTADO_OPTIONS.map((option) => [option.value, option.label])
+) as Record<ConductorEstadoValue, string>;
 type ConductorEstadoValue = (typeof CONDUCTOR_ESTADO_OPTIONS)[number]["value"];
 
 export function getConductorEstadoLabel(value: number | string): string {
@@ -116,9 +128,9 @@ export function getConductorEstadoLabel(value: number | string): string {
   return "Sin estado";
 }
 
-  // -------------------------------
-  //    CONDUCTORES
-  // -------------------------------
+// -------------------------------
+//    CONDUCTORES
+// -------------------------------
 
 // Buscar Concutores de una empresa
 
@@ -138,10 +150,10 @@ export async function fetchConductores(
   const list = Array.isArray(raw)
     ? raw
     : Array.isArray(raw?.conductores)
-      ? raw.conductores
-      : raw
-        ? [raw] // convierte un objeto a arreglo de un solo elemento
-        : [];
+    ? raw.conductores
+    : raw
+    ? [raw] // convierte un objeto a arreglo de un solo elemento
+    : [];
 
   console.log("Conductores obtenidos:", list);
   return list;
@@ -158,9 +170,7 @@ export async function crearConductor(
     body: JSON.stringify(payload),
   });
 
-  const body = (await response
-    .json()
-    .catch(() => null)) as {
+  const body = (await response.json().catch(() => null)) as {
     message?: string;
     conductor?: Conductor;
   } | null;
@@ -169,8 +179,7 @@ export async function crearConductor(
     return {
       success: false,
       message:
-        body?.message ??
-        `No se pudo crear el conductor (${response.status})`,
+        body?.message ?? `No se pudo crear el conductor (${response.status})`,
     };
   }
 
@@ -193,15 +202,15 @@ export async function eliminarConductor(
     }
   );
 
-  const body = (await response
-    .json()
-    .catch(() => null)) as { message?: string; success?: boolean } | null;
+  const body = (await response.json().catch(() => null)) as {
+    message?: string;
+    success?: boolean;
+  } | null;
 
   if (!response.ok) {
     return {
       success: false,
-      message:
-        `No se pudo eliminar el conductor (${response.status})\nbody.message: ${body?.message}`,
+      message: `No se pudo eliminar el conductor id:${idConductor} (${response.status})\nbody.message: ${body?.message}`,
     };
   }
 
@@ -217,9 +226,7 @@ export async function eliminarConductor(
 
 // Buscar Vehiculos de una empresa
 
-export async function fetchVehiculos(
-  idEmpresa: number
-): Promise<Vehiculo[]> {
+export async function fetchVehiculos(idEmpresa: number): Promise<Vehiculo[]> {
   const response = await fetch(`${apiURL}/empresa/${idEmpresa}/vehiculos`);
 
   if (!response.ok) {
@@ -233,13 +240,131 @@ export async function fetchVehiculos(
   const list = Array.isArray(raw)
     ? raw
     : Array.isArray(raw?.vehiculos)
-      ? raw.vehiculos
-      : raw
-        ? [raw] // convierte un objeto a arreglo de un solo elemento
-        : [];
+    ? raw.vehiculos
+    : raw
+    ? [raw] // convierte un objeto a arreglo de un solo elemento
+    : [];
 
   console.log("Vehiculos obtenidos:", list);
   return list;
+}
+
+// -------------------------------
+//    FLOTA ASIGNACIONES
+// -------------------------------
+
+type RawFlotaResponse = {
+  asignaciones?: unknown[];
+  Vinculos?: unknown[];
+  vinculos?: unknown[];
+  relaciones?: unknown[];
+  data?: unknown[];
+};
+
+type RawFlotaItem = Record<string, unknown>;
+
+export async function fetchVinculos(
+  idEmpresa: number
+): Promise<FlotaAsignacion[]> {
+  const response = await fetch(
+    `${apiURL}/empresa/${idEmpresa}/flota-asignaciones`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Error al obtener las asignaciones de flota: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const raw = (await response.json()) as unknown;
+  const rawObject = raw as RawFlotaResponse;
+
+  const list: unknown[] = Array.isArray(raw)
+    ? raw
+    : Array.isArray(rawObject.asignaciones)
+    ? rawObject.asignaciones
+    : Array.isArray(rawObject.Vinculos)
+    ? rawObject.Vinculos
+    : Array.isArray(rawObject.vinculos)
+    ? rawObject.vinculos
+    : Array.isArray(rawObject.relaciones)
+    ? rawObject.relaciones
+    : Array.isArray(rawObject.data)
+    ? rawObject.data
+    : [];
+
+  const entries = list.filter(
+    (item): item is RawFlotaItem => typeof item === "object" && item !== null
+  );
+
+  const asignaciones = entries
+    .map((item, index) => {
+      const conductorId =
+        getNumericValue(item["conductorId"]) ??
+        getNumericValue(item["idConductor"]) ??
+        getNumericValueFromNested(item["conductor"], ["idConductor", "id"]);
+
+      const vehiculoId =
+        getNumericValue(item["vehiculoId"]) ??
+        getNumericValue(item["idVehiculo"]) ??
+        getNumericValueFromNested(item["vehiculo"], ["idVehiculo", "id"]);
+
+      const id =
+        getNumericValue(item["id"]) ??
+        getNumericValue(item["idFlotaAsignacion"]) ??
+        getNumericValue(item["flotaAsignacionId"]) ??
+        getNumericValue(item["idRelacion"]) ??
+        getNumericValue(item["idVinculo"]) ??
+        index;
+
+      if (conductorId === undefined || vehiculoId === undefined) {
+        return null;
+      }
+
+      return {
+        id,
+        conductorId,
+        vehiculoId,
+      };
+    })
+    .filter((value): value is FlotaAsignacion => value !== null);
+
+  console.log("Flota asignaciones obtenidas:", asignaciones);
+  return asignaciones;
+}
+
+function getNumericValue(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim().length > 0) {
+    const numeric = Number(value);
+    if (Number.isFinite(numeric)) {
+      return numeric;
+    }
+  }
+
+  return undefined;
+}
+
+function getNumericValueFromNested(
+  value: unknown,
+  keys: string[]
+): number | undefined {
+  if (typeof value !== "object" || value === null) {
+    return undefined;
+  }
+
+  const record = value as Record<string, unknown>;
+  for (const key of keys) {
+    const numeric = getNumericValue(record[key]);
+    if (numeric !== undefined) {
+      return numeric;
+    }
+  }
+
+  return undefined;
 }
 
 // Crear Vehiculo
@@ -253,16 +378,16 @@ export async function crearVehiculo(
     body: JSON.stringify(payload),
   });
 
-  const body = (await response
-    .json()
-    .catch(() => null)) as { message?: string; vehiculo?: Vehiculo } | null;
+  const body = (await response.json().catch(() => null)) as {
+    message?: string;
+    vehiculo?: Vehiculo;
+  } | null;
 
   if (!response.ok) {
     return {
       success: false,
       message:
-        body?.message ??
-        `No se pudo crear el vehiculo (${response.status})`,
+        body?.message ?? `No se pudo crear el vehiculo (${response.status})`,
     };
   }
 
@@ -270,6 +395,36 @@ export async function crearVehiculo(
     success: true,
     message: body?.message,
     vehiculo: body?.vehiculo,
+  };
+}
+
+// Eliminar Vehiculo
+
+export async function eliminarVehiculo(
+  idVehiculo: number
+): Promise<EliminarVehiculoResult> {
+  const response = await fetch(
+    `${apiURL}/empresa/vehiculo/eliminar/${idVehiculo}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const body = (await response.json().catch(() => null)) as {
+    message?: string;
+    success?: boolean;
+  } | null;
+
+  if (!response.ok) {
+    return {
+      success: false,
+      message: `No se pudo eliminar el vehiculo id:${idVehiculo} (${response.status})\nbody.message: ${body?.message}`,
+    };
+  }
+
+  return {
+    success: body?.success ?? true,
+    message: body?.message,
   };
 }
 
@@ -307,6 +462,33 @@ export async function fetchHistorialPedidos(
 //    ADMINISTRADORES
 // -------------------------------
 
+export async function fetchAdministradores(
+  idEmpresa: number
+): Promise<Administrador[]> {
+  const response = await fetch(
+    `${apiURL}/empresa/${idEmpresa}/administradores`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Error al obtener administradores: ${response.status} ${response.statusText}`
+    );
+  }
+
+  const raw = await response.json();
+
+  const list = Array.isArray(raw)
+    ? raw
+    : Array.isArray(raw?.administradores)
+    ? raw.administradores
+    : raw
+    ? [raw] // convierte un objeto a arreglo de un solo elemento
+    : [];
+
+  console.log("Administradores obtenidos:", list);
+  return list;
+}
+
 export async function createAdministrador(
   payload: CreateAdministradorPayload
 ): Promise<Administrador> {
@@ -318,9 +500,7 @@ export async function createAdministrador(
     body: JSON.stringify(payload),
   });
 
-  const data = (await response
-    .json()
-    .catch(() => ({}))) as
+  const data = (await response.json().catch(() => ({}))) as
     | Administrador
     | {
         administrador?: Administrador;
@@ -340,4 +520,32 @@ export async function createAdministrador(
     (data as { administrador?: Administrador })?.administrador ??
     (data as Administrador)
   );
+}
+
+export async function eliminarAdministrador(
+  idAdministrador: number
+): Promise<EliminarAdministradorResult> {
+  const response = await fetch(
+    `${apiURL}/empresa/administrador/eliminar/${idAdministrador}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const body = (await response.json().catch(() => null)) as {
+    message?: string;
+    success?: boolean;
+  } | null;
+
+  if (!response.ok) {
+    return {
+      success: false,
+      message: `No se pudo eliminar el administrador id:${idAdministrador} (${response.status})\nbody.message: ${body?.message}`,
+    };
+  }
+
+  return {
+    success: body?.success ?? true,
+    message: body?.message,
+  };
 }
