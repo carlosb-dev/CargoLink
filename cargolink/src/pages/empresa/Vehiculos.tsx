@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
@@ -11,6 +11,7 @@ import useVehiculos from "../../hooks/useVehiculos";
 import { getStoredUserFromCookie } from "../../utils/cookies";
 import {
   crearVehiculo,
+  eliminarVehiculo,
   type CrearVehiculoPayload,
 } from "../../utils/empresa";
 
@@ -20,28 +21,64 @@ function Vehiculos() {
   const [isCreating, setIsCreating] = useState(false);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
-  const { vehiculos, isLoading, refetch } = useVehiculos();
+  const { vehiculos, isLoading, refetch, setVehiculos } = useVehiculos();
 
   const columns = useMemo(
     () => [
+      { key: "id", label: "ID" },
       { key: "matricula", label: "Matricula" },
       { key: "modelo", label: "Modelo" },
       { key: "tipo", label: "Tipo" },
       { key: "capacidad", label: "Capacidad" },
+      { key: "acciones", label: "Acciones" },
     ],
     []
+  );
+
+  // -------------------------------
+  //    DELETE VEHICULO
+  // -------------------------------
+
+  const handleDelete = useCallback(
+    async (idVehiculo: number | undefined) => {
+      if (!idVehiculo) {
+        window.alert("No se pudo identificar el vehiculo a eliminar.");
+        return;
+      }
+
+      const result = await eliminarVehiculo(idVehiculo);
+
+      if (!result.success) {
+        window.alert(result.message ?? "No se pudo eliminar el vehiculo.");
+        return;
+      }
+
+      setVehiculos((prev) =>
+        prev.filter((vehiculo) => vehiculo.idVehiculo !== idVehiculo)
+      );
+    },
+    [setVehiculos]
   );
 
   const rows = useMemo(
     () =>
       vehiculos.map((v) => ({
+        id: v.idVehiculo ?? "NA",
         matricula: v.Matricula ?? "NA",
         modelo: v.Modelo ?? "NA",
         tipo: v.Tipo ?? "NA",
         capacidad:
           typeof v.Capacidad === "number" ? `${v.Capacidad} kg` : "NA",
+        acciones: (
+          <button
+            onClick={() => void handleDelete(v.idVehiculo)}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+          >
+            Eliminar
+          </button>
+        ),
       })),
-    [vehiculos]
+    [vehiculos, handleDelete]
   );
 
   const hasVehiculos = rows.length > 0;
