@@ -50,7 +50,6 @@ function Login() {
         setCurrentUser(datos.data);
       }
 
-      alert(datos?.message ?? "Login exitoso");
       navigate(RUTAS.EMPRESA_PANEL);
     } catch (err) {
       console.error(err);
