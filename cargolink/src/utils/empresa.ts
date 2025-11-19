@@ -14,11 +14,14 @@ export type Conductor = {
 }
 
 export type Vehiculo = {
-  id?: number;
-  placa: string;
-  modelo: string;
-  estado: string;
-}
+  idVehiculo?: number;
+  Matricula: string;
+  Tipo: string;
+  Modelo: string;
+  Cantidad_paquetes: number;
+  Capacidad: number;
+  idEmpresa: number;
+};
 
 export type HistorialPedido = {
   id?: number;
@@ -63,6 +66,21 @@ export type EliminarConductorResult = {
   message?: string;
 };
 
+export type CrearVehiculoPayload = {
+  Matricula: string;
+  Tipo: string;
+  Modelo: string;
+  Cantidad_paquetes: number;
+  Capacidad: number;
+  idEmpresa: number;
+};
+
+export type CrearVehiculoResult = {
+  success: boolean;
+  message?: string;
+  vehiculo?: Vehiculo;
+};
+
 export const CONDUCTOR_ESTADO_OPTIONS = [
   { value: 1, label: "Activo" },
   { value: 2, label: "En Ruta" },
@@ -102,6 +120,8 @@ export function getConductorEstadoLabel(value: number | string): string {
   //    CONDUCTORES
   // -------------------------------
 
+// Buscar Concutores de una empresa
+
 export async function fetchConductores(
   idEmpresa: number
 ): Promise<Conductor[]> {
@@ -126,6 +146,8 @@ export async function fetchConductores(
   console.log("Conductores obtenidos:", list);
   return list;
 }
+
+// Crear Conductor
 
 export async function crearConductor(
   payload: CrearConductorPayload
@@ -159,6 +181,8 @@ export async function crearConductor(
   };
 }
 
+// Eliminar Conductor
+
 export async function eliminarConductor(
   idConductor: number
 ): Promise<EliminarConductorResult> {
@@ -177,8 +201,7 @@ export async function eliminarConductor(
     return {
       success: false,
       message:
-        body?.message ??
-        `No se pudo eliminar el conductor (${response.status})`,
+        `No se pudo eliminar el conductor (${response.status})\nbody.message: ${body?.message}`,
     };
   }
 
@@ -192,6 +215,8 @@ export async function eliminarConductor(
 //    VEHICULOS
 // -------------------------------
 
+// Buscar Vehiculos de una empresa
+
 export async function fetchVehiculos(
   idEmpresa: number
 ): Promise<Vehiculo[]> {
@@ -203,14 +228,49 @@ export async function fetchVehiculos(
     );
   }
 
-  const data = (await response.json()) as
-    | Vehiculo[]
-    | {
-        vehiculos?: Vehiculo[];
-      };
+  const raw = await response.json();
 
-  const list = Array.isArray(data) ? data : data?.vehiculos;
-  return Array.isArray(list) ? list : [];
+  const list = Array.isArray(raw)
+    ? raw
+    : Array.isArray(raw?.vehiculos)
+      ? raw.vehiculos
+      : raw
+        ? [raw] // convierte un objeto a arreglo de un solo elemento
+        : [];
+
+  console.log("Vehiculos obtenidos:", list);
+  return list;
+}
+
+// Crear Vehiculo
+
+export async function crearVehiculo(
+  payload: CrearVehiculoPayload
+): Promise<CrearVehiculoResult> {
+  const response = await fetch(`${apiURL}/empresa/vehiculo/crear`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  const body = (await response
+    .json()
+    .catch(() => null)) as { message?: string; vehiculo?: Vehiculo } | null;
+
+  if (!response.ok) {
+    return {
+      success: false,
+      message:
+        body?.message ??
+        `No se pudo crear el vehiculo (${response.status})`,
+    };
+  }
+
+  return {
+    success: true,
+    message: body?.message,
+    vehiculo: body?.vehiculo,
+  };
 }
 
 // -------------------------------
@@ -266,6 +326,8 @@ export async function createAdministrador(
         administrador?: Administrador;
         message?: string;
       };
+
+  console.log("crear admin" + data);
 
   if (!response.ok) {
     const message =
