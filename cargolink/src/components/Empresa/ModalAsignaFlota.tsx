@@ -27,11 +27,13 @@ type Props = {
 function ModalAsignaFlota({ open, onClose, onCreate, conductores, vehiculos }: Props) {
   const [selectedConductorId, setSelectedConductorId] = useState<number | null>(null);
   const [selectedVehiculoId, setSelectedVehiculoId] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSelectedConductorId(conductores[0]?.id ?? null);
       setSelectedVehiculoId(vehiculos[0]?.id ?? null);
+      setIsSubmitting(false);
     }
   }, [open, conductores, vehiculos]);
 
@@ -43,10 +45,15 @@ function ModalAsignaFlota({ open, onClose, onCreate, conductores, vehiculos }: P
     conductores.length > 0 &&
     vehiculos.length > 0;
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSubmit) return;
-    void onCreate({ conductorId: selectedConductorId, vehiculoId: selectedVehiculoId });
+    if (!canSubmit || isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await onCreate({ conductorId: selectedConductorId, vehiculoId: selectedVehiculoId });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -110,10 +117,10 @@ function ModalAsignaFlota({ open, onClose, onCreate, conductores, vehiculos }: P
             </button>
             <button
               type="submit"
-              disabled={!canSubmit}
+              disabled={!canSubmit || isSubmitting}
               className="px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:scale-105"
             >
-              Guardar
+              {isSubmitting ? "Guardando..." : "Guardar"}
             </button>
           </div>
         </form>

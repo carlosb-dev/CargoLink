@@ -10,11 +10,17 @@ import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import useConductores from "../../hooks/useConductores";
 import useVehiculos from "../../hooks/useVehiculos";  
 import useVinculos from "../../hooks/useVinculos";
-import { crearVinculo, getConductorEstadoLabel } from "../../utils/empresa";
+import {
+  crearVinculo,
+  eliminarVinculo,
+  getConductorEstadoLabel,
+  type FlotaAsignacion,
+} from "../../utils/empresa";
 
 function Flota() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const { conductores, isLoading: isConductoresLoading } = useConductores();
   const { vehiculos, isLoading: isVehiculosLoading } = useVehiculos();
   const {
@@ -36,10 +42,30 @@ function Flota() {
   );
 
   const handleDesvincular = useCallback(
-    (id: number) => {
-      setAsignaciones((prev) =>
-        prev.filter((asignacion) => asignacion.id !== id)
-      );
+    async (asignacion: FlotaAsignacion) => {
+      try {
+        setDeletingId(asignacion.id);
+        const result = await eliminarVinculo({
+          idVehiculo: asignacion.vehiculoId,
+          idConductor: asignacion.conductorId,
+        });
+
+        if (!result.success) {
+          window.alert(
+            result.message ?? "No se pudo eliminar la vinculacion."
+          );
+          return;
+        }
+
+        setAsignaciones((prev) =>
+          prev.filter((item) => item.id !== asignacion.id)
+        );
+      } catch (error) {
+        console.error("Error al eliminar vinculo:", error);
+        window.alert("Error al eliminar la vinculacion.");
+      } finally {
+        setDeletingId(null);
+      }
     },
     [setAsignaciones]
   );
@@ -101,15 +127,18 @@ function Flota() {
           estado: getConductorEstadoLabel(conductor?.Estado ?? ""),
           acciones: (
             <button
-              onClick={() => handleDesvincular(asignacion.id)}
-              className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+              onClick={() => {
+                void handleDesvincular(asignacion);
+              }}
+              disabled={deletingId === asignacion.id}
+              className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Desvincular
+              {deletingId === asignacion.id ? "Desvinculando..." : "Desvincular"}
             </button>
           ),
         };
       }),
-    [asignaciones, conductores, vehiculos, handleDesvincular]
+    [asignaciones, conductores, vehiculos, handleDesvincular, deletingId]
   );
 
   const conductoresDisponibles = useMemo(() => {
@@ -170,7 +199,12 @@ function Flota() {
               }
               className="px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:scale-105"
             >
-              Asignar vehiculo
+              {sinVehiculosDisponibles
+                ? "No hay vehículos disponibles"
+                : sinConductoresDisponibles
+                  ? "No hay conductores disponibles"
+                  : "Asignar vehículo"
+              }
             </button>
           </div>
 

@@ -20,6 +20,16 @@ export type CrearVinculoResult = {
   message?: string;
 };
 
+export type EliminarVinculoPayload = {
+  idVehiculo: number;
+  idConductor: number;
+};
+
+export type EliminarVinculoResult = {
+  success: boolean;
+  message?: string;
+};
+
 type RawFlotaResponse = {
   asignaciones?: unknown[];
   Vinculos?: unknown[];
@@ -130,6 +140,40 @@ export async function crearVinculo(
       message:
         body?.message ??
         `No se pudo crear la vinculacion (${response.status})`,
+    };
+  }
+
+  return {
+    success: body?.success ?? true,
+    message: body?.message,
+  };
+}
+
+// -------------------------------
+//    DELETE
+// -------------------------------
+
+export async function eliminarVinculo(
+  payload: EliminarVinculoPayload
+): Promise<EliminarVinculoResult> {
+  const response = await fetch(
+    `${apiURL}/empresa/vehiculo-conductor/eliminar/${payload.idVehiculo}/${payload.idConductor}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const body = (await response.json().catch(() => null)) as {
+    message?: string;
+    success?: boolean;
+  } | null;
+
+  if (!response.ok) {
+    return {
+      success: false,
+      message:
+        body?.message ??
+        `No se pudo eliminar la vinculacion (${response.status})`,
     };
   }
 
