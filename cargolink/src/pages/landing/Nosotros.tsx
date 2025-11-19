@@ -24,19 +24,27 @@ function Nosotros() {
             ¿Qué es CargoLink?
           </h2>
 
-          <p className="text-slate-300 max-w-3xl leading-relaxed">
-            CargoLink es una plataforma pensada para simplificar la gestión
-            logística de empresas y conductores. Permite crear rutas, asignar
-            vehículos y seguir pedidos en tiempo real con una interfaz limpia y
-            eficiente. Nuestro foco es la simplicidad y la observabilidad para
-            operaciones diarias.
-          </p>
+          <div className="flex flex-col gap-6">
+            <p className="text-slate-300 max-w-3xl leading-relaxed">
+              CargoLink es la plataforma web que centraliza la operación
+              logística de tu empresa. Desde una misma página puedes registrar
+              administradores, dar de alta conductores, vehículos y vincularlos
+              entre sícon un flujo simple en segundos.
+            </p>
+
+            <p className="text-slate-300 max-w-3xl leading-relaxed">
+              Todo el diseño está pensado para la supervisión diaria: tablas
+              claras para crear, editar o eliminar registros, asignación ágil
+              entre conductores y vehículos, y estados visibles al instante
+              para saber quién está disponible. Menos clics, más control de tu operación.
+            </p>
+          </div>
         </section>
 
         <section className="mw-6xl mx-auto px-6 py-12">
           <h3 className="text-2xl font-semibold mb-4 text-center">Créditos</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <CreditosModulo
               nombre={"Carlos Bello"}
               rol={"Front-end y Diseño"}
@@ -53,6 +61,12 @@ function Nosotros() {
               nombre={"Francisco García"}
               rol={"Back-end y Base de Datos"}
               enlace={"https://github.com/SirFrancis2007"}
+            />
+
+            <CreditosModulo
+              nombre={"GitHub"}
+              rol={"Proyecto Open Source"}
+              enlace={"https://github.com/carlosb-dev/CargoLink"}
             />
           </div>
         </section>
