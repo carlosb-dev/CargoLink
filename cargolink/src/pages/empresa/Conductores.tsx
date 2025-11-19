@@ -15,6 +15,7 @@ import {
   type CrearConductorPayload,
 } from "../../utils/empresa";
 import useConductores from "../../hooks/useConductores";
+import useVinculos from "../../hooks/useVinculos";
 
 function Conductores() {
   const [open, setOpen] = useState(false);
@@ -24,6 +25,7 @@ function Conductores() {
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
   const { conductores, isLoading, setConductores, refetch } = useConductores();
+  const { asignaciones } = useVinculos();
 
   // -------------------------------
   //    POST CONDUCTOR
@@ -63,6 +65,20 @@ function Conductores() {
   }
 
   // -------------------------------
+  //    CONDUCTORES DISPONIBLES
+  // -------------------------------
+
+  const conductoresDisponibles = useMemo(() => {
+    const ocupados = new Set(asignaciones.map((a) => a.conductorId));
+    return conductores
+      .filter((conductor) => !ocupados.has(conductor.idConductor))
+      .map((conductor) => ({
+        id: conductor.idConductor,
+        nombre: conductor.Nombre,
+      }));
+  }, [conductores, asignaciones]);
+
+  // -------------------------------
   //    DELETE CONDUCTOR
   // -------------------------------
 
@@ -70,6 +86,15 @@ function Conductores() {
     async (idConductor: number | undefined) => {
       if (!idConductor) {
         window.alert("No se pudo identificar el conductor a eliminar.");
+        return;
+      }
+
+      const estaDisponible = conductoresDisponibles.some(
+        (conductor) => conductor.id === idConductor
+      );
+
+      if (!estaDisponible) {
+        window.alert("Debe desvincular al conductor antes de eliminarlo.");
         return;
       }
 
@@ -90,7 +115,7 @@ function Conductores() {
         setDeletingId(null);
       }
     },
-    [setConductores]
+    [setConductores, conductoresDisponibles]
   );
 
   const columns = useMemo(

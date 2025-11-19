@@ -14,6 +14,7 @@ import {
   eliminarVehiculo,
   type CrearVehiculoPayload,
 } from "../../utils/empresa";
+import useVinculos from "../../hooks/useVinculos";
 
 function Vehiculos() {
   const [open, setOpen] = useState(false);
@@ -23,6 +24,7 @@ function Vehiculos() {
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
   const { vehiculos, isLoading, refetch, setVehiculos } = useVehiculos();
+  const { asignaciones } = useVinculos();
 
   const columns = useMemo(
     () => [
@@ -36,6 +38,14 @@ function Vehiculos() {
     []
   );
 
+  const vehiculosDisponibles = useMemo(() => {
+    const ocupados = new Set(asignaciones.map((a) => a.vehiculoId));
+    return vehiculos.filter((vehiculo) => {
+      const idVehiculo = vehiculo.idVehiculo;
+      return typeof idVehiculo === "number" && !ocupados.has(idVehiculo);
+    });
+  }, [vehiculos, asignaciones]);
+
   // -------------------------------
   //    DELETE VEHICULO
   // -------------------------------
@@ -44,6 +54,15 @@ function Vehiculos() {
     async (idVehiculo: number | undefined) => {
       if (!idVehiculo) {
         window.alert("No se pudo identificar el vehiculo a eliminar.");
+        return;
+      }
+
+      const estaDisponible = vehiculosDisponibles.some(
+        (vehiculo) => vehiculo.idVehiculo === idVehiculo
+      );
+
+      if (!estaDisponible) {
+        window.alert("Debe desvincular el vehiculo antes de eliminarlo.");
         return;
       }
 
@@ -64,7 +83,7 @@ function Vehiculos() {
         setDeletingId(null);
       }
     },
-    [setVehiculos]
+    [setVehiculos, vehiculosDisponibles]
   );
 
   const rows = useMemo(
