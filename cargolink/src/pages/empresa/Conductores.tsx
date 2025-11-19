@@ -1,77 +1,138 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaConductor from "../../components/Empresa/ModalCreaConductor";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalCreaConductor";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import { defaultConductores } from "../../data/empresaTablas";
-
-type Conductor = {
-  id: number;
-  nombre: string;
-  estado: string;
-  licencia: string;
-};
+import { getStoredUserFromCookie } from "../../utils/cookies";
+import {
+  crearConductor,
+  eliminarConductor,
+  getConductorEstadoLabel,
+  type CrearConductorPayload,
+} from "../../utils/empresa";
+import useConductores from "../../hooks/useConductores";
 
 function Conductores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [conductores, setConductores] =
-    useState<Conductor[]>(defaultConductores);
+  const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
+  const { conductores, isLoading, setConductores, refetch } = useConductores();
+
+  // -------------------------------
+  //    POST CONDUCTOR
+  // -------------------------------
+
+  async function handleCreate(data: FormValues): Promise<boolean> {
+    if (!empresaId || isCreating) {
+      if (!empresaId) {
+        window.alert("No se pudo identificar la empresa actual.");
+      }
+      return false;
+    }
+
+    setIsCreating(true);
+
+    const payload: CrearConductorPayload = {
+      Nombre: data.Nombre.trim(),
+      Licencia: data.Licencia.trim(),
+      Email: data.Email.trim(),
+      idEmpresa: empresaId,
+    };
+
+    try {
+      const result = await crearConductor(payload);
+
+      if (!result.success) {
+        window.alert(result.message ?? "No se pudo crear el conductor");
+        return false;
+      }
+
+      await refetch();
+      setIsModalOpen(false);
+      return true;
+    } finally {
+      setIsCreating(false);
+    }
+  }
+
+  // -------------------------------
+  //    DELETE CONDUCTOR
+  // -------------------------------
+
+  const handleDelete = useCallback(
+    async (idConductor: number | undefined) => {
+      if (!idConductor) {
+        window.alert("No se pudo identificar el conductor a eliminar.");
+        return;
+      }
+
+      setDeletingId(idConductor);
+
+      try {
+        const result = await eliminarConductor(idConductor);
+
+        if (!result.success) {
+          window.alert(result.message ?? "No se pudo eliminar el conductor.");
+          return;
+        }
+
+        setConductores((prev) =>
+          prev.filter((conductor) => conductor.idConductor !== idConductor)
+        );
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [setConductores]
+  );
 
   const columns = useMemo(
     () => [
       { key: "id", label: "ID" },
       { key: "nombre", label: "Nombre" },
-      { key: "estado", label: "Estado" },
+      { key: "email", label: "Email" },
       { key: "licencia", label: "Licencia" },
+      { key: "estado", label: "Estado" },
       { key: "acciones", label: "Acciones" },
     ],
     []
   );
 
+
+
   const rows = useMemo(
     () =>
       conductores.map((c) => ({
-        id: c.id,
-        nombre: c.nombre,
-        estado: c.estado,
-        licencia: c.licencia,
+        id: c.idConductor,
+        email: c.Email ?? "NA",
+        nombre: c.Nombre ?? "NA",
+        licencia: c.Licencia ?? "NA",
+        estado: getConductorEstadoLabel(c.Estado ?? ""),
         acciones: (
           <button
-            onClick={() => handleDelete(c.id)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            onClick={() => void handleDelete(c.idConductor)}
+            disabled={deletingId === c.idConductor}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Eliminar
+            {deletingId === c.idConductor ? "Eliminando..." : "Eliminar"}
           </button>
         ),
       })),
-    [conductores]
+    [conductores, handleDelete, deletingId]
   );
 
-  // Luego cambiar por DELETE en API
-  function handleDelete(id: number) {
-    setConductores((prev) => prev.filter((x) => x.id !== id));
-  }
+  const hasConductores = rows.length > 0;
 
-  // Luego cambiar por POST en API
-  function handleCreate(data: FormValues) {
-    const nextId = conductores.length
-      ? Math.max(...conductores.map((c) => c.id)) + 1
-      : 0;
-    setConductores((prev) => [
-      ...prev,
-      {
-        id: nextId,
-        nombre: data.nombre,
-        estado: data.estado,
-        licencia: data.licencia,
-      },
-    ]);
-    setIsModalOpen(false);
-  }
+  // -------------------------------
+  //    RENDER
+  // -------------------------------
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -105,7 +166,20 @@ function Conductores() {
               <h3 className="text-lg font-semibold">Lista</h3>
             </div>
             <div className="p-4 overflow-x-auto">
-              <Tabla columns={columns} rows={rows} />
+              {isLoading ? (
+                <p className="text-sm text-slate-400">
+                  Cargando conductores...
+                </p>
+              ) : hasConductores ? (
+                <Tabla columns={columns} rows={rows} />
+              ) : (
+                <EmptyStateCard
+                  title="No hay conductores"
+                  description="No se encontraron conductores para esta empresa."
+                  buttonLabel="Agregar conductor"
+                  onButtonClick={() => setIsModalOpen(true)}
+                />
+              )}
             </div>
           </div>
         </div>

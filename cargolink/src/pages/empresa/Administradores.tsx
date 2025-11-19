@@ -1,23 +1,29 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaAdmin from "../../components/Empresa/ModalCreaAdmin";
 import type { FormValues } from "../../components/Empresa/ModalCreaAdmin";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import { defaultAdmins } from "../../data/empresaTablas";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
-
-type Admin = {
-  id: number;
-  nombre: string;
-  email: string;
-};
+import { getStoredUserFromCookie } from "../../utils/cookies";
+import {
+  createAdministrador,
+  eliminarAdministrador,
+  type CreateAdministradorPayload,
+} from "../../utils/empresa";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
+import useAdministradores from "../../hooks/useAdministradores";
 
 function Administradores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [admins, setAdmins] = useState<Admin[]>(defaultAdmins);
+  const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
+  const { administradores, isLoading, refetch, setAdministradores } =
+    useAdministradores();
 
   const columns = useMemo(
     () => [
@@ -29,37 +35,88 @@ function Administradores() {
     []
   );
 
+  const handleDelete = useCallback(
+    async (idAdministrador?: number) => {
+      if (typeof idAdministrador !== "number") {
+        window.alert("No se pudo identificar el administrador a eliminar.");
+        return;
+      }
+
+      setDeletingId(idAdministrador);
+
+      try {
+        const result = await eliminarAdministrador(idAdministrador);
+
+        if (!result.success) {
+          window.alert(
+            result.message ?? "No se pudo eliminar el administrador."
+          );
+          return;
+        }
+
+        setAdministradores((prev) =>
+          prev.filter((admin) => admin.idAdministrador !== idAdministrador)
+        );
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [setAdministradores]
+  );
+
   const rows = useMemo(
     () =>
-      admins.map((a) => ({
-        id: a.id,
-        nombre: a.nombre,
-        email: a.email,
+      administradores.map((a) => ({
+        id: a.idAdministrador ?? "NA",
+        nombre: a.Nombre ?? "NA",
+        email: a.Email ?? "NA",
         acciones: (
           <button
-            onClick={() => handleDelete(a.id)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            onClick={() => void handleDelete(a.idAdministrador)}
+            disabled={deletingId === a.idAdministrador}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Eliminar
+            {deletingId === a.idAdministrador ? "Eliminando..." : "Eliminar"}
           </button>
         ),
       })),
-    [admins]
+    [administradores, handleDelete, deletingId]
   );
 
-  // Luego cambiar por DELETE en API
-  function handleDelete(id: number) {
-    setAdmins((prev) => prev.filter((x) => x.id !== id));
-  }
+  const hasAdministradores = rows.length > 0;
 
-  // Luego cambiar por POST en API
-  function handleCreate(data: FormValues) {
-    const nextId = admins.length ? Math.max(...admins.map((a) => a.id)) + 1 : 0;
-    setAdmins((prev) => [
-      ...prev,
-      { id: nextId, nombre: data.nombre, email: data.email },
-    ]);
-    setIsModalOpen(false);
+  async function handleCreate(data: FormValues): Promise<boolean> {
+    if (!empresaId || isCreating) {
+      if (!empresaId) {
+        window.alert("No se pudo identificar la empresa actual.");
+      }
+      return false;
+    }
+
+    setIsCreating(true);
+
+    const payload: CreateAdministradorPayload = {
+      Nombre: data.Nombre.trim(),
+      Contrasena: data.Contrasena,
+      Email: data.Email.trim(),
+      idEmpresa: empresaId,
+    };
+
+    try {
+      await createAdministrador(payload);
+      await refetch();
+      setIsModalOpen(false);
+      return true;
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "No se pudo crear el administrador";
+      window.alert(message);
+      return false;
+    } finally {
+      setIsCreating(false);
+    }
   }
 
   return (
@@ -94,7 +151,20 @@ function Administradores() {
               <h3 className="text-lg font-semibold">Lista</h3>
             </div>
             <div className="p-4 overflow-x-auto">
-              <Tabla columns={columns} rows={rows} />
+              {isLoading ? (
+                <p className="text-sm text-slate-400">
+                  Cargando administradores...
+                </p>
+              ) : hasAdministradores ? (
+                <Tabla columns={columns} rows={rows} />
+              ) : (
+                <EmptyStateCard
+                  title="No hay administradores"
+                  description="No se encontraron administradores para esta empresa."
+                  buttonLabel="Agregar admin"
+                  onButtonClick={() => setIsModalOpen(true)}
+                />
+              )}
             </div>
           </div>
         </div>

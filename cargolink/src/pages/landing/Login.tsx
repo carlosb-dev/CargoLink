@@ -1,25 +1,62 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
+import {
+  getStoredUserFromCookie,
+  persistUserCookie,
+  type EmpresaData,
+} from "../../utils/cookies";
+import { loginEmpresa, type LoginData } from "../../utils/auth";
 
 function Login() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<EmpresaData | null>(() =>
+    getStoredUserFromCookie()
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!email || !password) {
       setError("Completa todos los campos");
       return;
     }
-    // Aquí se llama a la API para iniciar sesión
-    console.log("Login:", { email });
+
+    const loginData = {
+      Email: email,
+      Contrasena: password,
+    };
+
+    try {
+      setIsLoading(true);
+      const result = await loginEmpresa(loginData);
+
+      if (!result.success) {
+        setError(result.message ?? "Credenciales incorrectas");
+        return;
+      }
+
+      const datos: LoginData | undefined = result.data;
+      if (datos?.data) {
+        persistUserCookie(datos.data);
+        setCurrentUser(datos.data);
+      }
+
+      navigate(RUTAS.EMPRESA_PANEL);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo conectar con el servidor");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -52,12 +89,18 @@ function Login() {
               />
             </div>
             {error && <div className="text-sm text-red-400">{error}</div>}
+            {currentUser && (
+              <div className="text-sm text-green-400">
+                Sesión activa: {currentUser.Nombre}
+              </div>
+            )}
             <div className="flex items-center justify-between gap-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold hover:cursor-pointer"
+                disabled={isLoading}
+                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold hover:cursor-pointer disabled:opacity-60"
               >
-                Entrar
+                {isLoading ? "Cargando..." : "Entrar"}
               </button>
               <Link
                 to={RUTAS.SIGNUP}

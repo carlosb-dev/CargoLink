@@ -1,73 +1,146 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import ModalCreaVehiculo from "../../components/Empresa/ModalCreaVehiculo";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalCreaVehiculo";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import { defaultVehiculos } from "../../data/empresaTablas";
-
-type Vehiculo = {
-  id: number;
-  placa: string;
-  modelo: string;
-};
+import useVehiculos from "../../hooks/useVehiculos";
+import { getStoredUserFromCookie } from "../../utils/cookies";
+import {
+  crearVehiculo,
+  eliminarVehiculo,
+  type CrearVehiculoPayload,
+} from "../../utils/empresa";
 
 function Vehiculos() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [vehiculos, setVehiculos] = useState<Vehiculo[]>(defaultVehiculos);
+  const [isCreating, setIsCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
+  const { vehiculos, isLoading, refetch, setVehiculos } = useVehiculos();
 
   const columns = useMemo(
     () => [
       { key: "id", label: "ID" },
-      { key: "placa", label: "Placa" },
+      { key: "matricula", label: "Matricula" },
       { key: "modelo", label: "Modelo" },
+      { key: "tipo", label: "Tipo" },
+      { key: "capacidad", label: "Capacidad" },
       { key: "acciones", label: "Acciones" },
     ],
     []
   );
 
+  // -------------------------------
+  //    DELETE VEHICULO
+  // -------------------------------
+
+  const handleDelete = useCallback(
+    async (idVehiculo: number | undefined) => {
+      if (!idVehiculo) {
+        window.alert("No se pudo identificar el vehiculo a eliminar.");
+        return;
+      }
+
+      setDeletingId(idVehiculo);
+
+      try {
+        const result = await eliminarVehiculo(idVehiculo);
+
+        if (!result.success) {
+          window.alert(result.message ?? "No se pudo eliminar el vehiculo.");
+          return;
+        }
+
+        setVehiculos((prev) =>
+          prev.filter((vehiculo) => vehiculo.idVehiculo !== idVehiculo)
+        );
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [setVehiculos]
+  );
+
   const rows = useMemo(
     () =>
       vehiculos.map((v) => ({
-        id: v.id,
-        placa: v.placa,
-        modelo: v.modelo,
+        id: v.idVehiculo ?? "NA",
+        matricula: v.Matricula ?? "NA",
+        modelo: v.Modelo ?? "NA",
+        tipo: v.Tipo ?? "NA",
+        capacidad:
+          typeof v.Capacidad === "number" ? `${v.Capacidad} kg` : "NA",
         acciones: (
           <button
-            onClick={() => handleDelete(v.id)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+            onClick={() => void handleDelete(v.idVehiculo)}
+            disabled={deletingId === v.idVehiculo}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Eliminar
+            {deletingId === v.idVehiculo ? "Eliminando..." : "Eliminar"}
           </button>
         ),
       })),
-    [vehiculos]
+    [vehiculos, handleDelete, deletingId]
   );
 
-  // Luego cambiar por DELETE en API
-  function handleDelete(id: number) {
-    setVehiculos((prev) => prev.filter((x) => x.id !== id));
+  const hasVehiculos = rows.length > 0;
+
+  // -------------------------------
+  //    POST VEHICULO
+  // -------------------------------
+
+  async function handleCreate(data: FormValues): Promise<boolean> {
+    if (!empresaId || isCreating) {
+      if (!empresaId) {
+        window.alert("No se pudo identificar la empresa actual.");
+      }
+      return false;
+    }
+
+    const cantidad = Number(data.Cantidad_paquetes);
+    const capacidad = Number(data.Capacidad);
+
+    if (Number.isNaN(cantidad) || Number.isNaN(capacidad)) {
+      window.alert("Cantidad y capacidad deben ser valores numericos.");
+      return false;
+    }
+
+    setIsCreating(true);
+
+    const payload: CrearVehiculoPayload = {
+      Matricula: data.Matricula.trim(),
+      Tipo: data.Tipo.trim(),
+      Modelo: data.Modelo.trim(),
+      Cantidad_paquetes: cantidad,
+      Capacidad: capacidad,
+      idEmpresa: empresaId,
+    };
+
+    try {
+      const result = await crearVehiculo(payload);
+
+      if (!result.success) {
+        window.alert(result.message ?? "No se pudo crear el vehiculo.");
+        return false;
+      }
+
+      await refetch();
+      setIsModalOpen(false);
+      return true;
+    } finally {
+      setIsCreating(false);
+    }
   }
 
-  // Luego cambiar por POST en API
-  function handleCreate(data: FormValues) {
-    const nextId = vehiculos.length
-      ? Math.max(...vehiculos.map((v) => v.id)) + 1
-      : 0;
-    setVehiculos((prev) => [
-      ...prev,
-      {
-        id: nextId,
-        placa: data.placa,
-        modelo: data.modelo,
-        estado: data.estado,
-      },
-    ]);
-    setIsModalOpen(false);
-  }
+  // -------------------------------
+  //    RENDER
+  // -------------------------------
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -85,14 +158,14 @@ function Vehiculos() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                Vehículos
+                Vehiculos
               </h1>
             </div>
             <button
               onClick={() => setIsModalOpen(true)}
               className="px-4 py-2 rounded bg-gradient-to-br from-cyan-400 to-blue-600 text-white hover:scale-105 transition-all duration-100"
             >
-              Agregar vehículo
+              Agregar vehiculo
             </button>
           </div>
 
@@ -101,7 +174,18 @@ function Vehiculos() {
               <h3 className="text-lg font-semibold">Lista</h3>
             </div>
             <div className="p-4 overflow-x-auto">
-              <Tabla columns={columns} rows={rows} />
+              {isLoading ? (
+                <p className="text-sm text-slate-400">Cargando vehiculos...</p>
+              ) : hasVehiculos ? (
+                <Tabla columns={columns} rows={rows} />
+              ) : (
+                <EmptyStateCard
+                  title="No hay vehiculos"
+                  description="No se encontraron vehiculos para esta empresa."
+                  buttonLabel="Agregar vehiculo"
+                  onButtonClick={() => setIsModalOpen(true)}
+                />
+              )}
             </div>
           </div>
         </div>

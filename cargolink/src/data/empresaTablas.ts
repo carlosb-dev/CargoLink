@@ -18,7 +18,7 @@ export const defaultVehiculos = [
   { id: 2, placa: "IJ-789-KL", modelo: "Iveco S-Way" },
 ];
 
-export const defaultFlotaAsignaciones = [
+export const defaultVinculos = [
   { id: 0, conductorId: 0, vehiculoId: 0 },
   { id: 1, conductorId: 1, vehiculoId: 1 },
 ];
@@ -65,8 +65,8 @@ export const defaultPedidos = [
     nombre: "Materia prima plástica",
     peso: "3.2 Tn",
     destino: "Planta Sur",
-    vehiculoId: defaultVehiculos[0].id,
-    administradorId: defaultAdmins[0].id,
+    vehiculoId: "67",
+    administradorId: "67",
     estadoActual: "Entregado",
   },
   {
@@ -74,8 +74,8 @@ export const defaultPedidos = [
     nombre: "Equipos electrónicos",
     peso: "1.5 Tn",
     destino: "Deposito Centro",
-    vehiculoId: defaultVehiculos[1].id,
-    administradorId: defaultAdmins[1].id,
+    vehiculoId: "67",
+    administradorId: "67",
     estadoActual: "En camino",
   },
   {
@@ -83,8 +83,8 @@ export const defaultPedidos = [
     nombre: "Insumos médicos",
     peso: "900 Kg",
     destino: "Clínica Norte",
-    vehiculoId: defaultVehiculos[2].id,
-    administradorId: defaultAdmins[0].id,
+    vehiculoId: "67",
+    administradorId: "67",
     estadoActual: "Entregado",
   },
 ];
@@ -94,8 +94,8 @@ export const defaultOrdenes = [
     nombre: "Lotes textiles",
     peso: "2.4 Tn",
     destino: "Centro Comercial Norte",
-    vehiculoId: defaultVehiculos[1].id,
-    administradorId: defaultAdmins[0].id,
+    vehiculoId: "67",
+    administradorId: "67",
     estadoActual: "Preparando",
   },
   {
@@ -103,8 +103,8 @@ export const defaultOrdenes = [
     nombre: "Insumos químicos",
     peso: "3.8 Tn",
     destino: "Laboratorio Central",
-    vehiculoId: defaultVehiculos[0].id,
-    administradorId: defaultAdmins[1].id,
+    vehiculoId: "67",
+    administradorId: "67",
     estadoActual: "Despachado",
   },
   {
@@ -112,8 +112,8 @@ export const defaultOrdenes = [
     nombre: "Paneles solares",
     peso: "1.1 Tn",
     destino: "Parque Tecnológico",
-    vehiculoId: defaultVehiculos[2].id,
-    administradorId: defaultAdmins[1].id,
+    vehiculoId: "67",
+    administradorId: "67",
     estadoActual: "En camino",
   },
 ];

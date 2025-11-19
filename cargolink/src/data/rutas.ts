@@ -1,7 +1,7 @@
 export const RUTAS = {
   HOME: "/",
   LOGIN: "/Login",
-  SIGNUP: "/SIGNUP",
+  SIGNUP: "/Signup",
   NOSOTROS: "/Nosotros",
 
   EMPRESA_PANEL: "/Empresa/Panel",

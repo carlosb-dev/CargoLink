@@ -1,34 +1,71 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
+import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
-import { defaultHistorialPedidos } from "../../data/empresaTablas";
-
-type HistorialItem = {
-  id: number;
-  tipo: string;
-  conductor: string;
-  matricula: string;
-  estadoAnterior: string;
-  estadoActual: string;
-  fechaModificacion: string;
-  nombrePedido: string;
-  destino: string;
-};
+import { getStoredUserFromCookie } from "../../utils/cookies";
+import {
+  fetchHistorialPedidos,
+  type HistorialPedido,
+} from "../../utils/empresa";
 
 function EmpresaHistorial() {
   const [open, setOpen] = useState(false);
-  const [historial] = useState<HistorialItem[]>(defaultHistorialPedidos);
+  const [historial, setHistorial] = useState<HistorialPedido[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const storedUser = getStoredUserFromCookie();
+  const empresaId = storedUser?.idEmpresa;
+
+  useEffect(() => {
+    if (!empresaId) {
+      setHistorial([]);
+      setIsLoading(false);
+      return;
+    }
+
+    let isActive = true;
+    setIsLoading(true);
+
+    fetchHistorialPedidos(empresaId)
+      .then((data) => {
+        if (!isActive) return;
+        setHistorial(data);
+      })
+      .catch(() => {
+        if (isActive) {
+          setHistorial([]);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [empresaId]);
+
+  function handleReload() {
+    if (!empresaId) return;
+    setIsLoading(true);
+
+    fetchHistorialPedidos(empresaId)
+      .then((data) => setHistorial(data))
+      .catch(() => setHistorial([]))
+      .finally(() => setIsLoading(false));
+  }
 
   const columns = useMemo(
     () => [
       { key: "conductor", label: "Conductor" },
-      { key: "matricula", label: "Vehículo" },
-      { key: "estadoAnterior", label: "Estado Anterior" },
-      { key: "estadoActual", label: "Estado Actual" },
-      { key: "fechaModificacion", label: "Fecha modificación" },
+      { key: "matricula", label: "Vehiculo" },
+      { key: "estadoAnterior", label: "Estado anterior" },
+      { key: "estadoActual", label: "Estado actual" },
+      { key: "fechaModificacion", label: "Fecha modificacion" },
       { key: "nombrePedido", label: "Pedido" },
       { key: "destino", label: "Destino" },
       { key: "tipo", label: "Tipo" },
@@ -39,17 +76,22 @@ function EmpresaHistorial() {
   const rows = useMemo(
     () =>
       historial.map((item) => ({
-        tipo: item.tipo === "orden" ? "órden" : "pedido",
-        conductor: item.conductor,
-        matricula: item.matricula,
-        estadoAnterior: item.estadoAnterior,
-        estadoActual: item.estadoActual,
-        fechaModificacion: item.fechaModificacion,
-        nombrePedido: item.nombrePedido,
-        destino: item.destino,
+        tipo:
+          item.tipo?.toLowerCase() === "orden"
+            ? "Orden"
+            : "Pedido",
+        conductor: item.conductor || "Sin asignar",
+        matricula: item.matricula || "Sin matricula",
+        estadoAnterior: item.estadoAnterior || "Sin datos",
+        estadoActual: item.estadoActual || "Sin estado",
+        fechaModificacion: item.fechaModificacion || "-",
+        nombrePedido: item.nombrePedido || "Pedido sin nombre",
+        destino: item.destino || "Sin destino",
       })),
     [historial]
   );
+
+  const hasHistorial = rows.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -77,7 +119,18 @@ function EmpresaHistorial() {
               <h3 className="text-lg font-semibold">Movimientos recientes</h3>
             </div>
             <div className="p-4 overflow-x-auto">
-              <Tabla columns={columns} rows={rows} />
+              {isLoading ? (
+                <p className="text-sm text-slate-400">Cargando historial...</p>
+              ) : hasHistorial ? (
+                <Tabla columns={columns} rows={rows} />
+              ) : (
+                <EmptyStateCard
+                  title="No hay movimientos"
+                  description="Todavia no hay pedidos registrados en el historial."
+                  buttonLabel={empresaId ? "Reintentar" : undefined}
+                  onButtonClick={empresaId ? handleReload : undefined}
+                />
+              )}
             </div>
           </div>
         </div>

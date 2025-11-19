@@ -1,22 +1,26 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RUTAS } from "../../data/rutas";
 import Header from "../../components/Header/Header";
 import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import Footer from "../../components/Footer";
+import { crearEmpresa } from "../../utils/auth";
 
 function Signup() {
   const [open, setOpen] = useState(false);
   const [empresa, setEmpresa] = useState("");
+  const [direccion, setDireccion] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmar, setConfirmar] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!empresa || !email || !password || !confirmar) {
+    if (!empresa || !email || !password || !confirmar || !direccion) {
       setError("Completa todos los campos");
       return;
     }
@@ -41,8 +45,34 @@ function Signup() {
       return;
     }
 
-    //Aqui se llama a la API para crear la cuenta
-    console.log("Registro exitoso:", { empresa, email });
+    const nuevaEmpresa = {
+      Nombre: empresa,
+      Contrasena: password,
+      Direccion: direccion,
+      Email: email,
+    };
+
+    try {
+      setIsLoading(true);
+      const result = await crearEmpresa(nuevaEmpresa);
+
+      if (!result.success) {
+        setError(result.message ?? "No se pudo crear la empresa");
+        return;
+      }
+      
+      setEmpresa("");
+      setDireccion("");
+      setEmail("");
+      setPassword("");
+      setConfirmar("");
+      navigate(RUTAS.LOGIN);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo conectar con el servidor");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -73,6 +103,18 @@ function Signup() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Direccion */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Direccion
+              </label>
+              <input
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
                 className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
               />
             </div>
@@ -108,9 +150,10 @@ function Signup() {
             <div className="flex items-center justify-between gap-3">
               <button
                 type="submit"
-                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer"
+                disabled={isLoading}
+                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer disabled:opacity-60"
               >
-                Crear cuenta
+                {isLoading ? "Cargando..." : "Crear cuenta"}
               </button>
 
               <Link
