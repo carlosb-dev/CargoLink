@@ -1,0 +1,175 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { RUTAS } from "../../data/rutas";
+import Header from "../../components/Header/Header";
+import DropdownMenu from "../../components/Dropdown/DropdownMenu";
+import Footer from "../../components/Footer";
+import { crearEmpresa } from "../../utils/auth";
+
+function Signup() {
+  const [open, setOpen] = useState(false);
+  const [empresa, setEmpresa] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!empresa || !email || !password || !confirmar || !direccion) {
+      setError("Completa todos los campos");
+      return;
+    }
+
+    if (password !== confirmar) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+    if (password.length <= 8 || password.length >= 16) {
+      setError("La contraseña debe tener entre 8 y 16 caracteres");
+      return;
+    }
+
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!$%^&#@]/.test(password);
+
+    if (!hasNumber || !hasSpecial) {
+      setError(
+        "La contraseña debe contener al menos un número y un carácter especial (!$%^&#@)"
+      );
+      return;
+    }
+
+    const nuevaEmpresa = {
+      Nombre: empresa,
+      Contrasena: password,
+      Direccion: direccion,
+      Email: email,
+    };
+
+    try {
+      setIsLoading(true);
+      const result = await crearEmpresa(nuevaEmpresa);
+
+      if (!result.success) {
+        setError(result.message ?? "No se pudo crear la empresa");
+        return;
+      }
+      
+      setEmpresa("");
+      setDireccion("");
+      setEmail("");
+      setPassword("");
+      setConfirmar("");
+      navigate(RUTAS.LOGIN);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo conectar con el servidor");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
+      <Header open={open} setOpen={setOpen} />
+      {open && <DropdownMenu />}
+
+      <main className="flex-1 flex items-center justify-center">
+        <div className="max-w-md w-full bg-slate-900/60 border border-slate-800 p-8 rounded-lg">
+          <h2 className="text-2xl font-bold mb-4">Crear cuenta</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Nombre */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Nombre de la empresa
+              </label>
+              <input
+                value={empresa}
+                onChange={(e) => setEmpresa(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Direccion */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Direccion
+              </label>
+              <input
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Contraseña */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {/* Confirmar contraseña */}
+            <div>
+              <label className="block text-sm text-slate-300 mb-1">
+                Repetir contraseña
+              </label>
+              <input
+                type="password"
+                value={confirmar}
+                onChange={(e) => setConfirmar(e.target.value)}
+                className="w-full px-3 py-2 rounded bg-slate-800 border border-slate-700 text-slate-100"
+              />
+            </div>
+
+            {error && <div className="text-sm text-red-400">{error}</div>}
+
+            <div className="flex items-center justify-between gap-3">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-4 py-2 bg-cyan-400 text-black rounded font-semibold  hover:cursor-pointer disabled:opacity-60"
+              >
+                {isLoading ? "Cargando..." : "Crear cuenta"}
+              </button>
+
+              <Link
+                to={RUTAS.LOGIN}
+                className="text-sm text-slate-300 hover:text-blue-300"
+              >
+                ¿Ya tienes cuenta? Iniciá sesión
+              </Link>
+            </div>
+          </form>
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}
+
+export default Signup;
