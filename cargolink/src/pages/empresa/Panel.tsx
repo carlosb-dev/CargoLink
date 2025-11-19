@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
@@ -6,9 +6,10 @@ import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import { defaultAdmins } from "../../data/empresaTablas";
 import { getStoredUserFromCookie } from "../../utils/cookies";
-import { fetchConductores, fetchVehiculos, getConductorEstadoLabel } from "../../utils/empresa";
-import type { Conductor, Vehiculo } from "../../utils/empresa";
+import { getConductorEstadoLabel } from "../../utils/empresa";
 import EmptyStateCard from "../../components/Globals/EmptyStateCard";
+import useConductores from "../../hooks/useConductores";
+import useVehiculos from "../../hooks/useVehiculos";
 
 // Variables de Ejemplo
 
@@ -19,65 +20,10 @@ const administradores = defaultAdmins.map(({ nombre, email }) => ({
 
 function Empresa() {
   const [open, setOpen] = useState(false);
-  const [conductores, setConductores] = useState<Conductor[]>([]);
-  const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
-  const [isConductoresLoading, setIsConductoresLoading] = useState(true);
-  const [isVehiculosLoading, setIsVehiculosLoading] = useState(true);
+  const { vehiculos, isLoading: isVehiculosLoading } = useVehiculos();
+  const { conductores, isLoading: isConductoresLoading } = useConductores();
   const storedUser = getStoredUserFromCookie();
-  const empresaId = storedUser?.idEmpresa;
   const empresaNombre = storedUser?.Nombre ?? "EmpresaTest";
-
-  useEffect(() => {
-    if (!empresaId) {
-      setConductores([]);
-      setVehiculos([]);
-      setIsConductoresLoading(false);
-      setIsVehiculosLoading(false);
-      return;
-    }
-
-    let active = true;
-    setIsConductoresLoading(true);
-    setIsVehiculosLoading(true);
-
-    fetchConductores(empresaId)
-      .then((data) => {
-        if (active) {
-          setConductores(data);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          setConductores([]);
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsConductoresLoading(false);
-        }
-      });
-
-    fetchVehiculos(empresaId)
-      .then((data) => {
-        if (active) {
-          setVehiculos(data);
-        }
-      })
-      .catch(() => {
-        if (active) {
-          setVehiculos([]);
-        }
-      })
-      .finally(() => {
-        if (active) {
-          setIsVehiculosLoading(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [empresaId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
@@ -175,11 +121,15 @@ function Empresa() {
                   ) : vehiculos.length > 0 ? (
                     <Tabla
                       columns={[
-                        { key: "placa", label: "Placa" },
+                        { key: "matricula", label: "Matricula" },
                         { key: "modelo", label: "Modelo" },
-                        { key: "estado", label: "Estado" },
+                        { key: "tipo", label: "Tipo" },
                       ]}
-                      rows={vehiculos}
+                      rows={vehiculos.map((vehiculo) => ({
+                        matricula: vehiculo.Matricula ?? "NA",
+                        modelo: vehiculo.Modelo ?? "NA",
+                        tipo: vehiculo.Tipo ?? "NA",
+                      }))}
                     />
                   ) : (
                     <EmptyStateCard

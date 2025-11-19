@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
@@ -11,87 +11,18 @@ import { getStoredUserFromCookie } from "../../utils/cookies";
 import {
   crearConductor,
   eliminarConductor,
-  fetchConductores,
   getConductorEstadoLabel,
-  type Conductor,
   type CrearConductorPayload,
 } from "../../utils/empresa";
+import useConductores from "../../hooks/useConductores";
 
 function Conductores() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [conductores, setConductores] = useState<Conductor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [reloadKey, setReloadKey] = useState(0);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
-
-  const columns = useMemo(
-    () => [
-      { key: "id", label: "ID" },
-      { key: "nombre", label: "Nombre" },
-      { key: "email", label: "Email" },
-      { key: "licencia", label: "Licencia" },
-      { key: "estado", label: "Estado" },
-      { key: "acciones", label: "Acciones" },
-    ],
-    []
-  );
-
-  const rows = useMemo(
-    () =>
-      conductores.map((c) => ({
-        id: c.idConductor,
-        email: c.Email ?? "NA",
-        nombre: c.Nombre ?? "NA",
-        licencia: c.Licencia ?? "NA",
-        estado: getConductorEstadoLabel(c.Estado ?? ""),
-        acciones: (
-          <button
-            onClick={() => void handleDelete(c.idConductor)}
-            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
-          >
-            Eliminar
-          </button>
-        ),
-      })),
-    [conductores]
-  );
-
-  const hasConductores = rows.length > 0;
-
-  // -------------------------------
-  //    GET CONDUCTOR
-  // -------------------------------
-
-  useEffect(() => {
-    if (!empresaId) {
-      setConductores([]);
-      setIsLoading(false);
-      return;
-    }
-
-    let isActive = true;
-    setIsLoading(true);
-
-    fetchConductores(empresaId)
-      .then((data) => {
-        if (!isActive) return;
-        setConductores(data);
-      })
-      .catch(() => {
-        if (!isActive) return;
-        setConductores([]);
-      })
-      .finally(() => {
-        if (isActive) setIsLoading(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [empresaId, reloadKey]);
+  const { conductores, isLoading, setConductores, refetch } = useConductores();
 
   // -------------------------------
   //    POST CONDUCTOR
@@ -122,7 +53,7 @@ function Conductores() {
         return false;
       }
 
-      setReloadKey((prev) => prev + 1);
+      await refetch();
       setIsModalOpen(false);
       return true;
     } finally {
@@ -134,23 +65,66 @@ function Conductores() {
   //    DELETE CONDUCTOR
   // -------------------------------
 
-  async function handleDelete(idConductor: number | undefined) {
-    if (!idConductor) {
-      window.alert("No se pudo identificar el conductor a eliminar.");
-      return;
-    }
+  const handleDelete = useCallback(
+    async (idConductor: number | undefined) => {
+      if (!idConductor) {
+        window.alert("No se pudo identificar el conductor a eliminar.");
+        return;
+      }
 
-    const result = await eliminarConductor(idConductor);
+      const result = await eliminarConductor(idConductor);
 
-    if (!result.success) {
-      window.alert(result.message ?? "No se pudo eliminar el conductor.");
-      return;
-    }
+      if (!result.success) {
+        window.alert(result.message ?? "No se pudo eliminar el conductor.");
+        return;
+      }
 
-    setConductores((prev) =>
-      prev.filter((conductor) => conductor.idConductor !== idConductor)
-    );
-  }
+      setConductores((prev) =>
+        prev.filter((conductor) => conductor.idConductor !== idConductor)
+      );
+    },
+    [setConductores]
+  );
+
+  const columns = useMemo(
+    () => [
+      { key: "id", label: "ID" },
+      { key: "nombre", label: "Nombre" },
+      { key: "email", label: "Email" },
+      { key: "licencia", label: "Licencia" },
+      { key: "estado", label: "Estado" },
+      { key: "acciones", label: "Acciones" },
+    ],
+    []
+  );
+
+
+
+  const rows = useMemo(
+    () =>
+      conductores.map((c) => ({
+        id: c.idConductor,
+        email: c.Email ?? "NA",
+        nombre: c.Nombre ?? "NA",
+        licencia: c.Licencia ?? "NA",
+        estado: getConductorEstadoLabel(c.Estado ?? ""),
+        acciones: (
+          <button
+            onClick={() => void handleDelete(c.idConductor)}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+          >
+            Eliminar
+          </button>
+        ),
+      })),
+    [conductores, handleDelete]
+  );
+
+  const hasConductores = rows.length > 0;
+
+  // -------------------------------
+  //    RENDER
+  // -------------------------------
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">

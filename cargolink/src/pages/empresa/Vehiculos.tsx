@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer";
 import Tabla from "../../components/Empresa/Tabla";
@@ -7,52 +7,27 @@ import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import type { FormValues } from "../../components/Empresa/ModalCreaVehiculo";
 import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
+import useVehiculos from "../../hooks/useVehiculos";
 import { getStoredUserFromCookie } from "../../utils/cookies";
-import { fetchVehiculos, type Vehiculo } from "../../utils/empresa";
+import {
+  crearVehiculo,
+  type CrearVehiculoPayload,
+} from "../../utils/empresa";
 
 function Vehiculos() {
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isCreating, setIsCreating] = useState(false);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
-
-  useEffect(() => {
-    if (!empresaId) {
-      setVehiculos([]);
-      setIsLoading(false);
-      return;
-    }
-
-    let isActive = true;
-    setIsLoading(true);
-
-    fetchVehiculos(empresaId)
-      .then((data) => {
-        if (!isActive) return;
-        setVehiculos(data);
-      })
-      .catch(() => {
-        if (!isActive) return;
-        setVehiculos([]);
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [empresaId]);
+  const { vehiculos, isLoading, refetch } = useVehiculos();
 
   const columns = useMemo(
     () => [
-      { key: "placa", label: "Placa" },
+      { key: "matricula", label: "Matricula" },
       { key: "modelo", label: "Modelo" },
-      { key: "estado", label: "Estado" },
+      { key: "tipo", label: "Tipo" },
+      { key: "capacidad", label: "Capacidad" },
     ],
     []
   );
@@ -60,34 +35,67 @@ function Vehiculos() {
   const rows = useMemo(
     () =>
       vehiculos.map((v) => ({
-        placa: v.placa,
-        modelo: v.modelo,
-        estado: v.estado ?? "Sin estado",
+        matricula: v.Matricula ?? "NA",
+        modelo: v.Modelo ?? "NA",
+        tipo: v.Tipo ?? "NA",
+        capacidad:
+          typeof v.Capacidad === "number" ? `${v.Capacidad} kg` : "NA",
       })),
     [vehiculos]
   );
 
-  function handleCreate(data: FormValues) {
-    const nextId =
-      vehiculos.length > 0
-        ? Math.max(
-            ...vehiculos.map((v) => (typeof v.id === "number" ? v.id : 0))
-          ) + 1
-        : 1;
+  const hasVehiculos = rows.length > 0;
 
-    setVehiculos((prev) => [
-      ...prev,
-      {
-        id: nextId,
-        placa: data.placa,
-        modelo: data.modelo,
-        estado: data.estado,
-      },
-    ]);
-    setIsModalOpen(false);
+  // -------------------------------
+  //    POST VEHICULO
+  // -------------------------------
+
+  async function handleCreate(data: FormValues): Promise<boolean> {
+    if (!empresaId || isCreating) {
+      if (!empresaId) {
+        window.alert("No se pudo identificar la empresa actual.");
+      }
+      return false;
+    }
+
+    const cantidad = Number(data.Cantidad_paquetes);
+    const capacidad = Number(data.Capacidad);
+
+    if (Number.isNaN(cantidad) || Number.isNaN(capacidad)) {
+      window.alert("Cantidad y capacidad deben ser valores numericos.");
+      return false;
+    }
+
+    setIsCreating(true);
+
+    const payload: CrearVehiculoPayload = {
+      Matricula: data.Matricula.trim(),
+      Tipo: data.Tipo.trim(),
+      Modelo: data.Modelo.trim(),
+      Cantidad_paquetes: cantidad,
+      Capacidad: capacidad,
+      idEmpresa: empresaId,
+    };
+
+    try {
+      const result = await crearVehiculo(payload);
+
+      if (!result.success) {
+        window.alert(result.message ?? "No se pudo crear el vehiculo.");
+        return false;
+      }
+
+      await refetch();
+      setIsModalOpen(false);
+      return true;
+    } finally {
+      setIsCreating(false);
+    }
   }
 
-  const hasVehiculos = rows.length > 0;
+  // -------------------------------
+  //    RENDER
+  // -------------------------------
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
