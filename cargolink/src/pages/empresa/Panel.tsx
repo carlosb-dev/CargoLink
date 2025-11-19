@@ -6,7 +6,7 @@ import DropdownMenu from "../../components/Dropdown/DropdownMenu";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import { defaultAdmins } from "../../data/empresaTablas";
 import { getStoredUserFromCookie } from "../../utils/cookies";
-import { fetchConductores, fetchVehiculos } from "../../utils/empresa";
+import { fetchConductores, fetchVehiculos, getConductorEstadoLabel } from "../../utils/empresa";
 import type { Conductor, Vehiculo } from "../../utils/empresa";
 import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 
@@ -21,6 +21,8 @@ function Empresa() {
   const [open, setOpen] = useState(false);
   const [conductores, setConductores] = useState<Conductor[]>([]);
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
+  const [isConductoresLoading, setIsConductoresLoading] = useState(true);
+  const [isVehiculosLoading, setIsVehiculosLoading] = useState(true);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
   const empresaNombre = storedUser?.Nombre ?? "EmpresaTest";
@@ -29,10 +31,14 @@ function Empresa() {
     if (!empresaId) {
       setConductores([]);
       setVehiculos([]);
+      setIsConductoresLoading(false);
+      setIsVehiculosLoading(false);
       return;
     }
 
     let active = true;
+    setIsConductoresLoading(true);
+    setIsVehiculosLoading(true);
 
     fetchConductores(empresaId)
       .then((data) => {
@@ -43,6 +49,11 @@ function Empresa() {
       .catch(() => {
         if (active) {
           setConductores([]);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setIsConductoresLoading(false);
         }
       });
 
@@ -55,6 +66,11 @@ function Empresa() {
       .catch(() => {
         if (active) {
           setVehiculos([]);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setIsVehiculosLoading(false);
         }
       });
 
@@ -101,15 +117,23 @@ function Empresa() {
                 <div className="p-4 border-b border-slate-800">
                   <h3 className="text-lg font-semibold">Conductores</h3>
                 </div>
-                <div className="p-4 overflow-x-auto">
-                  {conductores.length > 0 ? (
+                <div className="p-4 overflow-x-auto overflow-y-auto max-h-64">
+                  {isConductoresLoading ? (
+                    <p className="text-sm text-slate-400">
+                      Cargando conductores...
+                    </p>
+                  ) : conductores.length > 0 ? (
                     <Tabla
                       columns={[
-                        { key: "nombre", label: "Nombre" },
-                        { key: "estado", label: "Estado" },
-                        { key: "licencia", label: "Licencia" },
+                        { key: "Nombre", label: "Nombre" },
+                        { key: "Estado", label: "Estado" },
+                        { key: "Licencia", label: "Licencia" },
                       ]}
-                      rows={conductores}
+                      rows={conductores.map((c) => ({
+                        Nombre: c.Nombre ?? "NA",
+                        Estado: getConductorEstadoLabel(c.Estado ?? ""),
+                        Licencia: c.Licencia ?? "NA",
+                      }))}
                     />
                   ) : (
                     <EmptyStateCard
@@ -127,7 +151,7 @@ function Empresa() {
                 <div className="p-4 border-b border-slate-800">
                   <h3 className="text-lg font-semibold">Administradores</h3>
                 </div>
-                <div className="p-4 overflow-x-auto">
+                <div className="p-4 overflow-x-auto overflow-y-auto max-h-64">
                   <Tabla
                     columns={[
                       { key: "nombre", label: "Nombre" },
@@ -143,8 +167,12 @@ function Empresa() {
                 <div className="p-4 border-b border-slate-800">
                   <h3 className="text-lg font-semibold">Vehiculos</h3>
                 </div>
-                <div className="p-4 overflow-x-auto">
-                  {vehiculos.length > 0 ? (
+                <div className="p-4 overflow-x-auto overflow-y-auto max-h-64">
+                  {isVehiculosLoading ? (
+                    <p className="text-sm text-slate-400">
+                      Cargando vehículos...
+                    </p>
+                  ) : vehiculos.length > 0 ? (
                     <Tabla
                       columns={[
                         { key: "placa", label: "Placa" },
