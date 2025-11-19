@@ -1,6 +1,7 @@
 import hero from "../assets/hero.png";
 import { Link } from "react-router-dom";
 import { RUTAS } from "../data/rutas";
+import { getStoredUserFromCookie } from "../utils/cookies";
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
@@ -9,8 +10,10 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 
 function SeccionHero() {
+  const storedUser = getStoredUserFromCookie();
   const truckRef = useRef(null);
   const frontLightRef = useRef(null);
+  const rutaDinamica = storedUser?.idEmpresa ? RUTAS.EMPRESA_PANEL : RUTAS.SIGNUP;
 
   useEffect(() => {
     // Inicializar AOS
@@ -51,27 +54,27 @@ function SeccionHero() {
       <div className="space-y-6">
         <h1
           className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight"
-          data-aos="zoom-in" // 👈 Efecto zoom-in para el título
-          data-aos-delay="200" // 👈 Pequeño delay para mejor timing
+          data-aos="zoom-in"
+          data-aos-delay="200"
         >
           Logística con Tecnología
         </h1>
         <p
           className="text-slate-300 max-w-xl"
-          data-aos="zoom-in" // 👈 Efecto zoom-in para el párrafo
-          data-aos-delay="400" // 👈 Delay mayor para efecto escalonado
+          data-aos="zoom-in"
+          data-aos-delay="400"
         >
           Automatizamos la Gestión de tu Flota con precisión absoluta, para que
           tu Servicio de Transporte alcance la excelencia operativa
         </p>
         <div
           className="flex gap-4"
-          data-aos="zoom-in" // 👈 Efecto zoom-in para los botones
-          data-aos-delay="600" // 👈 Delay mayor para el último elemento
+          data-aos="zoom-in"
+          data-aos-delay="600"
         >
           <Link
             className="inline-flex items-center gap-2 px-5 py-3 bg-cyan-400 text-black font-semibold rounded shadow hover:scale-[1.02] hover:-translate-y-[5px] hover:shadow-[0_10px_30px_rgba(255,255,255,0.3)] transition-all duration-300"
-            to={RUTAS.SIGNUP}
+            to={rutaDinamica}
           >
             Comenzar
           </Link>
@@ -87,7 +90,7 @@ function SeccionHero() {
             className="w-full h-auto rounded-2xl object-cover"
           />
 
-          {/* 🔦 LUZ FRONTAL */}
+          {/* Luz frontal */}
           <div
             ref={frontLightRef}
             className="absolute bottom-[8%] left-[5%] w-[20%] h-[5%] bg-yellow-50 opacity-0 blur-sm rounded-full rotate-[24deg]"
