@@ -40,7 +40,7 @@ function Login() {
       const result = await loginEmpresa(loginData);
 
       if (!result.success) {
-        setError(result.message ?? "Credenciales incorrectas");
+        setError("Credenciales incorrectas");
         return;
       }
 

@@ -51,7 +51,6 @@ export async function fetchAdministradores(
     ? [raw]
     : [];
 
-  console.log("Administradores obtenidos:", list);
   return list;
 }
 

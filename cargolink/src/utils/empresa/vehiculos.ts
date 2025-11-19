@@ -59,7 +59,6 @@ export async function fetchVehiculos(
     ? [raw]
     : [];
 
-  console.log("Vehiculos obtenidos:", list);
   return list;
 }
 

@@ -110,7 +110,6 @@ export async function fetchVinculos(
     })
     .filter((value): value is FlotaAsignacion => value !== null);
 
-  console.log("Flota asignaciones obtenidas:", asignaciones);
   return asignaciones;
 }
 
@@ -126,8 +125,6 @@ export async function crearVinculo(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-
-  console.log(payload);
 
   const body = (await response.json().catch(() => null)) as {
     message?: string;

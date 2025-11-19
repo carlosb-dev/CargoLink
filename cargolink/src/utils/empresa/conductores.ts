@@ -87,7 +87,6 @@ export async function fetchConductores(
     ? [raw]
     : [];
 
-  console.log("Conductores obtenidos:", list);
   return list;
 }
 
