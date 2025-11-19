@@ -10,21 +10,12 @@ import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import { getStoredUserFromCookie } from "../../utils/cookies";
 import {
   crearConductor,
+  eliminarConductor,
   fetchConductores,
   getConductorEstadoLabel,
   type Conductor,
   type CrearConductorPayload,
 } from "../../utils/empresa";
-
-function getNextConductorId(list: Conductor[]): number {
-  if (list.length === 0) {
-    return 1;
-  }
-
-  return (
-    Math.max(...list.map((c) => (typeof c.id === "number" ? c.id : 0))) + 1
-  );
-}
 
 function Conductores() {
   const [open, setOpen] = useState(false);
@@ -32,8 +23,47 @@ function Conductores() {
   const [conductores, setConductores] = useState<Conductor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const storedUser = getStoredUserFromCookie();
   const empresaId = storedUser?.idEmpresa;
+
+  const columns = useMemo(
+    () => [
+      { key: "id", label: "ID" },
+      { key: "nombre", label: "Nombre" },
+      { key: "email", label: "Email" },
+      { key: "licencia", label: "Licencia" },
+      { key: "estado", label: "Estado" },
+      { key: "acciones", label: "Acciones" },
+    ],
+    []
+  );
+
+  const rows = useMemo(
+    () =>
+      conductores.map((c) => ({
+        id: c.idConductor,
+        email: c.Email ?? "NA",
+        nombre: c.Nombre ?? "NA",
+        licencia: c.Licencia ?? "NA",
+        estado: getConductorEstadoLabel(c.Estado ?? ""),
+        acciones: (
+          <button
+            onClick={() => void handleDelete(c.idConductor)}
+            className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
+          >
+            Eliminar
+          </button>
+        ),
+      })),
+    [conductores]
+  );
+
+  const hasConductores = rows.length > 0;
+
+  // -------------------------------
+  //    GET CONDUCTOR
+  // -------------------------------
 
   useEffect(() => {
     if (!empresaId) {
@@ -55,59 +85,18 @@ function Conductores() {
         setConductores([]);
       })
       .finally(() => {
-        if (isActive) {
-          setIsLoading(false);
-        }
+        if (isActive) setIsLoading(false);
       });
 
     return () => {
       isActive = false;
     };
-  }, [empresaId]);
+  }, [empresaId, reloadKey]);
 
-  const columns = useMemo(
-    () => [
-      { key: "id", label: "ID" },
-      { key: "nombre", label: "Nombre" },
-      { key: "estado", label: "Estado" },
-      { key: "licencia", label: "Licencia" },
-      { key: "acciones", label: "Acciones" },
-    ],
-    []
-  );
+  // -------------------------------
+  //    POST CONDUCTOR
+  // -------------------------------
 
-  const rows = useMemo(
-    () =>
-      conductores.map((c, index) => {
-        const rowId =
-          typeof c.id === "number" ? c.id : index + 1;
-
-        return {
-          id: rowId,
-          nombre: c.nombre ?? "",
-          estado: c.estado ?? "Sin estado",
-          licencia: c.licencia ?? "",
-          acciones: (
-            <button
-              onClick={() => handleDelete(rowId)}
-              className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950"
-            >
-              Eliminar
-            </button>
-          ),
-        };
-      }),
-    [conductores]
-  );
-
-  const hasConductores = rows.length > 0;
-
-  // Luego cambiar por DELETE en API
-  function handleDelete(id: number) {
-    setConductores((prev) => prev.filter((x) => x.id !== id));
-  }
-
-  // Luego cambiar por POST en API
   async function handleCreate(data: FormValues): Promise<boolean> {
     if (!empresaId || isCreating) {
       if (!empresaId) {
@@ -121,7 +110,6 @@ function Conductores() {
     const payload: CrearConductorPayload = {
       Nombre: data.Nombre.trim(),
       Licencia: data.Licencia.trim(),
-      Estado: data.Estado,
       Email: data.Email.trim(),
       idEmpresa: empresaId,
     };
@@ -134,30 +122,34 @@ function Conductores() {
         return false;
       }
 
-      const conductorFromApi = result.conductor;
-
-      setConductores((prev) => {
-        if (conductorFromApi) {
-          return [...prev, conductorFromApi];
-        }
-
-        return [
-          ...prev,
-          {
-            id: getNextConductorId(prev),
-            nombre: payload.Nombre,
-            estado: getConductorEstadoLabel(payload.Estado),
-            licencia: payload.Licencia,
-            email: payload.Email,
-          },
-        ];
-      });
-
+      setReloadKey((prev) => prev + 1);
       setIsModalOpen(false);
       return true;
     } finally {
       setIsCreating(false);
     }
+  }
+
+  // -------------------------------
+  //    DELETE CONDUCTOR
+  // -------------------------------
+
+  async function handleDelete(idConductor: number | undefined) {
+    if (!idConductor) {
+      window.alert("No se pudo identificar el conductor a eliminar.");
+      return;
+    }
+
+    const result = await eliminarConductor(idConductor);
+
+    if (!result.success) {
+      window.alert(result.message ?? "No se pudo eliminar el conductor.");
+      return;
+    }
+
+    setConductores((prev) =>
+      prev.filter((conductor) => conductor.idConductor !== idConductor)
+    );
   }
 
   return (

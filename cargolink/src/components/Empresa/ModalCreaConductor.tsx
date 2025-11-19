@@ -1,14 +1,9 @@
 import { useState } from "react";
-import { CONDUCTOR_ESTADO_OPTIONS } from "../../utils/empresa";
-
-type ConductorEstadoValue =
-  (typeof CONDUCTOR_ESTADO_OPTIONS)[number]["value"];
 
 type FormValues = {
   Nombre: string;
   Email: string;
   Licencia: string;
-  Estado: ConductorEstadoValue;
 };
 
 type Props = {
@@ -21,7 +16,6 @@ const getInitialFormValues = (): FormValues => ({
   Nombre: "",
   Email: "",
   Licencia: "",
-  Estado: CONDUCTOR_ESTADO_OPTIONS[0]?.value ?? 1,
 });
 
 function ModalCreaConductor({ open, onClose, onCreate }: Props) {
@@ -78,23 +72,6 @@ function ModalCreaConductor({ open, onClose, onCreate }: Props) {
               }
               required
             />
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Estado</label>
-            <select
-              className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-slate-100 outline-none focus:ring-2 focus:ring-indigo-600"
-              value={String(form.Estado)}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, Estado: Number(e.target.value) }))
-              }
-              required
-            >
-              {CONDUCTOR_ESTADO_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
           </div>
           <div>
             <label className="block text-sm mb-1">Licencia</label>

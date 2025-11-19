@@ -1,21 +1,26 @@
 import { apiURL } from "../data/apiData";
 
-export interface Conductor {
-  id?: number;
-  nombre: string;
-  estado: string;
-  licencia: string;
-  email?: string;
+  // -------------------------------
+  //    TIPOS DE DATO
+  // -------------------------------
+
+export type Conductor = {
+  Email: string;
+  Estado?: number;
+  Licencia: string;
+  Nombre: string;
+  idConductor: number;
+  idEmpresa: number;
 }
 
-export interface Vehiculo {
+export type Vehiculo = {
   id?: number;
   placa: string;
   modelo: string;
   estado: string;
 }
 
-export interface HistorialPedido {
+export type HistorialPedido = {
   id?: number;
   tipo: string;
   conductor: string;
@@ -27,18 +32,36 @@ export interface HistorialPedido {
   destino: string;
 }
 
-export interface Administrador {
+export type Administrador = {
   idAdministrador?: number;
   Nombre: string;
   Email: string;
 }
 
-export interface CreateAdministradorPayload {
+export type CreateAdministradorPayload = {
   Nombre: string;
   Contrasena: string;
   Email: string;
   idEmpresa: number;
 }
+
+export type CrearConductorPayload = {
+  Nombre: string;
+  Licencia: string;
+  Email: string;
+  idEmpresa: number;
+};
+
+export type CrearConductorResult = {
+  success: boolean;
+  message?: string;
+  conductor?: Conductor;
+};
+
+export type EliminarConductorResult = {
+  success: boolean;
+  message?: string;
+};
 
 export const CONDUCTOR_ESTADO_OPTIONS = [
   { value: 1, label: "Activo" },
@@ -46,13 +69,14 @@ export const CONDUCTOR_ESTADO_OPTIONS = [
   { value: 0, label: "De Baja" },
 ] as const;
 
-type ConductorEstadoValue = (typeof CONDUCTOR_ESTADO_OPTIONS)[number]["value"];
 
 const estadoLabelByValue: Record<ConductorEstadoValue, string> = {
   0: "De Baja",
   1: "Activo",
   2: "En Ruta",
 };
+
+type ConductorEstadoValue = (typeof CONDUCTOR_ESTADO_OPTIONS)[number]["value"];
 
 export function getConductorEstadoLabel(value: number | string): string {
   if (typeof value === "number") {
@@ -74,19 +98,9 @@ export function getConductorEstadoLabel(value: number | string): string {
   return "Sin estado";
 }
 
-export type CrearConductorPayload = {
-  Nombre: string;
-  Licencia: string;
-  Estado: ConductorEstadoValue;
-  Email: string;
-  idEmpresa: number;
-};
-
-export type CrearConductorResult = {
-  success: boolean;
-  message?: string;
-  conductor?: Conductor;
-};
+  // -------------------------------
+  //    CONDUCTORES
+  // -------------------------------
 
 export async function fetchConductores(
   idEmpresa: number
@@ -99,14 +113,18 @@ export async function fetchConductores(
     );
   }
 
-  const data = (await response.json()) as
-    | Conductor[]
-    | {
-        conductores?: Conductor[];
-      };
+  const raw = await response.json();
 
-  const list = Array.isArray(data) ? data : data?.conductores;
-  return Array.isArray(list) ? list : [];
+  const list = Array.isArray(raw)
+    ? raw
+    : Array.isArray(raw?.conductores)
+      ? raw.conductores
+      : raw
+        ? [raw] // convierte un objeto a arreglo de un solo elemento
+        : [];
+
+  console.log("Conductores obtenidos:", list);
+  return list;
 }
 
 export async function crearConductor(
@@ -141,6 +159,39 @@ export async function crearConductor(
   };
 }
 
+export async function eliminarConductor(
+  idConductor: number
+): Promise<EliminarConductorResult> {
+  const response = await fetch(
+    `${apiURL}/empresa/conductor/eliminar/${idConductor}`,
+    {
+      method: "DELETE",
+    }
+  );
+
+  const body = (await response
+    .json()
+    .catch(() => null)) as { message?: string; success?: boolean } | null;
+
+  if (!response.ok) {
+    return {
+      success: false,
+      message:
+        body?.message ??
+        `No se pudo eliminar el conductor (${response.status})`,
+    };
+  }
+
+  return {
+    success: body?.success ?? true,
+    message: body?.message,
+  };
+}
+
+// -------------------------------
+//    VEHICULOS
+// -------------------------------
+
 export async function fetchVehiculos(
   idEmpresa: number
 ): Promise<Vehiculo[]> {
@@ -161,6 +212,10 @@ export async function fetchVehiculos(
   const list = Array.isArray(data) ? data : data?.vehiculos;
   return Array.isArray(list) ? list : [];
 }
+
+// -------------------------------
+//    HISTORIAL
+// -------------------------------
 
 export async function fetchHistorialPedidos(
   idEmpresa: number
@@ -187,6 +242,10 @@ export async function fetchHistorialPedidos(
 
   return Array.isArray(list) ? list : [];
 }
+
+// -------------------------------
+//    ADMINISTRADORES
+// -------------------------------
 
 export async function createAdministrador(
   payload: CreateAdministradorPayload
