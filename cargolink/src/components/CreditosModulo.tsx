@@ -1,5 +1,5 @@
 
-function CreditosModulo({nombre, rol, enlace}: {nombre: string; rol: string; enlace: string}) {
+function CreditosModulo({nombre, rol, enlace, linkText}: {nombre: string; rol: string; enlace: string; linkText?: string}) {
   return (
     <div className="bg-slate-800/30 p-4 rounded-lg hover:scale-110 transition-all duration-300">
       <div className="font-medium">{nombre}</div>
@@ -10,7 +10,7 @@ function CreditosModulo({nombre, rol, enlace}: {nombre: string; rol: string; enl
         target="_blank"
         rel="noreferrer"
       >
-        github.com/carlosb-dev
+        {linkText} ➜
       </a>
     </div>
   );

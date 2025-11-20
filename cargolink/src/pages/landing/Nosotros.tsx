@@ -47,26 +47,30 @@ function Nosotros() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <CreditosModulo
               nombre={"Carlos Bello"}
-              rol={"Front-end y Diseño"}
+              rol={"Front-end/UX"}
               enlace={"https://github.com/carlosb-dev"}
+              linkText={"Ir al Perfil "}
             />
 
             <CreditosModulo
               nombre={"Jorge Casco"}
-              rol={"Middleware y API REST"}
+              rol={"Backend/API"}
               enlace={"https://github.com/jorge-link"}
+              linkText={"Ir al Perfil"}
             />
 
             <CreditosModulo
               nombre={"Francisco García"}
-              rol={"Back-end y Base de Datos"}
+              rol={"Datos/DB"}
               enlace={"https://github.com/SirFrancis2007"}
+              linkText={"Ir al Perfil"}
             />
 
             <CreditosModulo
               nombre={"GitHub"}
-              rol={"Proyecto Open Source"}
+              rol={"Repo del Proyecto"}
               enlace={"https://github.com/carlosb-dev/CargoLink"}
+              linkText={"Ir al Repo"}
             />
           </div>
         </section>
