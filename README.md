@@ -1,8 +1,6 @@
-## Computación 2025
+# **Computación 2025: Proyecto Final - Generacion T**
 
-# 🚌 **Proyecto Final - Generacion T**
-
----
+<img width="1591" height="938" alt="image" src="https://github.com/user-attachments/assets/5b60a120-cdbf-48d8-be53-b315a20dc5d3" />
 
 # 🚚 CargoLink — Sistema de Gestión Logística
 
