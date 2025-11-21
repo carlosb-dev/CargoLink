@@ -12,8 +12,8 @@ import Vehiculos from "./pages/empresa/Vehiculos";
 import Flota from "./pages/empresa/Flota";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { RUTAS } from "./data/rutas";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const router = createBrowserRouter([
   { path: RUTAS.HOME, element: <Home /> },
