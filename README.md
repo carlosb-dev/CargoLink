@@ -15,13 +15,13 @@ Este proyecto incluye **Frontend + Backend + Base de Datos**, conectados y compl
 CargoLink permite que una empresa de logística gestione digitalmente sus recursos.
 El sistema implementa:
 
- ✔ Registro de empresa.
- ✔ Inicio de sesión por rol.
- ✔ Gestión de administradores.
- ✔ Gestión de conductores.
- ✔ Gestión de vehículos.
- ✔ Asignación de vehículos a conductores.
- ✔ Seguimiento de pedidos.
+ ✔ Registro de empresa.  
+ ✔ Inicio de sesión por rol.  
+ ✔ Gestión de administradores.  
+ ✔ Gestión de conductores.  
+ ✔ Gestión de vehículos.  
+ ✔ Asignación de vehículos a conductores.  
+ ✔ Seguimiento de pedidos.  
 
 El objetivo es brindar una plataforma sencilla y eficiente para administrar una flota de transporte y su personal, facilitando flujos de trabajo típicos de una empresa logística.
 
