@@ -18,4 +18,6 @@ export const RUTAS = {
   ADMIN_LISTA_PEDIDOS: "/Administrador/ListaPedidos",
   ADMIN_LISTA_ORDENES: "/Administrador/ListaOrdenes",
   ADMIN_HISTORIAL: "/Administrador/Historial",
+
+  ACCESO_DENEGADO: "/AccesoDenegado",
 };
