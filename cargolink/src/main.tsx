@@ -10,6 +10,7 @@ import Administradores from "./pages/empresa/Administradores";
 import Conductores from "./pages/empresa/Conductores";
 import Vehiculos from "./pages/empresa/Vehiculos";
 import Flota from "./pages/empresa/Flota";
+import ErrorBoundary from "./components/Globals/ErrorBoundary";
 import {
   createBrowserRouter,
   Outlet,
@@ -54,6 +55,9 @@ export function TitleLayout() {
 const router = createBrowserRouter([
   {
     element: <TitleLayout />,
+    errorElement: (
+      <ErrorBoundary message="La ruta que intentaste acceder no existe." />
+    ), // Manejo de rutas no encontradas
     children: [
       { path: RUTAS.HOME, element: <Home /> },
       { path: RUTAS.LOGIN, element: <Login /> },
