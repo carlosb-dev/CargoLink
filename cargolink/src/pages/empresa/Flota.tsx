@@ -8,7 +8,7 @@ import type { FormValues } from "../../components/Empresa/ModalAsignaFlota";
 import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import { EMPRESA_NAV_ITEMS } from "../../data/navLinks";
 import useConductores from "../../hooks/useConductores";
-import useVehiculos from "../../hooks/useVehiculos";  
+import useVehiculos from "../../hooks/useVehiculos";
 import useVinculos from "../../hooks/useVinculos";
 import {
   crearVinculo,
@@ -16,8 +16,11 @@ import {
   getConductorEstadoLabel,
   type FlotaAsignacion,
 } from "../../utils/empresa";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 function Flota() {
+  useAuthRedirect();
+
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -51,9 +54,7 @@ function Flota() {
         });
 
         if (!result.success) {
-          window.alert(
-            result.message ?? "No se pudo eliminar la vinculacion."
-          );
+          window.alert(result.message ?? "No se pudo eliminar la vinculacion.");
           return;
         }
 
@@ -79,9 +80,7 @@ function Flota() {
         });
 
         if (!result.success) {
-          window.alert(
-            result.message ?? "No se pudo crear la vinculacion."
-          );
+          window.alert(result.message ?? "No se pudo crear la vinculacion.");
           return;
         }
 
@@ -133,7 +132,9 @@ function Flota() {
               disabled={deletingId === asignacion.id}
               className="px-3 py-1 rounded bg-red-700 text-white hover:bg-red-950 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {deletingId === asignacion.id ? "Desvinculando..." : "Desvincular"}
+              {deletingId === asignacion.id
+                ? "Desvinculando..."
+                : "Desvincular"}
             </button>
           ),
         };
@@ -202,9 +203,8 @@ function Flota() {
               {sinVehiculosDisponibles
                 ? "No hay vehículos disponibles"
                 : sinConductoresDisponibles
-                  ? "No hay conductores disponibles"
-                  : "Asignar vehículo"
-              }
+                ? "No hay conductores disponibles"
+                : "Asignar vehículo"}
             </button>
           </div>
 

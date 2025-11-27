@@ -9,11 +9,7 @@ function Nosotros() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-[#071029] to-black text-slate-100 flex flex-col">
-      <Header
-        open={open}
-        setOpen={setOpen}
-        mostrarAuth={true}
-      />
+      <Header open={open} setOpen={setOpen} mostrarAuth={true} />
       {open && (
         <DropdownMenu open={open} mostrarAuth={true} mostrarNav={true} />
       )}
@@ -35,8 +31,9 @@ function Nosotros() {
             <p className="text-slate-300 max-w-3xl leading-relaxed">
               Todo el diseño está pensado para la supervisión diaria: tablas
               claras para crear, editar o eliminar registros, asignación ágil
-              entre conductores y vehículos, y estados visibles al instante
-              para saber quién está disponible. Menos clics, más control de tu operación.
+              entre conductores y vehículos, y estados visibles al instante para
+              saber quién está disponible. Menos clics, más control de tu
+              operación.
             </p>
           </div>
         </section>

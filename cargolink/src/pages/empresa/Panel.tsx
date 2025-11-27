@@ -10,8 +10,11 @@ import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import useConductores from "../../hooks/useConductores";
 import useVehiculos from "../../hooks/useVehiculos";
 import useAdministradores from "../../hooks/useAdministradores";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 function Empresa() {
+  useAuthRedirect();
+
   const [open, setOpen] = useState(false);
   const { vehiculos, isLoading: isVehiculosLoading } = useVehiculos();
   const { conductores, isLoading: isConductoresLoading } = useConductores();

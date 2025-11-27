@@ -10,7 +10,8 @@ function AccesoDenegado() {
         </div>
         <h1 className="text-3xl font-extrabold">¡Necesitas iniciar sesión!</h1>
         <p className="text-slate-300 leading-relaxed">
-          Registrate o inicia sesión para acceder <br /> a las funcionalidades de CargoLink.
+          Registrate o inicia sesión para acceder <br /> a las funcionalidades
+          de CargoLink.
         </p>
         <div className="flex items-center justify-center gap-3 pt-2">
           <Link

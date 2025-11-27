@@ -16,8 +16,11 @@ import {
 } from "../../utils/empresa";
 import useConductores from "../../hooks/useConductores";
 import useVinculos from "../../hooks/useVinculos";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 function Conductores() {
+  useAuthRedirect();
+
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -129,8 +132,6 @@ function Conductores() {
     ],
     []
   );
-
-
 
   const rows = useMemo(
     () =>

@@ -15,7 +15,6 @@ import {
   Outlet,
   RouterProvider,
   useLocation,
-  Navigate,
 } from "react-router-dom";
 import { RUTAS } from "./data/rutas";
 import { Analytics } from "@vercel/analytics/react";
@@ -42,17 +41,12 @@ const TITULOS: Record<string, string> = {
   [RUTAS.ACCESO_DENEGADO]: "CargoLink - Acceso Denegado",
 };
 
-
 export function TitleLayout() {
   const { pathname } = useLocation();
 
   useEffect(() => {
     document.title = TITULOS[pathname] ?? "CargoLink";
   }, [pathname]);
-
-  if (!storedUser && pathname.startsWith("/Empresa")) {
-    return <Navigate to={RUTAS.ACCESO_DENEGADO} replace />;
-  }
 
   return <Outlet />;
 }
@@ -70,7 +64,7 @@ const router = createBrowserRouter([
       { path: RUTAS.EMPRESA_CONDUCTORES, element: <Conductores /> },
       { path: RUTAS.EMPRESA_VEHICULOS, element: <Vehiculos /> },
       { path: RUTAS.EMPRESA_FLOTA, element: <Flota /> },
-      { path: RUTAS.ACCESO_DENEGADO, element: <AccesoDenegado /> }
+      { path: RUTAS.ACCESO_DENEGADO, element: <AccesoDenegado /> },
     ],
   },
 ]);

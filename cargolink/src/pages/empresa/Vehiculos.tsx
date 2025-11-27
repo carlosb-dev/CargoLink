@@ -15,8 +15,10 @@ import {
   type CrearVehiculoPayload,
 } from "../../utils/empresa";
 import useVinculos from "../../hooks/useVinculos";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 function Vehiculos() {
+  useAuthRedirect();
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -93,8 +95,7 @@ function Vehiculos() {
         matricula: v.Matricula ?? "NA",
         modelo: v.Modelo ?? "NA",
         tipo: v.Tipo ?? "NA",
-        capacidad:
-          typeof v.Capacidad === "number" ? `${v.Capacidad} kg` : "NA",
+        capacidad: typeof v.Capacidad === "number" ? `${v.Capacidad} kg` : "NA",
         acciones: (
           <button
             onClick={() => void handleDelete(v.idVehiculo)}

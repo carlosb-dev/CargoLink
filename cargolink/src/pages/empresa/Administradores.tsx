@@ -14,8 +14,11 @@ import {
 } from "../../utils/empresa";
 import EmptyStateCard from "../../components/Globals/EmptyStateCard";
 import useAdministradores from "../../hooks/useAdministradores";
+import { useAuthRedirect } from "../../hooks/useAuthRedirect";
 
 function Administradores() {
+  useAuthRedirect();
+
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);

@@ -60,7 +60,7 @@ function Signup() {
         setError(result.message ?? "No se pudo crear la empresa");
         return;
       }
-      
+
       setEmpresa("");
       setDireccion("");
       setEmail("");
